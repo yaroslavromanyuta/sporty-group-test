@@ -2,12 +2,15 @@ package com.sportygroup.weatherapp.feature.forecast.presentation.state
 
 import com.sportygroup.weatherapp.feature.forecast.presentation.model.CityUiModel
 
-/** User intents originating from the forecast/home screen. */
+/**
+ * User intents originating from the forecast/home screen.
+ *
+ * Note: tapping "Use current location" is handled via an explicit callback in the route
+ * (so Android permission APIs stay out of the ViewModel), not as a [ForecastUiAction].
+ */
 sealed interface ForecastUiAction {
     data object OnRetryClick : ForecastUiAction
     data object OnRefresh : ForecastUiAction
-    data object OnUseCurrentLocationClick : ForecastUiAction
-    data class OnPermissionResult(val granted: Boolean) : ForecastUiAction
     data class OnCitySelected(val city: CityUiModel) : ForecastUiAction
 }
 

@@ -25,11 +25,17 @@ import com.sportygroup.weatherapp.core.designsystem.icon.UiIcon
 import com.sportygroup.weatherapp.core.designsystem.icon.UiIconType
 import com.sportygroup.weatherapp.core.designsystem.theme.SkyTheme
 
-/** Location permission state, offering to enable location or search manually. */
+/**
+ * Start screen and decision point: the user chooses between current-location weather and
+ * manual city search. Tapping "Use my location" triggers the permission flow in the route
+ * (not here). When [permissionDenied] is true, a message reminds the user that manual
+ * search is still available.
+ */
 @Composable
-fun PermissionRequiredContent(
+fun InitialChoiceContent(
+    permissionDenied: Boolean,
     canSearchManually: Boolean,
-    onEnableLocation: () -> Unit,
+    onUseCurrentLocation: () -> Unit,
     onSearch: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -66,15 +72,15 @@ fun PermissionRequiredContent(
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
-                    text = "Enable location",
+                    text = "Welcome to SkyCast",
                     color = SkyTheme.colors.textHigh,
                     fontWeight = FontWeight.ExtraBold,
                     fontSize = 23.sp,
                     textAlign = TextAlign.Center,
                 )
                 Text(
-                    text = "SkyCast uses your location to show accurate weather for where you are " +
-                        "right now. You can change this anytime.",
+                    text = "Use your current location for local weather, or search for any city. " +
+                        "We only request location after you choose it.",
                     color = SkyTheme.colors.textMedium,
                     fontWeight = FontWeight.Medium,
                     fontSize = 15.sp,
@@ -82,13 +88,13 @@ fun PermissionRequiredContent(
                     modifier = Modifier.padding(top = 10.dp, bottom = 22.dp),
                 )
                 SkyPrimaryButton(
-                    text = "Use my location",
-                    onClick = onEnableLocation,
+                    text = "Use current location",
+                    onClick = onUseCurrentLocation,
                     icon = UiIconType.LOCATION_FILL,
                 )
                 if (canSearchManually) {
                     SkyGhostButton(
-                        text = "Search a city instead",
+                        text = "Search city manually",
                         onClick = onSearch,
                         icon = UiIconType.SEARCH,
                         modifier = Modifier.padding(top = 12.dp),
@@ -96,16 +102,40 @@ fun PermissionRequiredContent(
                 }
             }
         }
+        if (permissionDenied) {
+            Text(
+                text = "Location permission denied. You can still search for a city manually.",
+                color = SkyTheme.colors.danger,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 13.sp,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(top = 16.dp),
+            )
+        }
     }
 }
 
 @Preview
 @Composable
-private fun PermissionRequiredContentPreview() {
+private fun InitialChoiceContentPreview() {
     SkyTheme {
-        PermissionRequiredContent(
+        InitialChoiceContent(
+            permissionDenied = false,
             canSearchManually = true,
-            onEnableLocation = {},
+            onUseCurrentLocation = {},
+            onSearch = {},
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun InitialChoiceContentDeniedPreview() {
+    SkyTheme {
+        InitialChoiceContent(
+            permissionDenied = true,
+            canSearchManually = true,
+            onUseCurrentLocation = {},
             onSearch = {},
         )
     }

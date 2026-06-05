@@ -26,6 +26,7 @@ class ForecastScreenTest {
                 ForecastScreen(
                     state = ForecastUiState.Content(ForecastPreviewData.forecast),
                     onAction = {},
+                    onUseCurrentLocation = {},
                     onOpenSearch = {},
                     onOpenSettings = {},
                 )
@@ -45,6 +46,7 @@ class ForecastScreenTest {
                 ForecastScreen(
                     state = ForecastUiState.Content(ForecastPreviewData.forecast),
                     onAction = {},
+                    onUseCurrentLocation = {},
                     onOpenSearch = {},
                     onOpenSettings = { openedSettings = true },
                 )
@@ -53,6 +55,65 @@ class ForecastScreenTest {
 
         composeRule.onNodeWithContentDescription("Settings").performClick()
         assertTrue(openedSettings)
+    }
+
+    @Test
+    fun initialChoice_showsBothChoices() {
+        composeRule.setContent {
+            SkyTheme {
+                ForecastScreen(
+                    state = ForecastUiState.InitialChoice(),
+                    onAction = {},
+                    onUseCurrentLocation = {},
+                    onOpenSearch = {},
+                    onOpenSettings = {},
+                )
+            }
+        }
+
+        composeRule.onNodeWithText("Use current location").assertIsDisplayed()
+        composeRule.onNodeWithText("Search city manually").assertIsDisplayed()
+    }
+
+    @Test
+    fun initialChoice_useCurrentLocationInvokesCallback() {
+        var requested = false
+        composeRule.setContent {
+            SkyTheme {
+                ForecastScreen(
+                    state = ForecastUiState.InitialChoice(),
+                    onAction = {},
+                    onUseCurrentLocation = { requested = true },
+                    onOpenSearch = {},
+                    onOpenSettings = {},
+                )
+            }
+        }
+
+        composeRule.onNodeWithText("Use current location").performClick()
+        assertTrue(requested)
+    }
+
+    @Test
+    fun initialChoice_manualSearchAvailableAndDeniedMessageShown() {
+        var searched = false
+        composeRule.setContent {
+            SkyTheme {
+                ForecastScreen(
+                    state = ForecastUiState.InitialChoice(permissionDenied = true),
+                    onAction = {},
+                    onUseCurrentLocation = {},
+                    onOpenSearch = { searched = true },
+                    onOpenSettings = {},
+                )
+            }
+        }
+
+        composeRule.onNodeWithText(
+            "Location permission denied. You can still search for a city manually.",
+        ).assertIsDisplayed()
+        composeRule.onNodeWithText("Search city manually").performClick()
+        assertTrue(searched)
     }
 
     @Test
@@ -65,6 +126,7 @@ class ForecastScreenTest {
                         ErrorMessage("Something went wrong", "Check your connection.", "NETWORK_TIMEOUT"),
                     ),
                     onAction = { if (it is ForecastUiAction.OnRetryClick) retried = true },
+                    onUseCurrentLocation = {},
                     onOpenSearch = {},
                     onOpenSettings = {},
                 )
@@ -74,22 +136,5 @@ class ForecastScreenTest {
         composeRule.onNodeWithText("Something went wrong").assertIsDisplayed()
         composeRule.onNodeWithText("Try again").performClick()
         assertTrue(retried)
-    }
-
-    @Test
-    fun permission_showsEnableLocation() {
-        composeRule.setContent {
-            SkyTheme {
-                ForecastScreen(
-                    state = ForecastUiState.PermissionRequired(),
-                    onAction = {},
-                    onOpenSearch = {},
-                    onOpenSettings = {},
-                )
-            }
-        }
-
-        composeRule.onNodeWithText("Enable location").assertIsDisplayed()
-        composeRule.onNodeWithText("Use my location").assertIsDisplayed()
     }
 }

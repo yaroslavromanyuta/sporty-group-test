@@ -28,7 +28,7 @@ import com.sportygroup.weatherapp.feature.forecast.presentation.component.Foreca
 import com.sportygroup.weatherapp.feature.forecast.presentation.component.ForecastLoadingContent
 import com.sportygroup.weatherapp.feature.forecast.presentation.component.ForecastTopBar
 import com.sportygroup.weatherapp.feature.forecast.presentation.component.HourlyForecastRow
-import com.sportygroup.weatherapp.feature.forecast.presentation.component.PermissionRequiredContent
+import com.sportygroup.weatherapp.feature.forecast.presentation.component.InitialChoiceContent
 import com.sportygroup.weatherapp.feature.forecast.presentation.component.WeatherMetricsGrid
 import com.sportygroup.weatherapp.feature.forecast.presentation.component.WeeklyForecastList
 import com.sportygroup.weatherapp.feature.forecast.presentation.model.ForecastUiModel
@@ -36,11 +36,12 @@ import com.sportygroup.weatherapp.feature.forecast.presentation.preview.Forecast
 import com.sportygroup.weatherapp.feature.forecast.presentation.state.ForecastUiAction
 import com.sportygroup.weatherapp.feature.forecast.presentation.state.ForecastUiState
 
-/** Stateless home screen. Renders one of loading / permission / error / content states. */
+/** Stateless home screen. Renders initial-choice / loading / error / content states. */
 @Composable
 fun ForecastScreen(
     state: ForecastUiState,
     onAction: (ForecastUiAction) -> Unit,
+    onUseCurrentLocation: () -> Unit,
     onOpenSearch: () -> Unit,
     onOpenSettings: () -> Unit,
     modifier: Modifier = Modifier,
@@ -55,12 +56,14 @@ fun ForecastScreen(
             ),
     ) {
         when (state) {
-            ForecastUiState.Loading -> ForecastLoadingContent()
-            is ForecastUiState.PermissionRequired -> PermissionRequiredContent(
+            is ForecastUiState.InitialChoice -> InitialChoiceContent(
+                permissionDenied = state.permissionDenied,
                 canSearchManually = state.canSearchManually,
-                onEnableLocation = { onAction(ForecastUiAction.OnUseCurrentLocationClick) },
+                onUseCurrentLocation = onUseCurrentLocation,
                 onSearch = onOpenSearch,
             )
+            ForecastUiState.RequestingPermission -> ForecastLoadingContent()
+            ForecastUiState.Loading -> ForecastLoadingContent()
             is ForecastUiState.Error -> ForecastErrorContent(
                 error = state.error,
                 canRetry = state.canRetry,
@@ -140,6 +143,7 @@ private fun ForecastScreenContentPreview() {
         ForecastScreen(
             state = ForecastUiState.Content(ForecastPreviewData.forecast),
             onAction = {},
+            onUseCurrentLocation = {},
             onOpenSearch = {},
             onOpenSettings = {},
         )
@@ -153,6 +157,7 @@ private fun ForecastScreenLoadingPreview() {
         ForecastScreen(
             state = ForecastUiState.Loading,
             onAction = {},
+            onUseCurrentLocation = {},
             onOpenSearch = {},
             onOpenSettings = {},
         )
@@ -161,11 +166,12 @@ private fun ForecastScreenLoadingPreview() {
 
 @Preview
 @Composable
-private fun ForecastScreenPermissionPreview() {
+private fun ForecastScreenInitialChoicePreview() {
     SkyTheme {
         ForecastScreen(
-            state = ForecastUiState.PermissionRequired(),
+            state = ForecastUiState.InitialChoice(),
             onAction = {},
+            onUseCurrentLocation = {},
             onOpenSearch = {},
             onOpenSettings = {},
         )

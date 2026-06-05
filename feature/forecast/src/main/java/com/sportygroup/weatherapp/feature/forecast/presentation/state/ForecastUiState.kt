@@ -6,11 +6,24 @@ import com.sportygroup.weatherapp.feature.forecast.presentation.model.ForecastUi
 /** Top-level state for the forecast (home) screen. */
 sealed interface ForecastUiState {
 
-    data object Loading : ForecastUiState
-
-    data class PermissionRequired(
+    /**
+     * Start screen and decision point shown on launch and whenever current-location weather
+     * is not (yet) available. The user must explicitly choose current location or manual
+     * search; we never auto-navigate away from here.
+     *
+     * @param permissionDenied true after the user declined the location permission, so the
+     *   screen can remind them that manual search is still available.
+     */
+    data class InitialChoice(
+        val permissionDenied: Boolean = false,
         val canSearchManually: Boolean = true,
     ) : ForecastUiState
+
+    /** The system permission dialog has been launched and we are awaiting its result. */
+    data object RequestingPermission : ForecastUiState
+
+    /** Loading a forecast (by current location or by a selected city). */
+    data object Loading : ForecastUiState
 
     data class Content(
         val forecast: ForecastUiModel,

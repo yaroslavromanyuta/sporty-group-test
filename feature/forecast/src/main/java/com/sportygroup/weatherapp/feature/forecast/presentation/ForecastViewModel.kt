@@ -43,7 +43,7 @@ class ForecastViewModel @Inject constructor(
     private val errorUiMapper: ErrorUiMapper,
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow<ForecastUiState>(ForecastUiState.Loading)
+    private val _uiState = MutableStateFlow<ForecastUiState>(ForecastUiState.InitialChoice())
     val uiState: StateFlow<ForecastUiState> = _uiState.asStateFlow()
 
     private val _searchState = MutableStateFlow(CitySearchUiState())
@@ -54,20 +54,22 @@ class ForecastViewModel @Inject constructor(
 
     private var settings: AppSettings = AppSettings.DEFAULT
     private var settingsInitialized = false
-    private var lastForecast: Forecast? = null
     private var lastSelectedCity: City? = null
+    /** True once the user has opted into current-location weather (after granting permission). */
+    private var usingCurrentLocation = false
     private var searchJob: Job? = null
 
     init {
+        // Observe settings for unit changes only. We intentionally do NOT load weather on
+        // launch — the start screen (InitialChoice) stays the decision point until the user
+        // taps "Use current location" (and grants permission) or picks a city manually.
         viewModelScope.launch {
             observeSettings().collect { newSettings ->
                 val unitsChanged = settingsInitialized && newSettings.affectsForecastUnits(settings)
-                val firstLoad = !settingsInitialized
                 settings = newSettings
                 settingsInitialized = true
-                when {
-                    firstLoad -> reload()
-                    unitsChanged -> reload()
+                if (unitsChanged && hasLoadedForecast()) {
+                    reload()
                 }
             }
         }
@@ -78,19 +80,32 @@ class ForecastViewModel @Inject constructor(
             ForecastUiAction.OnRetryClick,
             ForecastUiAction.OnRefresh,
             -> reload()
-            ForecastUiAction.OnUseCurrentLocationClick -> {
-                lastSelectedCity = null
-                reload()
-            }
-            is ForecastUiAction.OnPermissionResult ->
-                if (action.granted) {
-                    lastSelectedCity = null
-                    reload()
-                } else {
-                    _uiState.value = ForecastUiState.PermissionRequired()
-                }
             is ForecastUiAction.OnCitySelected -> selectCity(action.city)
         }
+    }
+
+    /**
+     * Called by the route after the user tapped "Use current location" and permission is
+     * granted (already held or just granted). Android permission APIs stay in the UI layer.
+     */
+    fun onLocationPermissionGranted() {
+        lastSelectedCity = null
+        usingCurrentLocation = true
+        reload()
+    }
+
+    /** Called by the route while the system permission dialog is shown. */
+    fun onLocationPermissionRequested() {
+        _uiState.value = ForecastUiState.RequestingPermission
+    }
+
+    /**
+     * Called by the route when the user declines the permission. We stay on the start screen
+     * and flag that manual search is still available.
+     */
+    fun onLocationPermissionDenied() {
+        usingCurrentLocation = false
+        _uiState.value = ForecastUiState.InitialChoice(permissionDenied = true)
     }
 
     fun onSearchAction(action: CitySearchUiAction) {
@@ -101,17 +116,16 @@ class ForecastViewModel @Inject constructor(
                 addToRecent(action.city)
                 selectCity(action.city)
             }
-            CitySearchUiAction.OnUseCurrentLocation -> {
-                lastSelectedCity = null
-                reload()
-                emitEvent(ForecastUiEvent.NavigateToHome)
-            }
+            // "Use current location" inside search is handled by the route (permission flow),
+            // which then calls onLocationPermissionGranted()/Denied(); nothing to do here.
+            CitySearchUiAction.OnUseCurrentLocation -> Unit
         }
     }
 
     private fun selectCity(cityUi: CityUiModel) {
         val city = cityUiMapper.toDomain(cityUi)
         lastSelectedCity = city
+        usingCurrentLocation = false
         _uiState.value = ForecastUiState.Loading
         viewModelScope.launch {
             handleForecastResult(getForecastByCity(city, settings))
@@ -121,6 +135,10 @@ class ForecastViewModel @Inject constructor(
 
     private fun reload() {
         val city = lastSelectedCity
+        if (city == null && !usingCurrentLocation) {
+            // Nothing loaded yet — keep the start screen as the decision point.
+            return
+        }
         _uiState.value = ForecastUiState.Loading
         viewModelScope.launch {
             val result = if (city == null) {
@@ -135,17 +153,19 @@ class ForecastViewModel @Inject constructor(
     private fun handleForecastResult(result: AppResult<Forecast>) {
         when (result) {
             is AppResult.Success -> {
-                lastForecast = result.value
                 _uiState.value = ForecastUiState.Content(
                     forecast = forecastUiMapper.map(result.value, settings.measurementSystem),
                 )
             }
             is AppResult.Failure -> _uiState.value = when (result.error) {
-                AppError.NoLocationPermission -> ForecastUiState.PermissionRequired()
+                // Permission revoked between launch and load: return to the start screen.
+                AppError.NoLocationPermission -> ForecastUiState.InitialChoice(permissionDenied = true)
                 else -> ForecastUiState.Error(errorUiMapper.map(result.error))
             }
         }
     }
+
+    private fun hasLoadedForecast(): Boolean = lastSelectedCity != null || usingCurrentLocation
 
     private fun onQueryChanged(query: String) {
         _searchState.update { it.copy(query = query, isSearching = query.isNotBlank()) }
