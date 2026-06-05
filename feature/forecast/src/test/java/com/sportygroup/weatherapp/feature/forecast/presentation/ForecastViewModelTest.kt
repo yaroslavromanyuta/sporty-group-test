@@ -32,6 +32,7 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -109,6 +110,47 @@ class ForecastViewModelTest {
         assertTrue((state as ForecastUiState.InitialChoice).permissionDenied)
         assertTrue(state.canSearchManually)
         coVerify(exactly = 0) { getCurrentLocationForecast(any()) }
+    }
+
+    @Test
+    fun `permanent denial flags the first screen to use settings`() = runTest {
+        val vm = viewModel()
+
+        vm.onLocationPermissionDenied(permanently = true)
+
+        val state = vm.uiState.value
+        assertTrue(state is ForecastUiState.InitialChoice)
+        assertTrue((state as ForecastUiState.InitialChoice).permissionDenied)
+        assertTrue(state.permissionPermanentlyDenied)
+        assertTrue(state.canSearchManually)
+    }
+
+    @Test
+    fun `permission becoming available clears denied flags on the first screen`() = runTest {
+        val vm = viewModel()
+        vm.onLocationPermissionDenied(permanently = true)
+
+        // User enabled permission in system Settings and returned to the app.
+        vm.onLocationPermissionAvailable()
+
+        val state = vm.uiState.value
+        assertTrue(state is ForecastUiState.InitialChoice)
+        assertFalse((state as ForecastUiState.InitialChoice).permissionDenied)
+        assertFalse(state.permissionPermanentlyDenied)
+        // We do not auto-load; the user still taps "Use current location".
+        coVerify(exactly = 0) { getCurrentLocationForecast(any()) }
+    }
+
+    @Test
+    fun `permission available does not disturb loaded content`() = runTest {
+        coEvery { getCurrentLocationForecast(any()) } returns AppResult.Success(domainForecast)
+        val vm = viewModel()
+        vm.onLocationPermissionGranted()
+        assertTrue(vm.uiState.value is ForecastUiState.Content)
+
+        vm.onLocationPermissionAvailable()
+
+        assertTrue(vm.uiState.value is ForecastUiState.Content)
     }
 
     @Test

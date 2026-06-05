@@ -101,11 +101,29 @@ class ForecastViewModel @Inject constructor(
 
     /**
      * Called by the route when the user declines the permission. We stay on the start screen
-     * and flag that manual search is still available.
+     * and flag that manual search is still available. [permanently] is true when the system
+     * will no longer show the permission dialog and the user must enable it from Settings.
      */
-    fun onLocationPermissionDenied() {
+    fun onLocationPermissionDenied(permanently: Boolean = false) {
         usingCurrentLocation = false
-        _uiState.value = ForecastUiState.InitialChoice(permissionDenied = true)
+        _uiState.value = ForecastUiState.InitialChoice(
+            permissionDenied = true,
+            permissionPermanentlyDenied = permanently,
+        )
+    }
+
+    /**
+     * Called by the route when the screen resumes and location permission is now available
+     * (e.g. the user enabled it from system Settings). Clears the denied flags so the start
+     * screen offers "Use current location" again. We don't auto-load — the user still taps.
+     */
+    fun onLocationPermissionAvailable() {
+        val current = _uiState.value
+        if (current is ForecastUiState.InitialChoice &&
+            (current.permissionDenied || current.permissionPermanentlyDenied)
+        ) {
+            _uiState.value = ForecastUiState.InitialChoice()
+        }
     }
 
     fun onSearchAction(action: CitySearchUiAction) {

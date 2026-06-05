@@ -42,6 +42,7 @@ fun ForecastScreen(
     state: ForecastUiState,
     onAction: (ForecastUiAction) -> Unit,
     onUseCurrentLocation: () -> Unit,
+    onOpenAppSettings: () -> Unit,
     onOpenSearch: () -> Unit,
     onOpenSettings: () -> Unit,
     modifier: Modifier = Modifier,
@@ -58,8 +59,10 @@ fun ForecastScreen(
         when (state) {
             is ForecastUiState.InitialChoice -> InitialChoiceContent(
                 permissionDenied = state.permissionDenied,
+                permissionPermanentlyDenied = state.permissionPermanentlyDenied,
                 canSearchManually = state.canSearchManually,
                 onUseCurrentLocation = onUseCurrentLocation,
+                onOpenAppSettings = onOpenAppSettings,
                 onSearch = onOpenSearch,
             )
             ForecastUiState.RequestingPermission -> ForecastLoadingContent()
@@ -144,6 +147,7 @@ private fun ForecastScreenContentPreview() {
             state = ForecastUiState.Content(ForecastPreviewData.forecast),
             onAction = {},
             onUseCurrentLocation = {},
+            onOpenAppSettings = {},
             onOpenSearch = {},
             onOpenSettings = {},
         )
@@ -158,6 +162,7 @@ private fun ForecastScreenLoadingPreview() {
             state = ForecastUiState.Loading,
             onAction = {},
             onUseCurrentLocation = {},
+            onOpenAppSettings = {},
             onOpenSearch = {},
             onOpenSettings = {},
         )
@@ -172,6 +177,7 @@ private fun ForecastScreenInitialChoicePreview() {
             state = ForecastUiState.InitialChoice(),
             onAction = {},
             onUseCurrentLocation = {},
+            onOpenAppSettings = {},
             onOpenSearch = {},
             onOpenSettings = {},
         )

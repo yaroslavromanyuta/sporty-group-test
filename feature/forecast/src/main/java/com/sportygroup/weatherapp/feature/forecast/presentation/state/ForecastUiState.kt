@@ -13,9 +13,12 @@ sealed interface ForecastUiState {
      *
      * @param permissionDenied true after the user declined the location permission, so the
      *   screen can remind them that manual search is still available.
+     * @param permissionPermanentlyDenied true when the permission can no longer be requested
+     *   in-app (e.g. "Don't allow" on Android 11+); the user must enable it in Settings.
      */
     data class InitialChoice(
         val permissionDenied: Boolean = false,
+        val permissionPermanentlyDenied: Boolean = false,
         val canSearchManually: Boolean = true,
     ) : ForecastUiState
 

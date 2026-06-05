@@ -34,8 +34,10 @@ import com.sportygroup.weatherapp.core.designsystem.theme.SkyTheme
 @Composable
 fun InitialChoiceContent(
     permissionDenied: Boolean,
+    permissionPermanentlyDenied: Boolean,
     canSearchManually: Boolean,
     onUseCurrentLocation: () -> Unit,
+    onOpenAppSettings: () -> Unit,
     onSearch: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -87,11 +89,19 @@ fun InitialChoiceContent(
                     textAlign = TextAlign.Center,
                     modifier = Modifier.padding(top = 10.dp, bottom = 22.dp),
                 )
-                SkyPrimaryButton(
-                    text = "Use current location",
-                    onClick = onUseCurrentLocation,
-                    icon = UiIconType.LOCATION_FILL,
-                )
+                if (permissionPermanentlyDenied) {
+                    SkyPrimaryButton(
+                        text = "Open settings",
+                        onClick = onOpenAppSettings,
+                        icon = UiIconType.LOCATION_FILL,
+                    )
+                } else {
+                    SkyPrimaryButton(
+                        text = "Use current location",
+                        onClick = onUseCurrentLocation,
+                        icon = UiIconType.LOCATION_FILL,
+                    )
+                }
                 if (canSearchManually) {
                     SkyGhostButton(
                         text = "Search city manually",
@@ -102,9 +112,16 @@ fun InitialChoiceContent(
                 }
             }
         }
-        if (permissionDenied) {
+        val deniedMessage = when {
+            permissionPermanentlyDenied ->
+                "Location permission is turned off. Enable it in Settings, or search for a city manually."
+            permissionDenied ->
+                "Location permission denied. You can still search for a city manually."
+            else -> null
+        }
+        if (deniedMessage != null) {
             Text(
-                text = "Location permission denied. You can still search for a city manually.",
+                text = deniedMessage,
                 color = SkyTheme.colors.danger,
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 13.sp,
@@ -121,8 +138,10 @@ private fun InitialChoiceContentPreview() {
     SkyTheme {
         InitialChoiceContent(
             permissionDenied = false,
+            permissionPermanentlyDenied = false,
             canSearchManually = true,
             onUseCurrentLocation = {},
+            onOpenAppSettings = {},
             onSearch = {},
         )
     }
@@ -134,8 +153,25 @@ private fun InitialChoiceContentDeniedPreview() {
     SkyTheme {
         InitialChoiceContent(
             permissionDenied = true,
+            permissionPermanentlyDenied = false,
             canSearchManually = true,
             onUseCurrentLocation = {},
+            onOpenAppSettings = {},
+            onSearch = {},
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun InitialChoiceContentPermanentlyDeniedPreview() {
+    SkyTheme {
+        InitialChoiceContent(
+            permissionDenied = true,
+            permissionPermanentlyDenied = true,
+            canSearchManually = true,
+            onUseCurrentLocation = {},
+            onOpenAppSettings = {},
             onSearch = {},
         )
     }

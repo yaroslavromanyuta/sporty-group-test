@@ -27,6 +27,7 @@ class ForecastScreenTest {
                     state = ForecastUiState.Content(ForecastPreviewData.forecast),
                     onAction = {},
                     onUseCurrentLocation = {},
+                    onOpenAppSettings = {},
                     onOpenSearch = {},
                     onOpenSettings = {},
                 )
@@ -47,6 +48,7 @@ class ForecastScreenTest {
                     state = ForecastUiState.Content(ForecastPreviewData.forecast),
                     onAction = {},
                     onUseCurrentLocation = {},
+                    onOpenAppSettings = {},
                     onOpenSearch = {},
                     onOpenSettings = { openedSettings = true },
                 )
@@ -65,6 +67,7 @@ class ForecastScreenTest {
                     state = ForecastUiState.InitialChoice(),
                     onAction = {},
                     onUseCurrentLocation = {},
+                    onOpenAppSettings = {},
                     onOpenSearch = {},
                     onOpenSettings = {},
                 )
@@ -84,6 +87,7 @@ class ForecastScreenTest {
                     state = ForecastUiState.InitialChoice(),
                     onAction = {},
                     onUseCurrentLocation = { requested = true },
+                    onOpenAppSettings = {},
                     onOpenSearch = {},
                     onOpenSettings = {},
                 )
@@ -103,6 +107,7 @@ class ForecastScreenTest {
                     state = ForecastUiState.InitialChoice(permissionDenied = true),
                     onAction = {},
                     onUseCurrentLocation = {},
+                    onOpenAppSettings = {},
                     onOpenSearch = { searched = true },
                     onOpenSettings = {},
                 )
@@ -117,6 +122,31 @@ class ForecastScreenTest {
     }
 
     @Test
+    fun initialChoice_permanentlyDeniedShowsOpenSettings() {
+        var openedAppSettings = false
+        composeRule.setContent {
+            SkyTheme {
+                ForecastScreen(
+                    state = ForecastUiState.InitialChoice(
+                        permissionDenied = true,
+                        permissionPermanentlyDenied = true,
+                    ),
+                    onAction = {},
+                    onUseCurrentLocation = {},
+                    onOpenAppSettings = { openedAppSettings = true },
+                    onOpenSearch = {},
+                    onOpenSettings = {},
+                )
+            }
+        }
+
+        // Manual search stays available; the primary action becomes "Open settings".
+        composeRule.onNodeWithText("Search city manually").assertIsDisplayed()
+        composeRule.onNodeWithText("Open settings").performClick()
+        assertTrue(openedAppSettings)
+    }
+
+    @Test
     fun error_retryButtonInvokesAction() {
         var retried = false
         composeRule.setContent {
@@ -127,6 +157,7 @@ class ForecastScreenTest {
                     ),
                     onAction = { if (it is ForecastUiAction.OnRetryClick) retried = true },
                     onUseCurrentLocation = {},
+                    onOpenAppSettings = {},
                     onOpenSearch = {},
                     onOpenSettings = {},
                 )
