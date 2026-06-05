@@ -61,6 +61,39 @@ class SettingsScreenTest {
     }
 
     @Test
+    fun selectingFahrenheitEmitsAction() {
+        var action: SettingsUiAction? = null
+        composeRule.setContent {
+            SkyTheme {
+                SettingsScreen(state = defaultState, onAction = { action = it }, onBack = {})
+            }
+        }
+
+        composeRule.onNodeWithText("Fahrenheit").performClick()
+
+        assertTrue(action is SettingsUiAction.SelectTemperatureUnit)
+        assertEquals(
+            TemperatureUnit.FAHRENHEIT,
+            (action as SettingsUiAction.SelectTemperatureUnit).value,
+        )
+    }
+
+    @Test
+    fun selectingDarkThemeEmitsAction() {
+        var action: SettingsUiAction? = null
+        composeRule.setContent {
+            SkyTheme {
+                SettingsScreen(state = defaultState, onAction = { action = it }, onBack = {})
+            }
+        }
+
+        composeRule.onNodeWithText("Dark").performClick()
+
+        assertTrue(action is SettingsUiAction.SelectThemeMode)
+        assertEquals(ThemeMode.DARK, (action as SettingsUiAction.SelectThemeMode).value)
+    }
+
+    @Test
     fun backButtonInvokesCallback() {
         var backPressed = false
         composeRule.setContent {

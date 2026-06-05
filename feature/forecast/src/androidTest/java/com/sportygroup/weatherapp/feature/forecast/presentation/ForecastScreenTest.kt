@@ -147,6 +147,124 @@ class ForecastScreenTest {
     }
 
     @Test
+    fun content_showsWeeklyAndMetricDetails() {
+        composeRule.setContent {
+            SkyTheme {
+                ForecastScreen(
+                    state = ForecastUiState.Content(ForecastPreviewData.forecast),
+                    onAction = {},
+                    onUseCurrentLocation = {},
+                    onOpenAppSettings = {},
+                    onOpenSearch = {},
+                    onOpenSettings = {},
+                )
+            }
+        }
+
+        composeRule.onNodeWithText("Humidity").assertIsDisplayed()
+        composeRule.onNodeWithText("Wind").assertIsDisplayed()
+        composeRule.onNodeWithText("Today").assertIsDisplayed()
+    }
+
+    @Test
+    fun loading_showsProgressText() {
+        composeRule.setContent {
+            SkyTheme {
+                ForecastScreen(
+                    state = ForecastUiState.Loading,
+                    onAction = {},
+                    onUseCurrentLocation = {},
+                    onOpenAppSettings = {},
+                    onOpenSearch = {},
+                    onOpenSettings = {},
+                )
+            }
+        }
+
+        composeRule.onNodeWithText("Fetching latest forecast…").assertIsDisplayed()
+    }
+
+    @Test
+    fun requestingPermission_showsProgressText() {
+        composeRule.setContent {
+            SkyTheme {
+                ForecastScreen(
+                    state = ForecastUiState.RequestingPermission,
+                    onAction = {},
+                    onUseCurrentLocation = {},
+                    onOpenAppSettings = {},
+                    onOpenSearch = {},
+                    onOpenSettings = {},
+                )
+            }
+        }
+
+        composeRule.onNodeWithText("Fetching latest forecast…").assertIsDisplayed()
+    }
+
+    @Test
+    fun content_cityName_opensSearch() {
+        var openedSearch = false
+        composeRule.setContent {
+            SkyTheme {
+                ForecastScreen(
+                    state = ForecastUiState.Content(ForecastPreviewData.forecast),
+                    onAction = {},
+                    onUseCurrentLocation = {},
+                    onOpenAppSettings = {},
+                    onOpenSearch = { openedSearch = true },
+                    onOpenSettings = {},
+                )
+            }
+        }
+
+        composeRule.onNodeWithText("Malaga").performClick()
+        assertTrue(openedSearch)
+    }
+
+    @Test
+    fun initialChoice_searchManually_opensSearch() {
+        var openedSearch = false
+        composeRule.setContent {
+            SkyTheme {
+                ForecastScreen(
+                    state = ForecastUiState.InitialChoice(),
+                    onAction = {},
+                    onUseCurrentLocation = {},
+                    onOpenAppSettings = {},
+                    onOpenSearch = { openedSearch = true },
+                    onOpenSettings = {},
+                )
+            }
+        }
+
+        composeRule.onNodeWithText("Search city manually").performClick()
+        assertTrue(openedSearch)
+    }
+
+    @Test
+    fun error_searchAnotherCity_opensSearch() {
+        var openedSearch = false
+        composeRule.setContent {
+            SkyTheme {
+                ForecastScreen(
+                    state = ForecastUiState.Error(
+                        ErrorMessage("Something went wrong", "Check your connection.", "NETWORK_TIMEOUT"),
+                    ),
+                    onAction = {},
+                    onUseCurrentLocation = {},
+                    onOpenAppSettings = {},
+                    onOpenSearch = { openedSearch = true },
+                    onOpenSettings = {},
+                )
+            }
+        }
+
+        composeRule.onNodeWithText("Search another city").performClick()
+        assertTrue(openedSearch)
+    }
+
+    @Test
     fun error_retryButtonInvokesAction() {
         var retried = false
         composeRule.setContent {

@@ -16,6 +16,8 @@ import com.sportygroup.weatherapp.core.model.City
 import com.sportygroup.weatherapp.core.model.Coordinates
 import com.sportygroup.weatherapp.feature.forecast.testutil.TestDispatcherProvider
 import com.sportygroup.weatherapp.lib.settings.model.AppSettings
+import com.sportygroup.weatherapp.lib.settings.model.MeasurementSystem
+import com.sportygroup.weatherapp.lib.settings.model.TemperatureUnit
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
@@ -86,6 +88,45 @@ class ForecastRepositoryIntegrationTest {
 
         assertTrue(result is AppResult.Success)
         assertTrue((result as AppResult.Success).value.isEmpty())
+    }
+
+    @Test
+    fun `forecast request sends metric unit parameters and coordinates`() = runTest {
+        server.enqueue(MockResponse().setResponseCode(200).setBody(FORECAST_JSON))
+
+        repository.getForecast(
+            City("Malaga", "Spain", Coordinates(36.7, -4.4)),
+            AppSettings(
+                measurementSystem = MeasurementSystem.METRIC,
+                temperatureUnit = TemperatureUnit.CELSIUS,
+            ),
+        )
+
+        val url = server.takeRequest().requestUrl!!
+        assertEquals("/v1/forecast", url.encodedPath)
+        assertEquals("36.7", url.queryParameter("latitude"))
+        assertEquals("-4.4", url.queryParameter("longitude"))
+        assertEquals("celsius", url.queryParameter("temperature_unit"))
+        assertEquals("kmh", url.queryParameter("wind_speed_unit"))
+        assertEquals("mm", url.queryParameter("precipitation_unit"))
+    }
+
+    @Test
+    fun `forecast request sends imperial unit parameters`() = runTest {
+        server.enqueue(MockResponse().setResponseCode(200).setBody(FORECAST_JSON))
+
+        repository.getForecast(
+            City("Malaga", "Spain", Coordinates(36.7, -4.4)),
+            AppSettings(
+                measurementSystem = MeasurementSystem.IMPERIAL,
+                temperatureUnit = TemperatureUnit.FAHRENHEIT,
+            ),
+        )
+
+        val url = server.takeRequest().requestUrl!!
+        assertEquals("fahrenheit", url.queryParameter("temperature_unit"))
+        assertEquals("mph", url.queryParameter("wind_speed_unit"))
+        assertEquals("inch", url.queryParameter("precipitation_unit"))
     }
 
     @Test
