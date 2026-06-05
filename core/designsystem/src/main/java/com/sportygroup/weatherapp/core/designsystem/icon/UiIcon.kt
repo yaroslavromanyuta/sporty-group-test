@@ -36,6 +36,9 @@ enum class UiIconType(@DrawableRes val drawableRes: Int) {
     HISTORY(R.drawable.ic_ui_history),
     EYE(R.drawable.ic_ui_eye),
     SUNRISE(R.drawable.ic_ui_sunrise),
+    SLIDERS(R.drawable.ic_ui_sliders),
+    CHECK(R.drawable.ic_ui_check),
+    HALFMOON(R.drawable.ic_ui_halfmoon),
 }
 
 @Composable

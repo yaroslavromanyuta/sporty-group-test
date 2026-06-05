@@ -16,17 +16,17 @@ data class ForecastDataModel(
 
 data class CurrentDataModel(
     val time: String?,
-    val temperatureC: Double,
-    val apparentTemperatureC: Double,
+    val temperature: Double,
+    val apparentTemperature: Double,
     val humidityPercent: Int,
     val weatherCode: Int,
-    val windSpeedKmh: Double,
+    val windSpeed: Double,
     val pressureHpa: Double,
 )
 
 data class HourlyEntryDataModel(
     val time: String,
-    val temperatureC: Double,
+    val temperature: Double,
     val weatherCode: Int,
     val precipitationProbability: Int,
 )
@@ -34,7 +34,7 @@ data class HourlyEntryDataModel(
 data class DailyEntryDataModel(
     val date: String,
     val weatherCode: Int,
-    val highC: Double,
-    val lowC: Double,
+    val high: Double,
+    val low: Double,
     val precipitationProbability: Int,
 )

@@ -2,11 +2,11 @@ package com.sportygroup.weatherapp.feature.forecast.presentation
 
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.sportygroup.weatherapp.core.designsystem.theme.SkyTheme
 import com.sportygroup.weatherapp.feature.forecast.presentation.mapper.ErrorMessage
-import com.sportygroup.weatherapp.feature.forecast.presentation.model.TemperatureUnit
 import com.sportygroup.weatherapp.feature.forecast.presentation.preview.ForecastPreviewData
 import com.sportygroup.weatherapp.feature.forecast.presentation.state.ForecastUiAction
 import com.sportygroup.weatherapp.feature.forecast.presentation.state.ForecastUiState
@@ -24,11 +24,10 @@ class ForecastScreenTest {
         composeRule.setContent {
             SkyTheme {
                 ForecastScreen(
-                    state = ForecastUiState.Content(ForecastPreviewData.forecast, TemperatureUnit.CELSIUS),
-                    isDarkTheme = false,
+                    state = ForecastUiState.Content(ForecastPreviewData.forecast),
                     onAction = {},
-                    onToggleTheme = {},
                     onOpenSearch = {},
+                    onOpenSettings = {},
                 )
             }
         }
@@ -36,6 +35,24 @@ class ForecastScreenTest {
         composeRule.onNodeWithText("Malaga").assertIsDisplayed()
         composeRule.onNodeWithText("Partly cloudy").assertIsDisplayed()
         composeRule.onNodeWithText("HOURLY").assertIsDisplayed()
+    }
+
+    @Test
+    fun content_settingsButtonInvokesCallback() {
+        var openedSettings = false
+        composeRule.setContent {
+            SkyTheme {
+                ForecastScreen(
+                    state = ForecastUiState.Content(ForecastPreviewData.forecast),
+                    onAction = {},
+                    onOpenSearch = {},
+                    onOpenSettings = { openedSettings = true },
+                )
+            }
+        }
+
+        composeRule.onNodeWithContentDescription("Settings").performClick()
+        assertTrue(openedSettings)
     }
 
     @Test
@@ -47,10 +64,9 @@ class ForecastScreenTest {
                     state = ForecastUiState.Error(
                         ErrorMessage("Something went wrong", "Check your connection.", "NETWORK_TIMEOUT"),
                     ),
-                    isDarkTheme = false,
                     onAction = { if (it is ForecastUiAction.OnRetryClick) retried = true },
-                    onToggleTheme = {},
                     onOpenSearch = {},
+                    onOpenSettings = {},
                 )
             }
         }
@@ -66,10 +82,9 @@ class ForecastScreenTest {
             SkyTheme {
                 ForecastScreen(
                     state = ForecastUiState.PermissionRequired(),
-                    isDarkTheme = false,
                     onAction = {},
-                    onToggleTheme = {},
                     onOpenSearch = {},
+                    onOpenSettings = {},
                 )
             }
         }

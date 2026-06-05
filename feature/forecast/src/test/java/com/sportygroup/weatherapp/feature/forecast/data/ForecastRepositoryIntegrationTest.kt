@@ -6,6 +6,7 @@ import com.sportygroup.weatherapp.feature.forecast.data.mapper.DefaultCityDataTo
 import com.sportygroup.weatherapp.feature.forecast.data.mapper.DefaultCityDtoToDataMapper
 import com.sportygroup.weatherapp.feature.forecast.data.mapper.DefaultForecastDataToDomainMapper
 import com.sportygroup.weatherapp.feature.forecast.data.mapper.DefaultForecastDtoToDataMapper
+import com.sportygroup.weatherapp.feature.forecast.data.mapper.ForecastUnitsMapper
 import com.sportygroup.weatherapp.feature.forecast.data.remote.DefaultCitySearchRemoteDataSource
 import com.sportygroup.weatherapp.feature.forecast.data.remote.DefaultForecastRemoteDataSource
 import com.sportygroup.weatherapp.feature.forecast.data.remote.api.ForecastApi
@@ -14,6 +15,7 @@ import com.sportygroup.weatherapp.feature.forecast.data.repository.ForecastRepos
 import com.sportygroup.weatherapp.core.model.City
 import com.sportygroup.weatherapp.core.model.Coordinates
 import com.sportygroup.weatherapp.feature.forecast.testutil.TestDispatcherProvider
+import com.sportygroup.weatherapp.lib.settings.model.AppSettings
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
@@ -50,6 +52,7 @@ class ForecastRepositoryIntegrationTest {
             forecastDataToDomain = DefaultForecastDataToDomainMapper(),
             cityDtoToData = DefaultCityDtoToDataMapper(),
             cityDataToDomain = DefaultCityDataToDomainMapper(),
+            forecastUnitsMapper = ForecastUnitsMapper(),
             dispatchers = TestDispatcherProvider(),
         )
     }
@@ -63,11 +66,14 @@ class ForecastRepositoryIntegrationTest {
     fun `parses a successful forecast response`() = runTest {
         server.enqueue(MockResponse().setResponseCode(200).setBody(FORECAST_JSON))
 
-        val result = repository.getForecast(City("Malaga", "Spain", Coordinates(36.7, -4.4)))
+        val result = repository.getForecast(
+            City("Malaga", "Spain", Coordinates(36.7, -4.4)),
+            AppSettings.DEFAULT,
+        )
 
         assertTrue(result is AppResult.Success)
         val forecast = (result as AppResult.Success).value
-        assertEquals(24.0, forecast.current.temperatureC, 0.0)
+        assertEquals(24.0, forecast.current.temperature, 0.0)
         assertEquals(1, forecast.daily.size)
         assertEquals(2, forecast.hourly.size)
     }
@@ -86,7 +92,10 @@ class ForecastRepositoryIntegrationTest {
     fun `server error maps to network failure`() = runTest {
         server.enqueue(MockResponse().setResponseCode(500))
 
-        val result = repository.getForecast(City("Malaga", "Spain", Coordinates(36.7, -4.4)))
+        val result = repository.getForecast(
+            City("Malaga", "Spain", Coordinates(36.7, -4.4)),
+            AppSettings.DEFAULT,
+        )
 
         assertEquals(AppResult.Failure(AppError.Network), result)
     }

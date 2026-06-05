@@ -43,6 +43,7 @@ dependencies {
     implementation(project(":core:designsystem"))
     implementation(project(":core:network"))
     implementation(project(":core:location"))
+    implementation(project(":lib:settings"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

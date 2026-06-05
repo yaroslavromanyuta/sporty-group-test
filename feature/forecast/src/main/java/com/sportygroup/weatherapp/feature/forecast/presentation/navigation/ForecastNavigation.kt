@@ -28,8 +28,7 @@ import kotlinx.coroutines.flow.collectLatest
  */
 fun NavGraphBuilder.forecastGraph(
     navController: NavController,
-    isDarkTheme: Boolean,
-    onToggleTheme: () -> Unit,
+    onOpenSettings: () -> Unit,
 ) {
     navigation(
         startDestination = ForecastDestinations.HOME,
@@ -39,9 +38,8 @@ fun NavGraphBuilder.forecastGraph(
             val viewModel = entry.sharedForecastViewModel(navController)
             ForecastRoute(
                 viewModel = viewModel,
-                isDarkTheme = isDarkTheme,
-                onToggleTheme = onToggleTheme,
                 onOpenSearch = { navController.navigate(ForecastDestinations.SEARCH) },
+                onOpenSettings = onOpenSettings,
             )
         }
         composable(ForecastDestinations.SEARCH) { entry ->
@@ -57,9 +55,8 @@ fun NavGraphBuilder.forecastGraph(
 @Composable
 private fun ForecastRoute(
     viewModel: ForecastViewModel,
-    isDarkTheme: Boolean,
-    onToggleTheme: () -> Unit,
     onOpenSearch: () -> Unit,
+    onOpenSettings: () -> Unit,
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
@@ -81,7 +78,6 @@ private fun ForecastRoute(
 
     ForecastScreen(
         state = state,
-        isDarkTheme = isDarkTheme,
         onAction = { action ->
             if (action is ForecastUiAction.OnUseCurrentLocationClick) {
                 permissionLauncher.launch(
@@ -94,8 +90,8 @@ private fun ForecastRoute(
                 viewModel.onAction(action)
             }
         },
-        onToggleTheme = onToggleTheme,
         onOpenSearch = onOpenSearch,
+        onOpenSettings = onOpenSettings,
     )
 }
 

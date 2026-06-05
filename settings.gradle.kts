@@ -29,5 +29,7 @@ include(":core:common")
 include(":core:designsystem")
 include(":core:network")
 include(":core:location")
+include(":lib:settings")
 include(":feature:forecast")
+include(":feature:settings")
  

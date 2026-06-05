@@ -1,6 +1,5 @@
 package com.sportygroup.weatherapp.feature.forecast.presentation
 
-import app.cash.turbine.test
 import com.sportygroup.weatherapp.core.common.AppError
 import com.sportygroup.weatherapp.core.common.AppResult
 import com.sportygroup.weatherapp.core.model.City
@@ -12,21 +11,24 @@ import com.sportygroup.weatherapp.feature.forecast.domain.usecase.SearchCitiesUs
 import com.sportygroup.weatherapp.feature.forecast.presentation.mapper.CityUiMapper
 import com.sportygroup.weatherapp.feature.forecast.presentation.mapper.ErrorUiMapper
 import com.sportygroup.weatherapp.feature.forecast.presentation.mapper.ForecastDomainToUiMapper
-import com.sportygroup.weatherapp.feature.forecast.presentation.model.TemperatureUnit
 import com.sportygroup.weatherapp.feature.forecast.presentation.preview.ForecastPreviewData
-import com.sportygroup.weatherapp.feature.forecast.presentation.state.ForecastUiAction
 import com.sportygroup.weatherapp.feature.forecast.presentation.state.ForecastUiState
+import com.sportygroup.weatherapp.lib.settings.model.AppSettings
+import com.sportygroup.weatherapp.lib.settings.model.MeasurementSystem
+import com.sportygroup.weatherapp.lib.settings.model.ThemeMode
+import com.sportygroup.weatherapp.lib.settings.usecase.ObserveSettingsUseCase
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
-import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -34,12 +36,15 @@ import org.junit.Test
 @OptIn(ExperimentalCoroutinesApi::class)
 class ForecastViewModelTest {
 
+    private val observeSettings = mockk<ObserveSettingsUseCase>()
     private val getCurrentLocationForecast = mockk<GetCurrentLocationForecastUseCase>()
     private val getForecastByCity = mockk<GetForecastByCityUseCase>()
     private val searchCities = mockk<SearchCitiesUseCase>()
     private val forecastUiMapper = mockk<ForecastDomainToUiMapper>()
     private val cityUiMapper = CityUiMapper()
     private val errorUiMapper = ErrorUiMapper()
+
+    private val settingsFlow = MutableStateFlow(AppSettings.DEFAULT)
 
     private val domainForecast = Forecast(
         city = City("Malaga", "Spain", Coordinates(36.7, -4.4), isCurrentLocation = true),
@@ -51,6 +56,7 @@ class ForecastViewModelTest {
     @Before
     fun setUp() {
         Dispatchers.setMain(UnconfinedTestDispatcher())
+        every { observeSettings() } returns settingsFlow
         every { forecastUiMapper.map(any(), any()) } returns ForecastPreviewData.forecast
     }
 
@@ -60,6 +66,7 @@ class ForecastViewModelTest {
     }
 
     private fun viewModel() = ForecastViewModel(
+        observeSettings,
         getCurrentLocationForecast,
         getForecastByCity,
         searchCities,
@@ -70,7 +77,7 @@ class ForecastViewModelTest {
 
     @Test
     fun `successful location load emits content`() = runTest {
-        coEvery { getCurrentLocationForecast() } returns AppResult.Success(domainForecast)
+        coEvery { getCurrentLocationForecast(any()) } returns AppResult.Success(domainForecast)
 
         val vm = viewModel()
 
@@ -79,7 +86,8 @@ class ForecastViewModelTest {
 
     @Test
     fun `missing permission emits permission required`() = runTest {
-        coEvery { getCurrentLocationForecast() } returns AppResult.Failure(AppError.NoLocationPermission)
+        coEvery { getCurrentLocationForecast(any()) } returns
+            AppResult.Failure(AppError.NoLocationPermission)
 
         val vm = viewModel()
 
@@ -88,7 +96,7 @@ class ForecastViewModelTest {
 
     @Test
     fun `network failure emits error`() = runTest {
-        coEvery { getCurrentLocationForecast() } returns AppResult.Failure(AppError.Network)
+        coEvery { getCurrentLocationForecast(any()) } returns AppResult.Failure(AppError.Network)
 
         val vm = viewModel()
 
@@ -96,14 +104,25 @@ class ForecastViewModelTest {
     }
 
     @Test
-    fun `unit change re-maps content with new unit`() = runTest {
-        coEvery { getCurrentLocationForecast() } returns AppResult.Success(domainForecast)
+    fun `changing measurement system reloads forecast`() = runTest {
+        coEvery { getCurrentLocationForecast(any()) } returns AppResult.Success(domainForecast)
         val vm = viewModel()
+        assertTrue(vm.uiState.value is ForecastUiState.Content)
 
-        vm.uiState.test {
-            assertEquals(TemperatureUnit.CELSIUS, (awaitItem() as ForecastUiState.Content).unit)
-            vm.onAction(ForecastUiAction.OnUnitChange(TemperatureUnit.FAHRENHEIT))
-            assertEquals(TemperatureUnit.FAHRENHEIT, (awaitItem() as ForecastUiState.Content).unit)
-        }
+        // a units change should trigger a second forecast load
+        settingsFlow.value = AppSettings.DEFAULT.copy(measurementSystem = MeasurementSystem.IMPERIAL)
+
+        coVerify(exactly = 2) { getCurrentLocationForecast(any()) }
+    }
+
+    @Test
+    fun `theme-only change does not reload forecast`() = runTest {
+        coEvery { getCurrentLocationForecast(any()) } returns AppResult.Success(domainForecast)
+        val vm = viewModel()
+        assertTrue(vm.uiState.value is ForecastUiState.Content)
+
+        settingsFlow.value = AppSettings.DEFAULT.copy(themeMode = ThemeMode.DARK)
+
+        coVerify(exactly = 1) { getCurrentLocationForecast(any()) }
     }
 }

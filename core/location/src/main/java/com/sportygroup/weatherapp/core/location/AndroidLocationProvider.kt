@@ -3,6 +3,7 @@ package com.sportygroup.weatherapp.core.location
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
+import androidx.annotation.RequiresPermission
 import androidx.core.content.ContextCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.Priority
@@ -24,6 +25,7 @@ class AndroidLocationProvider @Inject constructor(
         return fine == PackageManager.PERMISSION_GRANTED || coarse == PackageManager.PERMISSION_GRANTED
     }
 
+    @RequiresPermission(anyOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION])
     override suspend fun getCurrentCoordinates(): AppResult<Coordinates> {
         if (!hasLocationPermission()) return AppResult.Failure(AppError.NoLocationPermission)
         return try {

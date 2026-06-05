@@ -6,10 +6,10 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sportygroup.weatherapp.core.designsystem.theme.SkyTheme
+import com.sportygroup.weatherapp.lib.settings.model.ThemeMode
 import com.sportygroup.weatherapp.navigation.AppNavHost
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -19,13 +19,15 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         setContent {
-            val systemDark = isSystemInDarkTheme()
-            var darkTheme by remember { mutableStateOf(systemDark) }
+            val viewModel: MainViewModel = hiltViewModel()
+            val themeMode by viewModel.themeMode.collectAsStateWithLifecycle()
+            val darkTheme = when (themeMode) {
+                ThemeMode.SYSTEM -> isSystemInDarkTheme()
+                ThemeMode.LIGHT -> false
+                ThemeMode.DARK -> true
+            }
             SkyTheme(darkTheme = darkTheme) {
-                AppNavHost(
-                    isDarkTheme = darkTheme,
-                    onToggleTheme = { darkTheme = !darkTheme },
-                )
+                AppNavHost()
             }
         }
     }

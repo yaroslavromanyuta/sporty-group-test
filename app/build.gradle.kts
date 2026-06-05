@@ -41,10 +41,14 @@ android {
 
 dependencies {
     implementation(project(":feature:forecast"))
+    implementation(project(":feature:settings"))
+    implementation(project(":lib:settings"))
     implementation(project(":core:designsystem"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.activity.compose)
 
     implementation(platform(libs.androidx.compose.bom))

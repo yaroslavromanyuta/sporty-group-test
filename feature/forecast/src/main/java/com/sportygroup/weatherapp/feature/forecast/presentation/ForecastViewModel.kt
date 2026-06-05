@@ -13,12 +13,13 @@ import com.sportygroup.weatherapp.feature.forecast.presentation.mapper.CityUiMap
 import com.sportygroup.weatherapp.feature.forecast.presentation.mapper.ErrorUiMapper
 import com.sportygroup.weatherapp.feature.forecast.presentation.mapper.ForecastDomainToUiMapper
 import com.sportygroup.weatherapp.feature.forecast.presentation.model.CityUiModel
-import com.sportygroup.weatherapp.feature.forecast.presentation.model.TemperatureUnit
 import com.sportygroup.weatherapp.feature.forecast.presentation.state.CitySearchUiAction
 import com.sportygroup.weatherapp.feature.forecast.presentation.state.CitySearchUiState
 import com.sportygroup.weatherapp.feature.forecast.presentation.state.ForecastUiAction
 import com.sportygroup.weatherapp.feature.forecast.presentation.state.ForecastUiEvent
 import com.sportygroup.weatherapp.feature.forecast.presentation.state.ForecastUiState
+import com.sportygroup.weatherapp.lib.settings.model.AppSettings
+import com.sportygroup.weatherapp.lib.settings.usecase.ObserveSettingsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
@@ -33,6 +34,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ForecastViewModel @Inject constructor(
+    observeSettings: ObserveSettingsUseCase,
     private val getCurrentLocationForecast: GetCurrentLocationForecastUseCase,
     private val getForecastByCity: GetForecastByCityUseCase,
     private val searchCities: SearchCitiesUseCase,
@@ -50,13 +52,25 @@ class ForecastViewModel @Inject constructor(
     private val _events = Channel<ForecastUiEvent>(Channel.BUFFERED)
     val events = _events.receiveAsFlow()
 
-    private var unit: TemperatureUnit = TemperatureUnit.CELSIUS
+    private var settings: AppSettings = AppSettings.DEFAULT
+    private var settingsInitialized = false
     private var lastForecast: Forecast? = null
     private var lastSelectedCity: City? = null
     private var searchJob: Job? = null
 
     init {
-        loadCurrentLocationForecast()
+        viewModelScope.launch {
+            observeSettings().collect { newSettings ->
+                val unitsChanged = settingsInitialized && newSettings.affectsForecastUnits(settings)
+                val firstLoad = !settingsInitialized
+                settings = newSettings
+                settingsInitialized = true
+                when {
+                    firstLoad -> reload()
+                    unitsChanged -> reload()
+                }
+            }
+        }
     }
 
     fun onAction(action: ForecastUiAction) {
@@ -64,11 +78,17 @@ class ForecastViewModel @Inject constructor(
             ForecastUiAction.OnRetryClick,
             ForecastUiAction.OnRefresh,
             -> reload()
-            ForecastUiAction.OnUseCurrentLocationClick -> loadCurrentLocationForecast()
-            is ForecastUiAction.OnUnitChange -> changeUnit(action.unit)
+            ForecastUiAction.OnUseCurrentLocationClick -> {
+                lastSelectedCity = null
+                reload()
+            }
             is ForecastUiAction.OnPermissionResult ->
-                if (action.granted) loadCurrentLocationForecast()
-                else _uiState.value = ForecastUiState.PermissionRequired()
+                if (action.granted) {
+                    lastSelectedCity = null
+                    reload()
+                } else {
+                    _uiState.value = ForecastUiState.PermissionRequired()
+                }
             is ForecastUiAction.OnCitySelected -> selectCity(action.city)
         }
     }
@@ -82,17 +102,10 @@ class ForecastViewModel @Inject constructor(
                 selectCity(action.city)
             }
             CitySearchUiAction.OnUseCurrentLocation -> {
-                loadCurrentLocationForecast()
+                lastSelectedCity = null
+                reload()
                 emitEvent(ForecastUiEvent.NavigateToHome)
             }
-        }
-    }
-
-    private fun loadCurrentLocationForecast() {
-        lastSelectedCity = null
-        _uiState.value = ForecastUiState.Loading
-        viewModelScope.launch {
-            handleForecastResult(getCurrentLocationForecast())
         }
     }
 
@@ -101,18 +114,21 @@ class ForecastViewModel @Inject constructor(
         lastSelectedCity = city
         _uiState.value = ForecastUiState.Loading
         viewModelScope.launch {
-            handleForecastResult(getForecastByCity(city))
+            handleForecastResult(getForecastByCity(city, settings))
             emitEvent(ForecastUiEvent.NavigateToHome)
         }
     }
 
     private fun reload() {
         val city = lastSelectedCity
-        if (city == null) {
-            loadCurrentLocationForecast()
-        } else {
-            _uiState.value = ForecastUiState.Loading
-            viewModelScope.launch { handleForecastResult(getForecastByCity(city)) }
+        _uiState.value = ForecastUiState.Loading
+        viewModelScope.launch {
+            val result = if (city == null) {
+                getCurrentLocationForecast(settings)
+            } else {
+                getForecastByCity(city, settings)
+            }
+            handleForecastResult(result)
         }
     }
 
@@ -121,27 +137,13 @@ class ForecastViewModel @Inject constructor(
             is AppResult.Success -> {
                 lastForecast = result.value
                 _uiState.value = ForecastUiState.Content(
-                    forecast = forecastUiMapper.map(result.value, unit),
-                    unit = unit,
+                    forecast = forecastUiMapper.map(result.value, settings.measurementSystem),
                 )
             }
             is AppResult.Failure -> _uiState.value = when (result.error) {
                 AppError.NoLocationPermission -> ForecastUiState.PermissionRequired()
                 else -> ForecastUiState.Error(errorUiMapper.map(result.error))
             }
-        }
-    }
-
-    private fun changeUnit(newUnit: TemperatureUnit) {
-        if (newUnit == unit) return
-        unit = newUnit
-        val forecast = lastForecast ?: return
-        val state = _uiState.value
-        if (state is ForecastUiState.Content) {
-            _uiState.value = state.copy(
-                forecast = forecastUiMapper.map(forecast, unit),
-                unit = unit,
-            )
         }
     }
 
@@ -178,6 +180,9 @@ class ForecastViewModel @Inject constructor(
     private fun emitEvent(event: ForecastUiEvent) {
         viewModelScope.launch { _events.send(event) }
     }
+
+    private fun AppSettings.affectsForecastUnits(other: AppSettings): Boolean =
+        temperatureUnit != other.temperatureUnit || measurementSystem != other.measurementSystem
 
     private companion object {
         const val SEARCH_DEBOUNCE_MS = 300L

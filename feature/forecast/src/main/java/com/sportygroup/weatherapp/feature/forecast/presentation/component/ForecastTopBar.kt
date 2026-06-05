@@ -16,23 +16,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sportygroup.weatherapp.core.designsystem.component.SkyIconButton
-import com.sportygroup.weatherapp.core.designsystem.component.SkyUnitToggle
-import com.sportygroup.weatherapp.core.designsystem.component.TemperatureUnitOption
 import com.sportygroup.weatherapp.core.designsystem.icon.UiIcon
 import com.sportygroup.weatherapp.core.designsystem.icon.UiIconType
 import com.sportygroup.weatherapp.core.designsystem.theme.SkyTheme
-import com.sportygroup.weatherapp.feature.forecast.presentation.model.TemperatureUnit
 
-/** City selector + unit toggle + theme switch row at the top of the home screen. */
+/** City selector + settings entry point at the top of the home screen. */
 @Composable
 fun ForecastTopBar(
     cityName: String,
     isCurrentLocation: Boolean,
-    unit: TemperatureUnit,
-    isDarkTheme: Boolean,
-    onUnitChange: (TemperatureUnit) -> Unit,
-    onToggleTheme: () -> Unit,
     onOpenSearch: () -> Unit,
+    onOpenSettings: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -83,26 +77,12 @@ fun ForecastTopBar(
                 }
             }
         }
-        SkyUnitToggle(
-            selected = unit.toOption(),
-            onSelect = { onUnitChange(it.toUnit()) },
-        )
         SkyIconButton(
-            icon = if (isDarkTheme) UiIconType.SUN else UiIconType.MOON,
-            contentDescription = if (isDarkTheme) "Switch to light theme" else "Switch to dark theme",
-            onClick = onToggleTheme,
+            icon = UiIconType.SLIDERS,
+            contentDescription = "Settings",
+            onClick = onOpenSettings,
         )
     }
-}
-
-private fun TemperatureUnit.toOption(): TemperatureUnitOption = when (this) {
-    TemperatureUnit.CELSIUS -> TemperatureUnitOption.CELSIUS
-    TemperatureUnit.FAHRENHEIT -> TemperatureUnitOption.FAHRENHEIT
-}
-
-private fun TemperatureUnitOption.toUnit(): TemperatureUnit = when (this) {
-    TemperatureUnitOption.CELSIUS -> TemperatureUnit.CELSIUS
-    TemperatureUnitOption.FAHRENHEIT -> TemperatureUnit.FAHRENHEIT
 }
 
 @Preview
@@ -112,11 +92,8 @@ private fun ForecastTopBarPreview() {
         ForecastTopBar(
             cityName = "Malaga",
             isCurrentLocation = true,
-            unit = TemperatureUnit.CELSIUS,
-            isDarkTheme = false,
-            onUnitChange = {},
-            onToggleTheme = {},
             onOpenSearch = {},
+            onOpenSettings = {},
         )
     }
 }

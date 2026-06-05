@@ -5,13 +5,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.sportygroup.weatherapp.feature.forecast.presentation.navigation.ForecastDestinations
 import com.sportygroup.weatherapp.feature.forecast.presentation.navigation.forecastGraph
+import com.sportygroup.weatherapp.feature.settings.presentation.navigation.navigateToSettings
+import com.sportygroup.weatherapp.feature.settings.presentation.navigation.settingsScreen
 
-/** Root navigation host. Delegates the forecast routes to the feature module. */
+/** Root navigation host. Wires the forecast and settings feature graphs. */
 @Composable
-fun AppNavHost(
-    isDarkTheme: Boolean,
-    onToggleTheme: () -> Unit,
-) {
+fun AppNavHost() {
     val navController = rememberNavController()
     NavHost(
         navController = navController,
@@ -19,8 +18,10 @@ fun AppNavHost(
     ) {
         forecastGraph(
             navController = navController,
-            isDarkTheme = isDarkTheme,
-            onToggleTheme = onToggleTheme,
+            onOpenSettings = { navController.navigateToSettings() },
+        )
+        settingsScreen(
+            onBack = { navController.popBackStack() },
         )
     }
 }

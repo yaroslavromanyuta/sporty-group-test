@@ -2,7 +2,6 @@ package com.sportygroup.weatherapp.feature.forecast.presentation.state
 
 import com.sportygroup.weatherapp.feature.forecast.presentation.mapper.ErrorMessage
 import com.sportygroup.weatherapp.feature.forecast.presentation.model.ForecastUiModel
-import com.sportygroup.weatherapp.feature.forecast.presentation.model.TemperatureUnit
 
 /** Top-level state for the forecast (home) screen. */
 sealed interface ForecastUiState {
@@ -15,7 +14,6 @@ sealed interface ForecastUiState {
 
     data class Content(
         val forecast: ForecastUiModel,
-        val unit: TemperatureUnit,
         val isRefreshing: Boolean = false,
     ) : ForecastUiState
 

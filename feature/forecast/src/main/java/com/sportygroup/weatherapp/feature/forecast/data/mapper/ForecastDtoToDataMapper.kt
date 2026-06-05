@@ -22,11 +22,11 @@ class DefaultForecastDtoToDataMapper @Inject constructor() : ForecastDtoToDataMa
             timezone = dto.timezone,
             current = CurrentDataModel(
                 time = current?.time,
-                temperatureC = current?.temperature ?: 0.0,
-                apparentTemperatureC = current?.apparentTemperature ?: current?.temperature ?: 0.0,
+                temperature = current?.temperature ?: 0.0,
+                apparentTemperature = current?.apparentTemperature ?: current?.temperature ?: 0.0,
                 humidityPercent = current?.relativeHumidity ?: 0,
                 weatherCode = current?.weatherCode ?: -1,
-                windSpeedKmh = current?.windSpeed ?: 0.0,
+                windSpeed = current?.windSpeed ?: 0.0,
                 pressureHpa = current?.pressure ?: 0.0,
             ),
             hourly = mapHourly(dto),
@@ -39,7 +39,7 @@ class DefaultForecastDtoToDataMapper @Inject constructor() : ForecastDtoToDataMa
         return h.time.indices.map { i ->
             HourlyEntryDataModel(
                 time = h.time[i],
-                temperatureC = h.temperature.getOrNull(i) ?: 0.0,
+                temperature = h.temperature.getOrNull(i) ?: 0.0,
                 weatherCode = h.weatherCode.getOrNull(i) ?: -1,
                 precipitationProbability = h.precipitationProbability.getOrNull(i) ?: 0,
             )
@@ -52,8 +52,8 @@ class DefaultForecastDtoToDataMapper @Inject constructor() : ForecastDtoToDataMa
             DailyEntryDataModel(
                 date = d.time[i],
                 weatherCode = d.weatherCode.getOrNull(i) ?: -1,
-                highC = d.temperatureMax.getOrNull(i) ?: 0.0,
-                lowC = d.temperatureMin.getOrNull(i) ?: 0.0,
+                high = d.temperatureMax.getOrNull(i) ?: 0.0,
+                low = d.temperatureMin.getOrNull(i) ?: 0.0,
                 precipitationProbability = d.precipitationProbabilityMax.getOrNull(i) ?: 0,
             )
         }

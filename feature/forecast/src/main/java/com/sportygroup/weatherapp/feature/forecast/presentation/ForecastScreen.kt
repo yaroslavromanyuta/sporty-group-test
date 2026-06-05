@@ -32,7 +32,6 @@ import com.sportygroup.weatherapp.feature.forecast.presentation.component.Permis
 import com.sportygroup.weatherapp.feature.forecast.presentation.component.WeatherMetricsGrid
 import com.sportygroup.weatherapp.feature.forecast.presentation.component.WeeklyForecastList
 import com.sportygroup.weatherapp.feature.forecast.presentation.model.ForecastUiModel
-import com.sportygroup.weatherapp.feature.forecast.presentation.model.TemperatureUnit
 import com.sportygroup.weatherapp.feature.forecast.presentation.preview.ForecastPreviewData
 import com.sportygroup.weatherapp.feature.forecast.presentation.state.ForecastUiAction
 import com.sportygroup.weatherapp.feature.forecast.presentation.state.ForecastUiState
@@ -41,10 +40,9 @@ import com.sportygroup.weatherapp.feature.forecast.presentation.state.ForecastUi
 @Composable
 fun ForecastScreen(
     state: ForecastUiState,
-    isDarkTheme: Boolean,
     onAction: (ForecastUiAction) -> Unit,
-    onToggleTheme: () -> Unit,
     onOpenSearch: () -> Unit,
+    onOpenSettings: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -72,11 +70,8 @@ fun ForecastScreen(
             )
             is ForecastUiState.Content -> ForecastContent(
                 forecast = state.forecast,
-                unit = state.unit,
-                isDarkTheme = isDarkTheme,
-                onAction = onAction,
-                onToggleTheme = onToggleTheme,
                 onOpenSearch = onOpenSearch,
+                onOpenSettings = onOpenSettings,
             )
         }
     }
@@ -85,11 +80,8 @@ fun ForecastScreen(
 @Composable
 private fun ForecastContent(
     forecast: ForecastUiModel,
-    unit: TemperatureUnit,
-    isDarkTheme: Boolean,
-    onAction: (ForecastUiAction) -> Unit,
-    onToggleTheme: () -> Unit,
     onOpenSearch: () -> Unit,
+    onOpenSettings: () -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -101,11 +93,8 @@ private fun ForecastContent(
         ForecastTopBar(
             cityName = forecast.cityName,
             isCurrentLocation = forecast.isCurrentLocation,
-            unit = unit,
-            isDarkTheme = isDarkTheme,
-            onUnitChange = { onAction(ForecastUiAction.OnUnitChange(it)) },
-            onToggleTheme = onToggleTheme,
             onOpenSearch = onOpenSearch,
+            onOpenSettings = onOpenSettings,
         )
         CurrentWeatherHero(
             current = forecast.current,
@@ -149,11 +138,10 @@ private fun ForecastContent(
 private fun ForecastScreenContentPreview() {
     SkyTheme {
         ForecastScreen(
-            state = ForecastUiState.Content(ForecastPreviewData.forecast, TemperatureUnit.CELSIUS),
-            isDarkTheme = false,
+            state = ForecastUiState.Content(ForecastPreviewData.forecast),
             onAction = {},
-            onToggleTheme = {},
             onOpenSearch = {},
+            onOpenSettings = {},
         )
     }
 }
@@ -164,10 +152,9 @@ private fun ForecastScreenLoadingPreview() {
     SkyTheme {
         ForecastScreen(
             state = ForecastUiState.Loading,
-            isDarkTheme = false,
             onAction = {},
-            onToggleTheme = {},
             onOpenSearch = {},
+            onOpenSettings = {},
         )
     }
 }
@@ -178,10 +165,9 @@ private fun ForecastScreenPermissionPreview() {
     SkyTheme {
         ForecastScreen(
             state = ForecastUiState.PermissionRequired(),
-            isDarkTheme = false,
             onAction = {},
-            onToggleTheme = {},
             onOpenSearch = {},
+            onOpenSettings = {},
         )
     }
 }

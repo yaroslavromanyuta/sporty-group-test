@@ -3,8 +3,9 @@
 SkyCast is a small, production-like Android weather app built for the SkyGroup home
 assignment. It shows the current-day and 7-day forecast for your current location or any
 city you search for, with explicit handling of loading, error, empty and
-location-permission states. The UI is a native Jetpack Compose recreation of the
-**SkyCast design handoff** (`ui_kits/skycast/index.html`) — no WebView, no copied HTML/CSS.
+location-permission states, plus a **Settings** screen for units and theme. The UI is a
+native Jetpack Compose recreation of the **SkyCast design handoff** — no WebView, no copied
+HTML/CSS.
 
 > Add screenshots/recordings here once captured from an emulator (e.g. Pixel, API 34).
 
@@ -18,6 +19,9 @@ location-permission states. The UI is a native Jetpack Compose recreation of the
 | Weekly forecast | `WeeklyForecastList` (7 days from Open-Meteo `daily`) |
 | Current location forecast | `GetCurrentLocationForecastUseCase` + `CurrentLocationProvider` |
 | Choose another city | `CitySearchScreen` + Open-Meteo Geocoding |
+| Settings (units + theme) | `:feature:settings` `SettingsScreen`, persisted with DataStore |
+| Units affect API + UI, reload on change | `ForecastUnitsMapper` → Open-Meteo params; ViewModel reloads on unit change |
+| Theme reacts to setting | `MainViewModel` observes `ThemeMode` → `SkyTheme` |
 | 100% executable | `./gradlew :app:assembleDebug` builds a runnable APK |
 | No API key committed | Open-Meteo needs no key |
 | Kotlin / Coroutines / Compose | Throughout |
@@ -65,11 +69,15 @@ driven by hoisted state + action callbacks, each with `@Preview`s for every majo
 :core:designsystem    SkyTheme, tokens, native WeatherIcon/UiIcon, reusable components
 :core:network         Shared OkHttp + JSON providers
 :core:location        CurrentLocationProvider / CurrentCityNameResolver (+ Android impls, DI)
+:lib:settings         Public settings contracts: AppSettings, MeasurementSystem,
+                      TemperatureUnit, ThemeMode, SettingsRepository, observe/update use cases
 :feature:forecast     The weather feature:
-  data                DTOs, Retrofit APIs, data models, mappers, repository impl
+  data                DTOs, Retrofit APIs, data models, mappers (incl. ForecastUnitsMapper), repository impl
   domain              repository interface, use cases (models live in :core:model)
   presentation        UI models, mappers, state, ViewModel, screens, components, navigation
   di                  feature Hilt modules (ApiModule, data bindings, presentation bindings)
+:feature:settings     Settings implementation: DataStore persistence, repository impl,
+                      mappers, Hilt bindings, SettingsViewModel, Compose UI, navigation
 ```
 
 Module dependency direction (acyclic):
@@ -78,8 +86,24 @@ Module dependency direction (acyclic):
 :core:model    ◄── :core:designsystem, :core:location, :feature:forecast
 :core:common   ◄── :core:location, :feature:forecast
 :core:network  ◄── :feature:forecast
-:feature:forecast ◄── :app   (:app also depends on :core:designsystem for SkyTheme)
+:lib:settings  ◄── :feature:forecast, :feature:settings, :app
+:feature:forecast, :feature:settings ◄── :app
 ```
+
+Only `:lib:settings` (the contracts) is shared for settings data — `:feature:forecast`
+depends on it, **never** on `:feature:settings`. The DataStore-backed implementation in
+`:feature:settings` is wired into the graph by `:app`, so Hilt satisfies the
+`SettingsRepository` interface at runtime.
+
+### Settings behavior
+
+- Measurement system (Metric/Imperial), temperature unit (Celsius/Fahrenheit) and theme
+  (System/Light/Dark) are persisted with **Preferences DataStore** and exposed as a `Flow`.
+- The app theme reacts to the theme setting (`MainViewModel` → `SkyTheme`).
+- The forecast request sends the selected units to Open-Meteo (`temperature_unit`,
+  `wind_speed_unit`, `precipitation_unit`); changing units **reloads** the forecast.
+- Pressure is converted to inHg for Imperial in the presentation mapper (Open-Meteo always
+  returns hPa).
 
 ---
 

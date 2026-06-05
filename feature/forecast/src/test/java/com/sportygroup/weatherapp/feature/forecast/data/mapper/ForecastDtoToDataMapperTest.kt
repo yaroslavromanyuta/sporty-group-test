@@ -31,9 +31,9 @@ class ForecastDtoToDataMapperTest {
         val result = mapper.map(dto)
 
         assertEquals(2, result.hourly.size)
-        assertEquals(24.0, result.hourly[0].temperatureC, 0.0)
+        assertEquals(24.0, result.hourly[0].temperature, 0.0)
         assertEquals(10, result.hourly[0].precipitationProbability)
-        assertEquals(25.0, result.hourly[1].temperatureC, 0.0)
+        assertEquals(25.0, result.hourly[1].temperature, 0.0)
         // null precipitation probability is coalesced to 0
         assertEquals(0, result.hourly[1].precipitationProbability)
     }
@@ -44,9 +44,9 @@ class ForecastDtoToDataMapperTest {
 
         val result = mapper.map(dto)
 
-        assertEquals(20.0, result.current.temperatureC, 0.0)
+        assertEquals(20.0, result.current.temperature, 0.0)
         // apparent temperature falls back to temperature when absent
-        assertEquals(20.0, result.current.apparentTemperatureC, 0.0)
+        assertEquals(20.0, result.current.apparentTemperature, 0.0)
         assertEquals(0, result.current.humidityPercent)
     }
 
@@ -65,8 +65,8 @@ class ForecastDtoToDataMapperTest {
         val result = mapper.map(dto)
 
         assertEquals(1, result.daily.size)
-        assertEquals(26.0, result.daily[0].highC, 0.0)
-        assertEquals(17.0, result.daily[0].lowC, 0.0)
+        assertEquals(26.0, result.daily[0].high, 0.0)
+        assertEquals(17.0, result.daily[0].low, 0.0)
         assertEquals(80, result.daily[0].precipitationProbability)
     }
 }

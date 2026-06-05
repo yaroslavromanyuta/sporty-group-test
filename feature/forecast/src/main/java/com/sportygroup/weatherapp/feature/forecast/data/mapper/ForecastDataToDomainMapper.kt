@@ -24,21 +24,21 @@ class DefaultForecastDataToDomainMapper @Inject constructor() : ForecastDataToDo
         return Forecast(
             city = city,
             current = CurrentWeather(
-                temperatureC = current.temperatureC,
-                apparentTemperatureC = current.apparentTemperatureC,
+                temperature = current.temperature,
+                apparentTemperature = current.apparentTemperature,
                 condition = WeatherCodeMapper.toCondition(current.weatherCode),
                 humidityPercent = current.humidityPercent,
-                windSpeedKmh = current.windSpeedKmh,
+                windSpeed = current.windSpeed,
                 pressureHpa = current.pressureHpa,
-                highC = today?.highC ?: current.temperatureC,
-                lowC = today?.lowC ?: current.temperatureC,
+                high = today?.high ?: current.temperature,
+                low = today?.low ?: current.temperature,
                 updatedAt = parseDateTime(current.time) ?: LocalDateTime.now(),
             ),
             hourly = model.hourly.mapNotNull { entry ->
                 val time = parseDateTime(entry.time) ?: return@mapNotNull null
                 HourlyForecast(
                     time = time,
-                    temperatureC = entry.temperatureC,
+                    temperature = entry.temperature,
                     condition = WeatherCodeMapper.toCondition(entry.weatherCode),
                     precipitationProbability = entry.precipitationProbability,
                 )
@@ -48,8 +48,8 @@ class DefaultForecastDataToDomainMapper @Inject constructor() : ForecastDataToDo
                 DailyForecast(
                     date = date,
                     condition = WeatherCodeMapper.toCondition(entry.weatherCode),
-                    highC = entry.highC,
-                    lowC = entry.lowC,
+                    high = entry.high,
+                    low = entry.low,
                     precipitationProbability = entry.precipitationProbability,
                 )
             },

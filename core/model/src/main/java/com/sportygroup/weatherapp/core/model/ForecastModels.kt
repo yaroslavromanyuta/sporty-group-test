@@ -17,23 +17,26 @@ data class City(
     val isCurrentLocation: Boolean = false,
 )
 
-/** Current ("now") conditions. Temperatures are raw Celsius values — no formatting. */
+/**
+ * Current ("now") conditions. Temperature and wind values are expressed in the units the
+ * forecast was requested in (see the forecast request units); pressure is always hPa.
+ */
 data class CurrentWeather(
-    val temperatureC: Double,
-    val apparentTemperatureC: Double,
+    val temperature: Double,
+    val apparentTemperature: Double,
     val condition: WeatherCondition,
     val humidityPercent: Int,
-    val windSpeedKmh: Double,
+    val windSpeed: Double,
     val pressureHpa: Double,
-    val highC: Double,
-    val lowC: Double,
+    val high: Double,
+    val low: Double,
     val updatedAt: LocalDateTime,
 )
 
 /** A single hour in the hourly forecast. */
 data class HourlyForecast(
     val time: LocalDateTime,
-    val temperatureC: Double,
+    val temperature: Double,
     val condition: WeatherCondition,
     val precipitationProbability: Int,
 )
@@ -42,8 +45,8 @@ data class HourlyForecast(
 data class DailyForecast(
     val date: LocalDate,
     val condition: WeatherCondition,
-    val highC: Double,
-    val lowC: Double,
+    val high: Double,
+    val low: Double,
     val precipitationProbability: Int,
 )
 

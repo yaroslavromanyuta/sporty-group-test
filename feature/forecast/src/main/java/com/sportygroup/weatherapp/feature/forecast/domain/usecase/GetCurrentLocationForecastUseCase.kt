@@ -4,9 +4,9 @@ import com.sportygroup.weatherapp.core.common.AppError
 import com.sportygroup.weatherapp.core.common.AppResult
 import com.sportygroup.weatherapp.core.location.CurrentCityNameResolver
 import com.sportygroup.weatherapp.core.location.CurrentLocationProvider
-import com.sportygroup.weatherapp.core.model.City
 import com.sportygroup.weatherapp.core.model.Forecast
 import com.sportygroup.weatherapp.feature.forecast.domain.repository.ForecastRepository
+import com.sportygroup.weatherapp.lib.settings.model.AppSettings
 import javax.inject.Inject
 
 /**
@@ -18,14 +18,14 @@ class GetCurrentLocationForecastUseCase @Inject constructor(
     private val cityNameResolver: CurrentCityNameResolver,
     private val repository: ForecastRepository,
 ) {
-    suspend operator fun invoke(): AppResult<Forecast> {
+    suspend operator fun invoke(settings: AppSettings): AppResult<Forecast> {
         if (!locationProvider.hasLocationPermission()) {
             return AppResult.Failure(AppError.NoLocationPermission)
         }
         return when (val coordinates = locationProvider.getCurrentCoordinates()) {
             is AppResult.Failure -> coordinates
             is AppResult.Success -> {
-                when (val forecast = repository.getForecastByCoordinates(coordinates.value)) {
+                when (val forecast = repository.getForecastByCoordinates(coordinates.value, settings)) {
                     is AppResult.Failure -> forecast
                     is AppResult.Success -> {
                         val resolved = cityNameResolver.resolve(coordinates.value)

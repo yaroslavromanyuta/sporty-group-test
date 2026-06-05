@@ -11,6 +11,9 @@ interface ForecastApi {
     suspend fun getForecast(
         @Query("latitude") latitude: Double,
         @Query("longitude") longitude: Double,
+        @Query("temperature_unit") temperatureUnit: String = "celsius",
+        @Query("wind_speed_unit") windSpeedUnit: String = "kmh",
+        @Query("precipitation_unit") precipitationUnit: String = "mm",
         @Query("current") current: String = CURRENT_FIELDS,
         @Query("hourly") hourly: String = HOURLY_FIELDS,
         @Query("daily") daily: String = DAILY_FIELDS,
