@@ -13,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import com.sportygroup.weatherapp.core.designsystem.preview.SkyPreview
@@ -25,6 +26,7 @@ import com.sportygroup.weatherapp.core.designsystem.component.SkyPrimaryButton
 import com.sportygroup.weatherapp.core.designsystem.icon.UiIcon
 import com.sportygroup.weatherapp.core.designsystem.icon.UiIconType
 import com.sportygroup.weatherapp.core.designsystem.theme.SkyTheme
+import com.sportygroup.weatherapp.feature.forecast.R
 
 /**
  * Start screen and decision point: the user chooses between current-location weather and
@@ -75,15 +77,14 @@ fun InitialChoiceContent(
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
-                    text = "Welcome to SkyCast",
+                    text = stringResource(R.string.forecast_welcome_title),
                     color = SkyTheme.colors.textHigh,
                     fontWeight = FontWeight.ExtraBold,
                     fontSize = 23.sp,
                     textAlign = TextAlign.Center,
                 )
                 Text(
-                    text = "Use your current location for local weather, or search for any city. " +
-                        "We only request location after you choose it.",
+                    text = stringResource(R.string.forecast_welcome_message),
                     color = SkyTheme.colors.textMedium,
                     fontWeight = FontWeight.Medium,
                     fontSize = 15.sp,
@@ -92,20 +93,20 @@ fun InitialChoiceContent(
                 )
                 if (permissionPermanentlyDenied) {
                     SkyPrimaryButton(
-                        text = "Open settings",
+                        text = stringResource(R.string.forecast_open_settings),
                         onClick = onOpenAppSettings,
                         icon = UiIconType.LOCATION_FILL,
                     )
                 } else {
                     SkyPrimaryButton(
-                        text = "Use current location",
+                        text = stringResource(R.string.forecast_use_current_location),
                         onClick = onUseCurrentLocation,
                         icon = UiIconType.LOCATION_FILL,
                     )
                 }
                 if (canSearchManually) {
                     SkyGhostButton(
-                        text = "Search city manually",
+                        text = stringResource(R.string.forecast_search_manually),
                         onClick = onSearch,
                         icon = UiIconType.SEARCH,
                         modifier = Modifier.padding(top = 12.dp),
@@ -115,9 +116,9 @@ fun InitialChoiceContent(
         }
         val deniedMessage = when {
             permissionPermanentlyDenied ->
-                "Location permission is turned off. Enable it in Settings, or search for a city manually."
+                stringResource(R.string.forecast_permission_permanently_denied)
             permissionDenied ->
-                "Location permission denied. You can still search for a city manually."
+                stringResource(R.string.forecast_permission_denied)
             else -> null
         }
         if (deniedMessage != null) {

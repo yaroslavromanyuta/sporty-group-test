@@ -15,11 +15,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import com.sportygroup.weatherapp.core.designsystem.preview.SkyPreview
 import com.sportygroup.weatherapp.core.designsystem.preview.ThemePreviews
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.sportygroup.weatherapp.feature.settings.R
 import com.sportygroup.weatherapp.core.designsystem.component.SkyIconButton
 import com.sportygroup.weatherapp.core.designsystem.icon.UiIconType
 import com.sportygroup.weatherapp.core.designsystem.theme.SkyTheme
@@ -60,32 +62,48 @@ fun SettingsScreen(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(6.dp),
         ) {
-            SkyIconButton(icon = UiIconType.BACK, contentDescription = "Back", onClick = onBack)
+            SkyIconButton(
+                icon = UiIconType.BACK,
+                contentDescription = stringResource(R.string.settings_back_content_description),
+                onClick = onBack,
+            )
             Text(
-                text = "Settings",
+                text = stringResource(R.string.settings_title),
                 color = SkyTheme.colors.textHigh,
                 fontWeight = FontWeight.ExtraBold,
                 fontSize = 22.sp,
             )
         }
 
-        SettingsSection(label = "Units") {
+        SettingsSection(label = stringResource(R.string.settings_section_units)) {
             SettingsSegmentedControl(
-                label = "Measurement system",
-                helper = "Affects wind speed, pressure, and visibility",
+                label = stringResource(R.string.settings_measurement_label),
+                helper = stringResource(R.string.settings_measurement_helper),
                 options = listOf(
-                    SegmentOption(MeasurementSystem.METRIC, "Metric"),
-                    SegmentOption(MeasurementSystem.IMPERIAL, "Imperial"),
+                    SegmentOption(
+                        MeasurementSystem.METRIC,
+                        stringResource(R.string.settings_measurement_metric),
+                    ),
+                    SegmentOption(
+                        MeasurementSystem.IMPERIAL,
+                        stringResource(R.string.settings_measurement_imperial),
+                    ),
                 ),
                 selected = settings.measurementSystem,
                 onSelect = { onAction(SettingsUiAction.SelectMeasurementSystem(it)) },
             )
             SettingsDivider()
             SettingsSegmentedControl(
-                label = "Temperature",
+                label = stringResource(R.string.settings_temperature_label),
                 options = listOf(
-                    SegmentOption(TemperatureUnit.CELSIUS, "Celsius"),
-                    SegmentOption(TemperatureUnit.FAHRENHEIT, "Fahrenheit"),
+                    SegmentOption(
+                        TemperatureUnit.CELSIUS,
+                        stringResource(R.string.settings_temperature_celsius),
+                    ),
+                    SegmentOption(
+                        TemperatureUnit.FAHRENHEIT,
+                        stringResource(R.string.settings_temperature_fahrenheit),
+                    ),
                 ),
                 selected = settings.temperatureUnit,
                 onSelect = { onAction(SettingsUiAction.SelectTemperatureUnit(it)) },
@@ -94,7 +112,7 @@ fun SettingsScreen(
 
         Spacer(Modifier.height(22.dp))
 
-        SettingsSection(label = "Appearance") {
+        SettingsSection(label = stringResource(R.string.settings_section_appearance)) {
             SettingsThemePicker(
                 selected = settings.themeMode,
                 onSelect = { onAction(SettingsUiAction.SelectThemeMode(it)) },
@@ -108,13 +126,13 @@ fun SettingsScreen(
             verticalArrangement = Arrangement.spacedBy(3.dp),
         ) {
             Text(
-                text = "SkyCast 1.0",
+                text = stringResource(R.string.settings_app_version),
                 color = SkyTheme.colors.textLow,
                 fontWeight = FontWeight.Bold,
                 fontSize = 12.sp,
             )
             Text(
-                text = "Weather data by Open-Meteo",
+                text = stringResource(R.string.settings_data_source),
                 color = SkyTheme.colors.textLow,
                 fontWeight = FontWeight.Medium,
                 fontSize = 11.5.sp,

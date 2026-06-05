@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -26,14 +27,15 @@ import androidx.compose.ui.unit.sp
 import com.sportygroup.weatherapp.core.designsystem.icon.UiIcon
 import com.sportygroup.weatherapp.core.designsystem.icon.UiIconType
 import com.sportygroup.weatherapp.core.designsystem.theme.SkyTheme
+import com.sportygroup.weatherapp.feature.settings.R
 import com.sportygroup.weatherapp.lib.settings.model.ThemeMode
 
-private data class ThemeOption(val mode: ThemeMode, val label: String, val icon: UiIconType)
+private data class ThemeOption(val mode: ThemeMode, val labelRes: Int, val icon: UiIconType)
 
 private val themeOptions = listOf(
-    ThemeOption(ThemeMode.SYSTEM, "Same as\ndevice", UiIconType.HALFMOON),
-    ThemeOption(ThemeMode.LIGHT, "Light", UiIconType.SUN),
-    ThemeOption(ThemeMode.DARK, "Dark", UiIconType.MOON),
+    ThemeOption(ThemeMode.SYSTEM, R.string.settings_theme_system, UiIconType.HALFMOON),
+    ThemeOption(ThemeMode.LIGHT, R.string.settings_theme_light, UiIconType.SUN),
+    ThemeOption(ThemeMode.DARK, R.string.settings_theme_dark, UiIconType.MOON),
 )
 
 /** Three tappable theme cards: System / Light / Dark. */
@@ -45,7 +47,7 @@ fun SettingsThemePicker(
 ) {
     Column(modifier = modifier.fillMaxWidth().padding(16.dp)) {
         Text(
-            text = "Theme",
+            text = stringResource(R.string.settings_theme_label),
             color = SkyTheme.colors.textHigh,
             fontWeight = FontWeight.Bold,
             fontSize = 16.sp,
@@ -106,7 +108,7 @@ private fun ThemeCard(
             UiIcon(icon = option.icon, size = 20.dp, tint = contentColor)
         }
         Text(
-            text = option.label,
+            text = stringResource(option.labelRes),
             color = contentColor,
             fontWeight = if (selected) FontWeight.ExtraBold else FontWeight.Bold,
             fontSize = 12.5.sp,

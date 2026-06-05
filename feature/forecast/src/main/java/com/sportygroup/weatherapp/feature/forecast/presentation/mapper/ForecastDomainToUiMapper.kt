@@ -1,9 +1,11 @@
 package com.sportygroup.weatherapp.feature.forecast.presentation.mapper
 
 import com.sportygroup.weatherapp.core.common.DateTimeProvider
+import com.sportygroup.weatherapp.core.common.StringResources
 import com.sportygroup.weatherapp.core.designsystem.icon.UiIconType
 import com.sportygroup.weatherapp.core.model.DailyForecast
 import com.sportygroup.weatherapp.core.model.Forecast
+import com.sportygroup.weatherapp.feature.forecast.R
 import com.sportygroup.weatherapp.feature.forecast.presentation.model.CurrentWeatherUiModel
 import com.sportygroup.weatherapp.feature.forecast.presentation.model.DailyForecastUiModel
 import com.sportygroup.weatherapp.feature.forecast.presentation.model.ForecastUiModel
@@ -24,23 +26,32 @@ class DefaultForecastDomainToUiMapper @Inject constructor(
     private val measurementFormatter: MeasurementFormatter,
     private val conditionMapper: WeatherConditionUiMapper,
     private val dateTimeProvider: DateTimeProvider,
+    private val stringResources: StringResources,
 ) : ForecastDomainToUiMapper {
 
     override fun map(forecast: Forecast, measurementSystem: MeasurementSystem): ForecastUiModel {
         val current = forecast.current
+        val conditionLabel = conditionMapper.label(current.condition)
         return ForecastUiModel(
             cityName = forecast.city.name,
             region = forecast.city.region,
             isCurrentLocation = forecast.city.isCurrentLocation,
-            updatedLabel = "Updated %02d:%02d".format(current.updatedAt.hour, current.updatedAt.minute),
+            updatedLabel = stringResources.getString(
+                R.string.forecast_updated,
+                current.updatedAt.hour,
+                current.updatedAt.minute,
+            ),
             current = CurrentWeatherUiModel(
                 temperature = temperatureFormatter.value(current.temperature),
-                conditionLabel = conditionMapper.label(current.condition),
+                conditionLabel = conditionLabel,
                 highLabel = temperatureFormatter.degrees(current.high),
                 lowLabel = temperatureFormatter.degrees(current.low),
                 weatherType = conditionMapper.weatherType(current.condition),
-                contentDescription = "${conditionMapper.label(current.condition)}, " +
+                contentDescription = stringResources.getString(
+                    R.string.forecast_cd_current_weather,
+                    conditionLabel,
                     temperatureFormatter.degrees(current.temperature),
+                ),
             ),
             hourly = mapHourly(forecast),
             daily = mapDaily(forecast),
@@ -55,7 +66,11 @@ class DefaultForecastDomainToUiMapper @Inject constructor(
             .take(24)
         return upcoming.mapIndexed { index, hour ->
             HourlyForecastUiModel(
-                timeLabel = if (index == 0) "Now" else "%02d:00".format(hour.time.hour),
+                timeLabel = if (index == 0) {
+                    stringResources.getString(R.string.forecast_label_now)
+                } else {
+                    stringResources.getString(R.string.forecast_hour_format, hour.time.hour)
+                },
                 temperatureLabel = temperatureFormatter.degrees(hour.temperature),
                 weatherType = conditionMapper.weatherType(hour.condition),
                 precipitationProbability = hour.precipitationProbability,
@@ -74,7 +89,11 @@ class DefaultForecastDomainToUiMapper @Inject constructor(
         return days.map { day ->
             val isToday = day.date == today
             DailyForecastUiModel(
-                dayLabel = if (isToday) "Today" else day.shortDayLabel(),
+                dayLabel = if (isToday) {
+                    stringResources.getString(R.string.forecast_label_today)
+                } else {
+                    day.shortDayLabel()
+                },
                 isToday = isToday,
                 conditionLabel = conditionMapper.label(day.condition),
                 weatherType = conditionMapper.weatherType(day.condition),
@@ -94,33 +113,45 @@ class DefaultForecastDomainToUiMapper @Inject constructor(
         val current = forecast.current
         val wind = measurementFormatter.wind(current.windSpeed, measurementSystem)
         val pressure = measurementFormatter.pressure(current.pressureHpa, measurementSystem)
+        val feelsLike = temperatureFormatter.degrees(current.apparentTemperature)
         return listOf(
             WeatherMetricUiModel(
                 icon = UiIconType.THERMO,
-                label = "Feels like",
-                value = temperatureFormatter.degrees(current.apparentTemperature),
-                contentDescription = "Feels like ${temperatureFormatter.degrees(current.apparentTemperature)}",
+                label = stringResources.getString(R.string.forecast_metric_feels_like),
+                value = feelsLike,
+                contentDescription = stringResources.getString(R.string.forecast_cd_feels_like, feelsLike),
             ),
             WeatherMetricUiModel(
                 icon = UiIconType.HUMIDITY,
-                label = "Humidity",
+                label = stringResources.getString(R.string.forecast_metric_humidity),
                 value = current.humidityPercent.toString(),
                 unit = "%",
-                contentDescription = "Humidity ${current.humidityPercent} percent",
+                contentDescription = stringResources.getString(
+                    R.string.forecast_cd_humidity,
+                    current.humidityPercent,
+                ),
             ),
             WeatherMetricUiModel(
                 icon = UiIconType.WIND,
-                label = "Wind",
+                label = stringResources.getString(R.string.forecast_metric_wind),
                 value = wind.value,
                 unit = wind.unit,
-                contentDescription = "Wind ${wind.value} ${wind.unit}",
+                contentDescription = stringResources.getString(
+                    R.string.forecast_cd_wind,
+                    wind.value,
+                    wind.unit,
+                ),
             ),
             WeatherMetricUiModel(
                 icon = UiIconType.PRESSURE,
-                label = "Pressure",
+                label = stringResources.getString(R.string.forecast_metric_pressure),
                 value = pressure.value,
                 unit = pressure.unit,
-                contentDescription = "Pressure ${pressure.value} ${pressure.unit}",
+                contentDescription = stringResources.getString(
+                    R.string.forecast_cd_pressure,
+                    pressure.value,
+                    pressure.unit,
+                ),
             ),
         )
     }

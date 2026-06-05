@@ -20,6 +20,8 @@ import com.sportygroup.weatherapp.core.designsystem.preview.SkyPreview
 import com.sportygroup.weatherapp.core.designsystem.preview.ThemePreviews
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.stringResource
+import com.sportygroup.weatherapp.feature.forecast.R
 import com.sportygroup.weatherapp.core.designsystem.component.SkySectionHeader
 import com.sportygroup.weatherapp.core.designsystem.icon.UiIcon
 import com.sportygroup.weatherapp.core.designsystem.icon.UiIconType
@@ -124,17 +126,20 @@ private fun ForecastContent(
             )
         }
 
-        SkySectionHeader(title = "Hourly")
+        SkySectionHeader(title = stringResource(R.string.forecast_section_hourly))
         Spacer(Modifier.height(12.dp))
         HourlyForecastRow(hours = forecast.hourly)
 
         Spacer(Modifier.height(22.dp))
-        SkySectionHeader(title = "This week", actionText = "7 days")
+        SkySectionHeader(
+            title = stringResource(R.string.forecast_section_this_week),
+            actionText = stringResource(R.string.forecast_section_this_week_action),
+        )
         Spacer(Modifier.height(12.dp))
         WeeklyForecastList(days = forecast.daily)
 
         Spacer(Modifier.height(22.dp))
-        SkySectionHeader(title = "Today's details")
+        SkySectionHeader(title = stringResource(R.string.forecast_section_today_details))
         Spacer(Modifier.height(12.dp))
         WeatherMetricsGrid(metrics = forecast.metrics)
     }

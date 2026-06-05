@@ -28,6 +28,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import com.sportygroup.weatherapp.core.designsystem.preview.SkyPreview
 import com.sportygroup.weatherapp.core.designsystem.preview.ThemePreviews
@@ -36,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sportygroup.weatherapp.core.designsystem.component.SkyCard
 import com.sportygroup.weatherapp.core.designsystem.theme.SkyTheme
+import com.sportygroup.weatherapp.feature.forecast.R
 
 /** Shimmer skeleton shown while the first forecast loads. */
 @Composable
@@ -92,7 +94,7 @@ fun ForecastLoadingContent(modifier: Modifier = Modifier) {
                 color = SkyTheme.colors.primary,
             )
             Text(
-                text = "Fetching latest forecast…",
+                text = stringResource(R.string.forecast_loading),
                 color = SkyTheme.colors.textMedium,
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 14.sp,

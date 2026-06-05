@@ -1,0 +1,4 @@
+<resources>
+    <string name="ds_search_placeholder">Search city or airport</string>
+    <string name="ds_clear_search_content_description">Clear search</string>
+</resources>

@@ -22,12 +22,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import com.sportygroup.weatherapp.core.designsystem.preview.SkyPreview
 import com.sportygroup.weatherapp.core.designsystem.preview.ThemePreviews
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.sportygroup.weatherapp.feature.forecast.R
 import com.sportygroup.weatherapp.core.designsystem.component.SkyIconButton
 import com.sportygroup.weatherapp.core.designsystem.component.SkySearchBar
 import com.sportygroup.weatherapp.core.designsystem.component.SkySectionHeader
@@ -66,11 +68,11 @@ fun CitySearchScreen(
         ) {
             SkyIconButton(
                 icon = UiIconType.BACK,
-                contentDescription = "Back",
+                contentDescription = stringResource(R.string.search_back_content_description),
                 onClick = onBack,
             )
             Text(
-                text = "Choose location",
+                text = stringResource(R.string.search_choose_location),
                 color = SkyTheme.colors.textHigh,
                 fontWeight = FontWeight.ExtraBold,
                 fontSize = 20.sp,
@@ -120,7 +122,7 @@ private fun SuggestionsList(
 ) {
     Column(modifier = Modifier.padding(top = 22.dp)) {
         if (recent.isNotEmpty()) {
-            SkySectionHeader(title = "Recent")
+            SkySectionHeader(title = stringResource(R.string.search_recent))
             recent.forEach { city ->
                 CityRow(
                     city = city,
@@ -130,7 +132,7 @@ private fun SuggestionsList(
             }
             Spacer(Modifier.height(8.dp))
         }
-        SkySectionHeader(title = "Suggested")
+        SkySectionHeader(title = stringResource(R.string.search_suggested))
         UseCurrentLocationRow(onClick = onUseCurrentLocation)
     }
 }
@@ -156,13 +158,13 @@ private fun UseCurrentLocationRow(onClick: () -> Unit) {
         }
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = "Use current location",
+                text = stringResource(R.string.forecast_use_current_location),
                 color = SkyTheme.colors.textHigh,
                 fontWeight = FontWeight.Bold,
                 fontSize = 16.sp,
             )
             Text(
-                text = "Detect my city automatically",
+                text = stringResource(R.string.search_detect_city),
                 color = SkyTheme.colors.textMedium,
                 fontWeight = FontWeight.Medium,
                 fontSize = 13.sp,
@@ -190,7 +192,7 @@ private fun EmptyResults(query: String) {
             UiIcon(icon = UiIconType.SEARCH, size = 32.dp, tint = SkyTheme.colors.primary)
         }
         Text(
-            text = "No matches for “$query”",
+            text = stringResource(R.string.search_no_matches, query),
             color = SkyTheme.colors.textHigh,
             fontWeight = FontWeight.ExtraBold,
             fontSize = 18.sp,
@@ -198,7 +200,7 @@ private fun EmptyResults(query: String) {
             modifier = Modifier.padding(top = 16.dp),
         )
         Text(
-            text = "Check the spelling or try searching for a nearby city or airport.",
+            text = stringResource(R.string.search_no_matches_hint),
             color = SkyTheme.colors.textMedium,
             fontWeight = FontWeight.Medium,
             fontSize = 14.5.sp,

@@ -15,6 +15,7 @@ import com.sportygroup.weatherapp.feature.forecast.presentation.model.CityUiMode
 import com.sportygroup.weatherapp.feature.forecast.presentation.preview.ForecastPreviewData
 import com.sportygroup.weatherapp.feature.forecast.presentation.state.ForecastUiAction
 import com.sportygroup.weatherapp.feature.forecast.presentation.state.ForecastUiState
+import com.sportygroup.weatherapp.feature.forecast.testutil.FakeStringResources
 import com.sportygroup.weatherapp.lib.settings.model.AppSettings
 import com.sportygroup.weatherapp.lib.settings.model.MeasurementSystem
 import com.sportygroup.weatherapp.lib.settings.model.ThemeMode
@@ -46,7 +47,7 @@ class ForecastViewModelTest {
     private val searchCities = mockk<SearchCitiesUseCase>()
     private val forecastUiMapper = mockk<ForecastDomainToUiMapper>()
     private val cityUiMapper = CityUiMapper()
-    private val errorUiMapper = ErrorUiMapper()
+    private val errorUiMapper = ErrorUiMapper(FakeStringResources())
 
     private val settingsFlow = MutableStateFlow(AppSettings.DEFAULT)
 

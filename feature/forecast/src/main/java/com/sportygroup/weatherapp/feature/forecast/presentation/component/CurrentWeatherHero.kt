@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import com.sportygroup.weatherapp.core.designsystem.preview.SkyPreview
 import com.sportygroup.weatherapp.core.designsystem.preview.ThemePreviews
@@ -18,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sportygroup.weatherapp.core.designsystem.icon.WeatherIcon
 import com.sportygroup.weatherapp.core.designsystem.theme.SkyTheme
+import com.sportygroup.weatherapp.feature.forecast.R
 import com.sportygroup.weatherapp.feature.forecast.presentation.model.CurrentWeatherUiModel
 import com.sportygroup.weatherapp.feature.forecast.presentation.preview.ForecastPreviewData
 
@@ -69,13 +71,13 @@ fun CurrentWeatherHero(
             modifier = Modifier.padding(top = 6.dp),
         ) {
             Text(
-                text = "H:${current.highLabel}",
+                text = stringResource(R.string.forecast_hero_high, current.highLabel),
                 color = SkyTheme.colors.textMedium,
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 15.sp,
             )
             Text(
-                text = "L:${current.lowLabel}",
+                text = stringResource(R.string.forecast_hero_low, current.lowLabel),
                 color = SkyTheme.colors.textMedium,
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 15.sp,

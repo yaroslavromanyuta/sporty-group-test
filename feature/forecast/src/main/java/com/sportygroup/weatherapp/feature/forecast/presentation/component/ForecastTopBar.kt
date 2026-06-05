@@ -10,6 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import com.sportygroup.weatherapp.core.designsystem.preview.SkyPreview
@@ -20,6 +21,7 @@ import com.sportygroup.weatherapp.core.designsystem.component.SkyIconButton
 import com.sportygroup.weatherapp.core.designsystem.icon.UiIcon
 import com.sportygroup.weatherapp.core.designsystem.icon.UiIconType
 import com.sportygroup.weatherapp.core.designsystem.theme.SkyTheme
+import com.sportygroup.weatherapp.feature.forecast.R
 
 /** City selector + settings entry point at the top of the home screen. */
 @Composable
@@ -70,7 +72,7 @@ fun ForecastTopBar(
                 }
                 if (isCurrentLocation) {
                     Text(
-                        text = "Current location",
+                        text = stringResource(R.string.forecast_current_location),
                         color = SkyTheme.colors.textMedium,
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 12.sp,
@@ -80,7 +82,7 @@ fun ForecastTopBar(
         }
         SkyIconButton(
             icon = UiIconType.SLIDERS,
-            contentDescription = "Settings",
+            contentDescription = stringResource(R.string.forecast_settings_content_description),
             onClick = onOpenSettings,
         )
     }

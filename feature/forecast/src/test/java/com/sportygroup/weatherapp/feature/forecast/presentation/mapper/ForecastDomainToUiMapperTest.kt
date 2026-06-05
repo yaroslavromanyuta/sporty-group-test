@@ -7,7 +7,9 @@ import com.sportygroup.weatherapp.core.model.DailyForecast
 import com.sportygroup.weatherapp.core.model.Forecast
 import com.sportygroup.weatherapp.core.model.HourlyForecast
 import com.sportygroup.weatherapp.core.model.WeatherCondition
+import com.sportygroup.weatherapp.feature.forecast.R
 import com.sportygroup.weatherapp.feature.forecast.testutil.FakeDateTimeProvider
+import com.sportygroup.weatherapp.feature.forecast.testutil.FakeStringResources
 import com.sportygroup.weatherapp.lib.settings.model.MeasurementSystem
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -23,11 +25,26 @@ class ForecastDomainToUiMapperTest {
 
     @Before
     fun setUp() {
+        val strings = FakeStringResources(
+            mapOf(
+                R.string.forecast_metric_feels_like to "Feels like",
+                R.string.forecast_metric_humidity to "Humidity",
+                R.string.forecast_metric_wind to "Wind",
+                R.string.forecast_metric_pressure to "Pressure",
+                R.string.forecast_label_now to "Now",
+                R.string.forecast_label_today to "Today",
+                R.string.unit_wind_kmh to "km/h",
+                R.string.unit_wind_mph to "mph",
+                R.string.unit_pressure_hpa to "hPa",
+                R.string.unit_pressure_inhg to "inHg",
+            ),
+        )
         mapper = DefaultForecastDomainToUiMapper(
             temperatureFormatter = TemperatureFormatter(),
-            measurementFormatter = MeasurementFormatter(),
-            conditionMapper = WeatherConditionUiMapper(),
+            measurementFormatter = MeasurementFormatter(strings),
+            conditionMapper = WeatherConditionUiMapper(strings),
             dateTimeProvider = FakeDateTimeProvider(now),
+            stringResources = strings,
         )
     }
 

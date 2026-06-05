@@ -20,7 +20,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
+import com.sportygroup.weatherapp.core.designsystem.R
 import com.sportygroup.weatherapp.core.designsystem.preview.SkyPreview
 import com.sportygroup.weatherapp.core.designsystem.preview.ThemePreviews
 import androidx.compose.ui.unit.dp
@@ -39,7 +41,7 @@ fun SkySearchBar(
     onValueChange: (String) -> Unit,
     onClear: () -> Unit,
     modifier: Modifier = Modifier,
-    placeholder: String = "Search city or airport",
+    placeholder: String = stringResource(R.string.ds_search_placeholder),
 ) {
     Row(
         modifier = modifier
@@ -89,7 +91,7 @@ fun SkySearchBar(
                     icon = UiIconType.CLOSE,
                     size = 15.dp,
                     tint = SkyTheme.colors.textMedium,
-                    contentDescription = "Clear search",
+                    contentDescription = stringResource(R.string.ds_clear_search_content_description),
                 )
             }
         }

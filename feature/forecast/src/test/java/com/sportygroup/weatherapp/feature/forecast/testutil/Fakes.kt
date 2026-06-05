@@ -2,10 +2,12 @@ package com.sportygroup.weatherapp.feature.forecast.testutil
 
 import com.sportygroup.weatherapp.core.common.DateTimeProvider
 import com.sportygroup.weatherapp.core.common.DispatcherProvider
+import com.sportygroup.weatherapp.core.common.StringResources
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import java.time.LocalDateTime
 import java.time.ZoneId
+import java.util.Locale
 
 /** Deterministic [DateTimeProvider] for tests. */
 class FakeDateTimeProvider(
@@ -22,4 +24,17 @@ class TestDispatcherProvider(
     override val main: CoroutineDispatcher = dispatcher
     override val io: CoroutineDispatcher = dispatcher
     override val default: CoroutineDispatcher = dispatcher
+}
+
+/**
+ * [StringResources] for tests. Returns mapped strings for known resource ids; for unmapped
+ * ids it returns a deterministic placeholder so non-asserted strings stay stable.
+ */
+class FakeStringResources(
+    private val strings: Map<Int, String> = emptyMap(),
+) : StringResources {
+    override fun getString(resId: Int): String = strings[resId] ?: "res:$resId"
+    override fun getString(resId: Int, vararg formatArgs: Any): String =
+        strings[resId]?.let { String.format(Locale.US, it, *formatArgs) }
+            ?: "res:$resId:" + formatArgs.joinToString()
 }

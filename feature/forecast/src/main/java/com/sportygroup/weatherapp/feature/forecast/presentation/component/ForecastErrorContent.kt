@@ -13,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import com.sportygroup.weatherapp.core.designsystem.preview.SkyPreview
@@ -25,6 +26,7 @@ import com.sportygroup.weatherapp.core.designsystem.component.SkyPrimaryButton
 import com.sportygroup.weatherapp.core.designsystem.icon.UiIcon
 import com.sportygroup.weatherapp.core.designsystem.icon.UiIconType
 import com.sportygroup.weatherapp.core.designsystem.theme.SkyTheme
+import com.sportygroup.weatherapp.feature.forecast.R
 import com.sportygroup.weatherapp.feature.forecast.presentation.mapper.ErrorMessage
 
 /** Full-screen error state with retry and search-another-city actions. */
@@ -78,11 +80,15 @@ fun ForecastErrorContent(
                     modifier = Modifier.padding(top = 10.dp, bottom = 22.dp),
                 )
                 if (canRetry) {
-                    SkyPrimaryButton(text = "Try again", onClick = onRetry, icon = UiIconType.REFRESH)
+                    SkyPrimaryButton(
+                        text = stringResource(R.string.forecast_error_try_again),
+                        onClick = onRetry,
+                        icon = UiIconType.REFRESH,
+                    )
                 }
                 if (canSearchAnotherCity) {
                     SkyGhostButton(
-                        text = "Search another city",
+                        text = stringResource(R.string.forecast_error_search_another),
                         onClick = onSearch,
                         icon = UiIconType.SEARCH,
                         modifier = Modifier.padding(top = 12.dp),
@@ -91,7 +97,7 @@ fun ForecastErrorContent(
             }
         }
         Text(
-            text = "Error code: ${error.code}",
+            text = stringResource(R.string.forecast_error_code, error.code),
             color = SkyTheme.colors.textLow,
             fontWeight = FontWeight.SemiBold,
             fontSize = 12.5.sp,
