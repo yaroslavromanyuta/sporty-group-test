@@ -15,7 +15,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
+import com.sportygroup.weatherapp.core.designsystem.preview.SkyPreview
+import com.sportygroup.weatherapp.core.designsystem.preview.ThemePreviews
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sportygroup.weatherapp.core.designsystem.component.SkyCard
@@ -67,10 +68,10 @@ private fun HourlyForecastChip(hour: HourlyForecastUiModel) {
     }
 }
 
-@Preview
+@ThemePreviews
 @Composable
 private fun HourlyForecastRowPreview() {
-    SkyTheme {
+    SkyPreview {
         HourlyForecastRow(hours = ForecastPreviewData.hourly, modifier = Modifier.padding(8.dp))
     }
 }

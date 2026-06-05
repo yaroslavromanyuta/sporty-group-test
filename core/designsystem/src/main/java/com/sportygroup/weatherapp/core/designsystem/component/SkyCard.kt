@@ -8,7 +8,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import com.sportygroup.weatherapp.core.designsystem.preview.SkyPreview
+import com.sportygroup.weatherapp.core.designsystem.preview.ThemePreviews
 import androidx.compose.ui.unit.dp
 import com.sportygroup.weatherapp.core.designsystem.theme.SkyTheme
 
@@ -32,10 +33,10 @@ fun SkyCard(
     }
 }
 
-@Preview
+@ThemePreviews
 @Composable
 private fun SkyCardPreview() {
-    SkyTheme {
+    SkyPreview {
         SkyCard {
             androidx.compose.material3.Text(
                 text = "SkyCast card",

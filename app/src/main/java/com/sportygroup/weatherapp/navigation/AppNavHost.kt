@@ -21,7 +21,7 @@ fun AppNavHost() {
             onOpenSettings = { navController.navigateToSettings() },
         )
         settingsScreen(
-            onBack = { navController.popBackStack() },
+            onBack = { navController.popBackStack() }
         )
     }
 }

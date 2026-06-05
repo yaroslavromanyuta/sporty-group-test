@@ -17,7 +17,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
+import com.sportygroup.weatherapp.core.designsystem.preview.SkyPreview
+import com.sportygroup.weatherapp.core.designsystem.preview.ThemePreviews
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sportygroup.weatherapp.core.designsystem.icon.UiIcon
@@ -72,10 +73,10 @@ fun CityRow(
     }
 }
 
-@Preview
+@ThemePreviews
 @Composable
 private fun CityRowPreview() {
-    SkyTheme {
+    SkyPreview {
         CityRow(city = ForecastPreviewData.searchResults.first(), onClick = {})
     }
 }

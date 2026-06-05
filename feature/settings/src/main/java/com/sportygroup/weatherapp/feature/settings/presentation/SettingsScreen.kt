@@ -16,7 +16,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
+import com.sportygroup.weatherapp.core.designsystem.preview.SkyPreview
+import com.sportygroup.weatherapp.core.designsystem.preview.ThemePreviews
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sportygroup.weatherapp.core.designsystem.component.SkyIconButton
@@ -122,10 +123,10 @@ fun SettingsScreen(
     }
 }
 
-@Preview(heightDp = 760)
+@ThemePreviews
 @Composable
 private fun SettingsScreenPreview() {
-    SkyTheme {
+    SkyPreview {
         SettingsScreen(
             state = SettingsUiState(
                 SettingsUiModel(

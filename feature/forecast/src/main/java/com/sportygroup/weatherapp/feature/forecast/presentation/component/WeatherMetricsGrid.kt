@@ -16,7 +16,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
+import com.sportygroup.weatherapp.core.designsystem.preview.SkyPreview
+import com.sportygroup.weatherapp.core.designsystem.preview.ThemePreviews
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sportygroup.weatherapp.core.designsystem.component.SkyCard
@@ -91,10 +92,10 @@ private fun WeatherMetricItem(metric: WeatherMetricUiModel, modifier: Modifier =
     }
 }
 
-@Preview
+@ThemePreviews
 @Composable
 private fun WeatherMetricsGridPreview() {
-    SkyTheme {
+    SkyPreview {
         WeatherMetricsGrid(metrics = ForecastPreviewData.metrics, modifier = Modifier.padding(8.dp))
     }
 }

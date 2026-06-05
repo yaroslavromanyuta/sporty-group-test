@@ -15,7 +15,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
+import com.sportygroup.weatherapp.core.designsystem.preview.SkyPreview
+import com.sportygroup.weatherapp.core.designsystem.preview.ThemePreviews
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sportygroup.weatherapp.core.designsystem.component.SkyCard
@@ -132,10 +133,10 @@ fun InitialChoiceContent(
     }
 }
 
-@Preview
+@ThemePreviews
 @Composable
 private fun InitialChoiceContentPreview() {
-    SkyTheme {
+    SkyPreview {
         InitialChoiceContent(
             permissionDenied = false,
             permissionPermanentlyDenied = false,
@@ -147,10 +148,10 @@ private fun InitialChoiceContentPreview() {
     }
 }
 
-@Preview
+@ThemePreviews
 @Composable
 private fun InitialChoiceContentDeniedPreview() {
-    SkyTheme {
+    SkyPreview {
         InitialChoiceContent(
             permissionDenied = true,
             permissionPermanentlyDenied = false,
@@ -162,10 +163,10 @@ private fun InitialChoiceContentDeniedPreview() {
     }
 }
 
-@Preview
+@ThemePreviews
 @Composable
 private fun InitialChoiceContentPermanentlyDeniedPreview() {
-    SkyTheme {
+    SkyPreview {
         InitialChoiceContent(
             permissionDenied = true,
             permissionPermanentlyDenied = true,

@@ -22,7 +22,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
+import com.sportygroup.weatherapp.core.designsystem.preview.SkyPreview
+import com.sportygroup.weatherapp.core.designsystem.preview.ThemePreviews
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sportygroup.weatherapp.core.designsystem.component.SkyCard
@@ -124,10 +125,10 @@ private fun RangeBar(startFraction: Float, widthFraction: Float, modifier: Modif
     }
 }
 
-@Preview
+@ThemePreviews
 @Composable
 private fun WeeklyForecastListPreview() {
-    SkyTheme {
+    SkyPreview {
         WeeklyForecastList(days = ForecastPreviewData.daily, modifier = Modifier.padding(8.dp))
     }
 }

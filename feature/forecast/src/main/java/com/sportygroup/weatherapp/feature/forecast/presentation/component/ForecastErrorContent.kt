@@ -15,7 +15,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
+import com.sportygroup.weatherapp.core.designsystem.preview.SkyPreview
+import com.sportygroup.weatherapp.core.designsystem.preview.ThemePreviews
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sportygroup.weatherapp.core.designsystem.component.SkyCard
@@ -99,10 +100,10 @@ fun ForecastErrorContent(
     }
 }
 
-@Preview
+@ThemePreviews
 @Composable
 private fun ForecastErrorContentPreview() {
-    SkyTheme {
+    SkyPreview {
         ForecastErrorContent(
             error = ErrorMessage(
                 title = "Something went wrong",

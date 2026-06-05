@@ -24,7 +24,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
+import com.sportygroup.weatherapp.core.designsystem.preview.SkyPreview
+import com.sportygroup.weatherapp.core.designsystem.preview.ThemePreviews
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sportygroup.weatherapp.core.designsystem.component.SkyIconButton
@@ -207,10 +208,10 @@ private fun EmptyResults(query: String) {
     }
 }
 
-@Preview
+@ThemePreviews
 @Composable
 private fun CitySearchResultsPreview() {
-    SkyTheme {
+    SkyPreview {
         CitySearchScreen(
             state = CitySearchUiState(query = "Ma", results = ForecastPreviewData.searchResults),
             onAction = {},
@@ -219,10 +220,10 @@ private fun CitySearchResultsPreview() {
     }
 }
 
-@Preview
+@ThemePreviews
 @Composable
 private fun CitySearchSuggestionsPreview() {
-    SkyTheme {
+    SkyPreview {
         CitySearchScreen(
             state = CitySearchUiState(recent = ForecastPreviewData.recent),
             onAction = {},
@@ -231,10 +232,10 @@ private fun CitySearchSuggestionsPreview() {
     }
 }
 
-@Preview
+@ThemePreviews
 @Composable
 private fun CitySearchEmptyPreview() {
-    SkyTheme {
+    SkyPreview {
         CitySearchScreen(
             state = CitySearchUiState(query = "Zzzzz", results = emptyList()),
             onAction = {},

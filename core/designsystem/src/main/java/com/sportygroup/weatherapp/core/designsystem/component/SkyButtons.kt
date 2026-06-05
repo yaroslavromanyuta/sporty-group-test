@@ -14,7 +14,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
+import com.sportygroup.weatherapp.core.designsystem.preview.SkyPreview
+import com.sportygroup.weatherapp.core.designsystem.preview.ThemePreviews
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sportygroup.weatherapp.core.designsystem.icon.UiIcon
@@ -74,10 +75,10 @@ private fun ButtonContent(text: String, icon: UiIconType?, contentColor: android
     }
 }
 
-@Preview
+@ThemePreviews
 @Composable
 private fun SkyButtonsPreview() {
-    SkyTheme {
+    SkyPreview {
         androidx.compose.foundation.layout.Column(
             modifier = Modifier.size(width = 280.dp, height = 160.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),

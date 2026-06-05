@@ -29,7 +29,8 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
+import com.sportygroup.weatherapp.core.designsystem.preview.SkyPreview
+import com.sportygroup.weatherapp.core.designsystem.preview.ThemePreviews
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -129,10 +130,10 @@ private fun ShimmerBox(width: Dp, height: Dp, radius: Dp) {
     )
 }
 
-@Preview
+@ThemePreviews
 @Composable
 private fun ForecastLoadingContentPreview() {
-    SkyTheme {
+    SkyPreview {
         ForecastLoadingContent()
     }
 }

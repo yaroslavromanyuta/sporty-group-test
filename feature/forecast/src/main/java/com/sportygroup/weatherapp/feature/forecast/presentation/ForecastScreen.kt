@@ -16,7 +16,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
+import com.sportygroup.weatherapp.core.designsystem.preview.SkyPreview
+import com.sportygroup.weatherapp.core.designsystem.preview.ThemePreviews
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sportygroup.weatherapp.core.designsystem.component.SkySectionHeader
@@ -139,10 +140,10 @@ private fun ForecastContent(
     }
 }
 
-@Preview(heightDp = 1100)
+@ThemePreviews
 @Composable
 private fun ForecastScreenContentPreview() {
-    SkyTheme {
+    SkyPreview {
         ForecastScreen(
             state = ForecastUiState.Content(ForecastPreviewData.forecast),
             onAction = {},
@@ -154,10 +155,10 @@ private fun ForecastScreenContentPreview() {
     }
 }
 
-@Preview
+@ThemePreviews
 @Composable
 private fun ForecastScreenLoadingPreview() {
-    SkyTheme {
+    SkyPreview {
         ForecastScreen(
             state = ForecastUiState.Loading,
             onAction = {},
@@ -169,10 +170,10 @@ private fun ForecastScreenLoadingPreview() {
     }
 }
 
-@Preview
+@ThemePreviews
 @Composable
 private fun ForecastScreenInitialChoicePreview() {
-    SkyTheme {
+    SkyPreview {
         ForecastScreen(
             state = ForecastUiState.InitialChoice(),
             onAction = {},

@@ -12,7 +12,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
+import com.sportygroup.weatherapp.core.designsystem.preview.SkyPreview
+import com.sportygroup.weatherapp.core.designsystem.preview.ThemePreviews
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sportygroup.weatherapp.core.designsystem.component.SkyIconButton
@@ -85,10 +86,10 @@ fun ForecastTopBar(
     }
 }
 
-@Preview
+@ThemePreviews
 @Composable
 private fun ForecastTopBarPreview() {
-    SkyTheme {
+    SkyPreview {
         ForecastTopBar(
             cityName = "Malaga",
             isCurrentLocation = true,

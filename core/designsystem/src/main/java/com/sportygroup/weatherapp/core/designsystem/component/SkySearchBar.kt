@@ -21,7 +21,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.tooling.preview.Preview
+import com.sportygroup.weatherapp.core.designsystem.preview.SkyPreview
+import com.sportygroup.weatherapp.core.designsystem.preview.ThemePreviews
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.layout.Column
@@ -95,10 +96,10 @@ fun SkySearchBar(
     }
 }
 
-@Preview
+@ThemePreviews
 @Composable
 private fun SkySearchBarPreview() {
-    SkyTheme {
+    SkyPreview {
         Column(
             modifier = Modifier.size(width = 320.dp, height = 140.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
