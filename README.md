@@ -1,1 +1,153 @@
-# sporty-group-test
+# SkyCast — Android Weather Forecast App
+
+SkyCast is a small, production-like Android weather app built for the SkyGroup home
+assignment. It shows the current-day and 7-day forecast for your current location or any
+city you search for, with explicit handling of loading, error, empty and
+location-permission states. The UI is a native Jetpack Compose recreation of the
+**SkyCast design handoff** (`ui_kits/skycast/index.html`) — no WebView, no copied HTML/CSS.
+
+> Add screenshots/recordings here once captured from an emulator (e.g. Pixel, API 34).
+
+---
+
+## Requirement coverage
+
+| Requirement | Where |
+|---|---|
+| Current-day forecast | `CurrentWeatherHero`, `WeatherMetricsGrid`, hourly row |
+| Weekly forecast | `WeeklyForecastList` (7 days from Open-Meteo `daily`) |
+| Current location forecast | `GetCurrentLocationForecastUseCase` + `CurrentLocationProvider` |
+| Choose another city | `CitySearchScreen` + Open-Meteo Geocoding |
+| 100% executable | `./gradlew :app:assembleDebug` builds a runnable APK |
+| No API key committed | Open-Meteo needs no key |
+| Kotlin / Coroutines / Compose | Throughout |
+| Clean Architecture + feature module | `:feature:forecast` with data/domain/presentation layers |
+| Loading / error / empty / permission states | `ForecastUiState` + dedicated composables |
+
+---
+
+## Tech stack
+
+- **Kotlin** 2.3.21, **Coroutines / Flow**
+- **Jetpack Compose** (Material 3) + **Navigation Compose**
+- **Hilt** for dependency injection
+- **Retrofit + OkHttp** with **kotlinx.serialization**
+- **Open-Meteo** Forecast & Geocoding APIs (no key required)
+- **AGP 9.2.1** (built-in Kotlin), **Gradle 9.4.1**, JDK 21, `compileSdk 37`, `minSdk 24`
+- Tests: **JUnit4**, **MockK**, **Turbine**, **kotlinx-coroutines-test**, **MockWebServer**, **Compose UI Test**
+
+---
+
+## Architecture
+
+Pragmatic **Clean Architecture + MVVM** with strict per-layer models and explicit mappers:
+
+```
+Remote DTO  ──►  Data model  ──►  Domain model  ──►  UI model
+ (Retrofit)      (data layer)     (platform-free)    (display-ready strings)
+```
+
+Dependency direction: `presentation → domain ← data`. The domain layer has no Android,
+Retrofit or Compose dependencies. UI composables never touch repositories or DTOs;
+formatting (temperatures, day labels, "Updated 09:30") lives only in presentation mappers.
+
+State is exposed as `StateFlow<ForecastUiState>` / `StateFlow<CitySearchUiState>` from a
+single `@HiltViewModel` shared across the forecast nav-graph; one-time effects use a
+`Channel`-backed flow. Screens are stateless (`ForecastScreen`, `CitySearchScreen`) and
+driven by hoisted state + action callbacks, each with `@Preview`s for every major state.
+
+### Module structure
+
+```
+:app                  Application, MainActivity, root NavHost, theming entry point
+:core:model           Platform-free domain models (Coordinates, City, Forecast, WeatherCondition…)
+:core:common          AppResult/AppError, DispatcherProvider, DateTimeProvider, Mapper (+ DI)
+:core:designsystem    SkyTheme, tokens, native WeatherIcon/UiIcon, reusable components
+:core:network         Shared OkHttp + JSON providers
+:core:location        CurrentLocationProvider / CurrentCityNameResolver (+ Android impls, DI)
+:feature:forecast     The weather feature:
+  data                DTOs, Retrofit APIs, data models, mappers, repository impl
+  domain              repository interface, use cases (models live in :core:model)
+  presentation        UI models, mappers, state, ViewModel, screens, components, navigation
+  di                  feature Hilt modules (ApiModule, data bindings, presentation bindings)
+```
+
+Module dependency direction (acyclic):
+
+```
+:core:model    ◄── :core:designsystem, :core:location, :feature:forecast
+:core:common   ◄── :core:location, :feature:forecast
+:core:network  ◄── :feature:forecast
+:feature:forecast ◄── :app   (:app also depends on :core:designsystem for SkyTheme)
+```
+
+---
+
+## APIs (Open-Meteo)
+
+Chosen because it needs **no API key** (ideal for a public homework repo), supports
+coordinate-based forecasts and city geocoding.
+
+- Forecast: `https://api.open-meteo.com/v1/forecast`
+- Geocoding: `https://geocoding-api.open-meteo.com/v1/search`
+
+---
+
+## Build, run, test
+
+Requires an Android SDK with **platform 37** installed and a `local.properties` pointing at
+it (`sdk.dir=...`). JDK 21 is used by the Gradle toolchain.
+
+```bash
+# Build a debug APK
+./gradlew :app:assembleDebug
+
+# Full build
+./gradlew clean build
+
+# JVM unit + integration tests (mappers, use cases, ViewModel, repository via MockWebServer)
+./gradlew :feature:forecast:testDebugUnitTest
+
+# Instrumented Compose UI tests (needs a connected device/emulator)
+./gradlew connectedAndroidTest
+```
+
+The debug APK is written to `app/build/outputs/apk/debug/app-debug.apk`.
+
+---
+
+## Location permission
+
+On first launch SkyCast tries the current-location flow. If location permission is not
+granted it shows a **first-class permission screen** with "Use my location" (which triggers
+the runtime permission request) and "Search a city instead". Manual city search works fully
+without any location permission. If a city name cannot be reverse-geocoded, the app falls
+back to showing "Current location".
+
+---
+
+## Testing
+
+- **Unit:** `WeatherCodeMapperTest`, `ForecastDtoToDataMapperTest`,
+  `ForecastDomainToUiMapperTest`, `SearchCitiesUseCaseTest`,
+  `GetCurrentLocationForecastUseCaseTest`, `ForecastViewModelTest`.
+- **Integration:** `ForecastRepositoryIntegrationTest` — real Retrofit + mappers against
+  **MockWebServer** (success, empty search, HTTP error → typed failure).
+- **Compose UI:** `ForecastScreenTest`, `CitySearchScreenTest` (content/error/permission,
+  search results/empty/input).
+
+> **Screenshot tests:** not wired up. The available screenshot tooling (Paparazzi 2.x
+> alpha) is not yet stable against AGP 9.2, so to keep the project 100% buildable the visual
+> states are covered by extensive `@Preview`s and Compose UI tests instead. Enabling
+> Compose Preview screenshot testing is the intended follow-up once tooling stabilises.
+
+---
+
+## Notes / known trade-offs
+
+- The design font (Manrope) is substituted with the platform sans-serif to avoid bundling
+  font binaries; weights and sizes match the handoff (notably the light, oversized hero).
+- The "Today's details" grid shows the four metrics available from the forecast request
+  (feels-like, humidity, wind, pressure); sunrise/visibility from the mock design are
+  omitted since they aren’t part of the live request.
+- See `AI_USAGE.md` for how AI tooling was used on this assignment.
