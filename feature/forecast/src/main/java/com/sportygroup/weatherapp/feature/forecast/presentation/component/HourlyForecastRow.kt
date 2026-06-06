@@ -47,12 +47,12 @@ private fun HourlyForecastChip(hour: HourlyForecastUiModel) {
     val tempColor = if (hour.isNow) SkyTheme.colors.onPrimary else SkyTheme.colors.textHigh
     Column(
         modifier = Modifier
-            .widthIn(min = 62.dp)
+            .widthIn(min = SkyTheme.size.chipMinWidth)
             .clip(SkyTheme.shapes.chip)
             .background(background)
             .then(
                 if (hour.isNow) Modifier
-                else Modifier.border(1.dp, SkyTheme.colors.chipBorder, SkyTheme.shapes.chip),
+                else Modifier.border(SkyTheme.size.borderThin, SkyTheme.colors.chipBorder, SkyTheme.shapes.chip),
             )
             .padding(horizontal = SkyTheme.spacing.s, vertical = SkyTheme.spacing.m),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -66,7 +66,7 @@ private fun HourlyForecastChip(hour: HourlyForecastUiModel) {
         )
         WeatherIcon(
             type = hour.weatherType,
-            size = 32.dp,
+            size = SkyTheme.size.iconXxxl,
             contentDescription = null,
         )
         Text(

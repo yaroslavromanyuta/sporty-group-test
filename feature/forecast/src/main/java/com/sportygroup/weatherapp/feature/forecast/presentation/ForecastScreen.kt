@@ -21,7 +21,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.text.font.FontWeight
 import com.sportygroup.weatherapp.core.designsystem.preview.SkyPreview
 import com.sportygroup.weatherapp.core.designsystem.preview.ThemePreviews
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.res.stringResource
 import com.sportygroup.weatherapp.feature.forecast.R
@@ -119,7 +118,7 @@ private fun ForecastContent(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(spacing.s),
         ) {
-            UiIcon(icon = UiIconType.CLOCK, size = 14.dp, tint = SkyTheme.colors.textLow)
+            UiIcon(icon = UiIconType.CLOCK, size = SkyTheme.size.iconXxs, tint = SkyTheme.colors.textLow)
             Text(
                 text = buildString {
                     append(forecast.updatedLabel)

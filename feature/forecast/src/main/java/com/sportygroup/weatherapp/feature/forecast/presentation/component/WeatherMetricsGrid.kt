@@ -56,11 +56,11 @@ private fun WeatherMetricItem(metric: WeatherMetricUiModel, modifier: Modifier =
     ) {
         Box(
             modifier = Modifier
-                .size(42.dp)
+                .size(SkyTheme.size.iconContainerLg)
                 .background(SkyTheme.colors.primarySoft, SkyTheme.shapes.metricIcon),
             contentAlignment = Alignment.Center,
         ) {
-            UiIcon(icon = metric.icon, size = 21.dp, tint = SkyTheme.colors.primary)
+            UiIcon(icon = metric.icon, size = SkyTheme.size.iconLgPlus, tint = SkyTheme.colors.primary)
         }
         Column {
             Text(

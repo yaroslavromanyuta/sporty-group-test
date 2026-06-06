@@ -32,7 +32,7 @@ fun SkyPrimaryButton(
 ) {
     Button(
         onClick = onClick,
-        modifier = modifier.fillMaxWidth().height(56.dp),
+        modifier = modifier.fillMaxWidth().height(SkyTheme.size.buttonHeight),
         shape = SkyTheme.shapes.pill,
         colors = ButtonDefaults.buttonColors(
             containerColor = SkyTheme.colors.primary,
@@ -53,9 +53,9 @@ fun SkyGhostButton(
 ) {
     OutlinedButton(
         onClick = onClick,
-        modifier = modifier.fillMaxWidth().height(54.dp),
+        modifier = modifier.fillMaxWidth().height(SkyTheme.size.buttonHeightSecondary),
         shape = SkyTheme.shapes.pill,
-        border = BorderStroke(1.5.dp, SkyTheme.colors.cardBorder),
+        border = BorderStroke(SkyTheme.size.border, SkyTheme.colors.cardBorder),
         colors = ButtonDefaults.outlinedButtonColors(contentColor = SkyTheme.colors.primary),
     ) {
         ButtonContent(text, icon, SkyTheme.colors.primary)
@@ -69,7 +69,7 @@ private fun ButtonContent(text: String, icon: UiIconType?, contentColor: android
         horizontalArrangement = Arrangement.spacedBy(SkyTheme.spacing.smPlus),
     ) {
         if (icon != null) {
-            UiIcon(icon = icon, size = 20.dp, tint = contentColor)
+            UiIcon(icon = icon, size = SkyTheme.size.iconLg, tint = contentColor)
         }
         Text(text = text, style = SkyTheme.typography.body)
     }

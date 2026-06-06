@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.selectable
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -22,7 +21,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sportygroup.weatherapp.core.designsystem.icon.UiIcon
 import com.sportygroup.weatherapp.core.designsystem.icon.UiIconType
@@ -80,15 +78,15 @@ private fun ThemeCard(
     val contentColor = if (selected) SkyTheme.colors.primary else SkyTheme.colors.textMedium
     Column(
         modifier = modifier
-            .heightIn(min = 82.dp)
-            .clip(RoundedCornerShape(16.dp))
+            .heightIn(min = SkyTheme.size.themeCardMinHeight)
+            .clip(SkyTheme.shapes.row)
             .background(background)
             .border(
                 BorderStroke(
-                    if (selected) 2.dp else 1.5.dp,
+                    if (selected) SkyTheme.size.borderThick else SkyTheme.size.border,
                     if (selected) SkyTheme.colors.primary else SkyTheme.colors.cardBorder,
                 ),
-                RoundedCornerShape(16.dp),
+                SkyTheme.shapes.row,
             )
             .selectable(selected = selected, role = Role.RadioButton, onClick = onClick)
             .padding(vertical = SkyTheme.spacing.mPlus, horizontal = SkyTheme.spacing.s),
@@ -97,14 +95,14 @@ private fun ThemeCard(
     ) {
         Box(
             modifier = Modifier
-                .size(38.dp)
-                .clip(RoundedCornerShape(12.dp))
+                .size(SkyTheme.size.iconContainer)
+                .clip(SkyTheme.shapes.iconContainer)
                 .background(
                     if (selected) SkyTheme.colors.primarySoft else SkyTheme.colors.track,
                 ),
             contentAlignment = Alignment.Center,
         ) {
-            UiIcon(icon = option.icon, size = 20.dp, tint = contentColor)
+            UiIcon(icon = option.icon, size = SkyTheme.size.iconLg, tint = contentColor)
         }
         Text(
             text = stringResource(option.labelRes),

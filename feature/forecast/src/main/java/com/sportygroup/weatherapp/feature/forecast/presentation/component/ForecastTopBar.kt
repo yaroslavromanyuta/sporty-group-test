@@ -15,7 +15,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import com.sportygroup.weatherapp.core.designsystem.preview.SkyPreview
 import com.sportygroup.weatherapp.core.designsystem.preview.ThemePreviews
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sportygroup.weatherapp.core.designsystem.component.SkyIconButton
 import com.sportygroup.weatherapp.core.designsystem.icon.UiIcon
@@ -49,7 +48,7 @@ fun ForecastTopBar(
         ) {
             UiIcon(
                 icon = if (isCurrentLocation) UiIconType.LOCATION_FILL else UiIconType.LOCATION,
-                size = 20.dp,
+                size = SkyTheme.size.iconLg,
                 tint = if (isCurrentLocation) SkyTheme.colors.primary else SkyTheme.colors.textMedium,
                 contentDescription = null,
             )
@@ -64,7 +63,7 @@ fun ForecastTopBar(
                     )
                     UiIcon(
                         icon = UiIconType.CHEVRON_DOWN,
-                        size = 17.dp,
+                        size = SkyTheme.size.iconSm,
                         tint = SkyTheme.colors.textMedium,
                         modifier = Modifier.padding(start = SkyTheme.spacing.xs),
                     )

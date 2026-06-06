@@ -8,7 +8,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import com.sportygroup.weatherapp.core.designsystem.R
 import com.sportygroup.weatherapp.core.designsystem.theme.SkyTheme
 
@@ -45,7 +44,7 @@ enum class UiIconType(@DrawableRes val drawableRes: Int) {
 fun UiIcon(
     icon: UiIconType,
     modifier: Modifier = Modifier,
-    size: Dp = 24.dp,
+    size: Dp = SkyTheme.size.iconXl,
     tint: Color = SkyTheme.colors.textHigh,
     contentDescription: String? = null,
 ) {

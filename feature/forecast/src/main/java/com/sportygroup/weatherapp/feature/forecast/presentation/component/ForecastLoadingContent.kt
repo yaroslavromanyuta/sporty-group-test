@@ -16,8 +16,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,6 +26,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import com.sportygroup.weatherapp.core.designsystem.preview.SkyPreview
@@ -53,17 +52,21 @@ fun ForecastLoadingContent(modifier: Modifier = Modifier) {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            ShimmerBox(width = 150.dp, height = 26.dp, radius = 13.dp)
-            ShimmerBox(width = 78.dp, height = 36.dp, radius = 18.dp)
+            ShimmerBox(width = SkeletonSize.cityNameWidth, height = SkeletonSize.cityNameHeight)
+            ShimmerBox(width = SkeletonSize.unitToggleWidth, height = SkeletonSize.unitToggleHeight)
         }
         Column(
             modifier = Modifier.fillMaxWidth().padding(vertical = spacing.m),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(spacing.lgPlus),
         ) {
-            ShimmerBox(width = 120.dp, height = 120.dp, radius = 60.dp)
-            ShimmerBox(width = 140.dp, height = 60.dp, radius = 16.dp)
-            ShimmerBox(width = 120.dp, height = 18.dp, radius = 9.dp)
+            ShimmerBox(width = SkeletonSize.heroIcon, height = SkeletonSize.heroIcon)
+            ShimmerBox(
+                width = SkeletonSize.heroTempWidth,
+                height = SkeletonSize.heroTempHeight,
+                shape = SkyTheme.shapes.row,
+            )
+            ShimmerBox(width = SkeletonSize.heroCaptionWidth, height = SkeletonSize.heroCaptionHeight)
         }
         Spacer(Modifier.height(spacing.ml))
         SkyCard(contentPadding = androidx.compose.foundation.layout.PaddingValues(spacing.ml)) {
@@ -76,9 +79,9 @@ fun ForecastLoadingContent(modifier: Modifier = Modifier) {
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(spacing.md),
                     ) {
-                        ShimmerBox(width = 34.dp, height = 12.dp, radius = 6.dp)
-                        ShimmerBox(width = 32.dp, height = 32.dp, radius = 16.dp)
-                        ShimmerBox(width = 28.dp, height = 14.dp, radius = 7.dp)
+                        ShimmerBox(width = SkeletonSize.chipLabelWidth, height = SkeletonSize.chipLabelHeight)
+                        ShimmerBox(width = SkeletonSize.chipIcon, height = SkeletonSize.chipIcon)
+                        ShimmerBox(width = SkeletonSize.chipTempWidth, height = SkeletonSize.chipTempHeight)
                     }
                 }
             }
@@ -90,8 +93,8 @@ fun ForecastLoadingContent(modifier: Modifier = Modifier) {
             verticalAlignment = Alignment.CenterVertically,
         ) {
             CircularProgressIndicator(
-                modifier = Modifier.size(18.dp),
-                strokeWidth = 2.5.dp,
+                modifier = Modifier.size(SkyTheme.size.progressIndicator),
+                strokeWidth = SkyTheme.size.stroke,
                 color = SkyTheme.colors.primary,
             )
             Text(
@@ -104,8 +107,30 @@ fun ForecastLoadingContent(modifier: Modifier = Modifier) {
     }
 }
 
+/**
+ * Bespoke geometry for the loading skeleton's shimmer blocks. These are private placeholder
+ * dimensions (they mimic the real content's layout) rather than shared design tokens, so they
+ * live here as named values instead of inline literals or [SkyTheme.size] entries.
+ */
+private object SkeletonSize {
+    val cityNameWidth = 150.dp
+    val cityNameHeight = 26.dp
+    val unitToggleWidth = 78.dp
+    val unitToggleHeight = 36.dp
+    val heroIcon = 120.dp
+    val heroTempWidth = 140.dp
+    val heroTempHeight = 60.dp
+    val heroCaptionWidth = 120.dp
+    val heroCaptionHeight = 18.dp
+    val chipLabelWidth = 34.dp
+    val chipLabelHeight = 12.dp
+    val chipIcon = 32.dp
+    val chipTempWidth = 28.dp
+    val chipTempHeight = 14.dp
+}
+
 @Composable
-private fun ShimmerBox(width: Dp, height: Dp, radius: Dp) {
+private fun ShimmerBox(width: Dp, height: Dp, shape: Shape = SkyTheme.shapes.pill) {
     val transition = rememberInfiniteTransition(label = "shimmer")
     val progress by transition.animateFloat(
         initialValue = 0f,
@@ -126,7 +151,7 @@ private fun ShimmerBox(width: Dp, height: Dp, radius: Dp) {
     Box(
         modifier = Modifier
             .size(width = width, height = height)
-            .clip(if (radius >= height / 2) CircleShape else RoundedCornerShape(radius))
+            .clip(shape)
             .background(base)
             .background(brush),
     )

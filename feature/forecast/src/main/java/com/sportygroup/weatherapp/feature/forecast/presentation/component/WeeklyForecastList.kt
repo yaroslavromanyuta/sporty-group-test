@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -69,15 +68,15 @@ private fun DailyForecastRow(day: DailyForecastUiModel) {
             style = SkyTheme.typography.bodyMedium,
             fontWeight = if (day.isToday) FontWeight.ExtraBold else FontWeight.Bold,
             maxLines = 1,
-            modifier = Modifier.widthIn(min = 42.dp),
+            modifier = Modifier.widthIn(min = SkyTheme.size.dayColumnMin),
         )
-        WeatherIcon(type = day.weatherType, size = 30.dp, contentDescription = day.conditionLabel)
+        WeatherIcon(type = day.weatherType, size = SkyTheme.size.iconXxl, contentDescription = day.conditionLabel)
         Text(
             text = if (day.precipitationProbability > 25) "${day.precipitationProbability}%" else "",
             color = SkyTheme.colors.primary,
             style = SkyTheme.typography.overline,
             maxLines = 1,
-            modifier = Modifier.widthIn(min = 34.dp),
+            modifier = Modifier.widthIn(min = SkyTheme.size.tempColumnMin),
         )
         Text(
             text = day.lowLabel,
@@ -86,7 +85,7 @@ private fun DailyForecastRow(day: DailyForecastUiModel) {
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.End,
             maxLines = 1,
-            modifier = Modifier.widthIn(min = 34.dp),
+            modifier = Modifier.widthIn(min = SkyTheme.size.tempColumnMin),
         )
         RangeBar(
             startFraction = day.barStartFraction,
@@ -100,7 +99,7 @@ private fun DailyForecastRow(day: DailyForecastUiModel) {
             fontWeight = FontWeight.ExtraBold,
             textAlign = TextAlign.End,
             maxLines = 1,
-            modifier = Modifier.widthIn(min = 34.dp),
+            modifier = Modifier.widthIn(min = SkyTheme.size.tempColumnMin),
         )
     }
 }
@@ -109,8 +108,8 @@ private fun DailyForecastRow(day: DailyForecastUiModel) {
 private fun RangeBar(startFraction: Float, widthFraction: Float, modifier: Modifier = Modifier) {
     BoxWithConstraints(
         modifier = modifier
-            .height(6.dp)
-            .clip(RoundedCornerShape(3.dp))
+            .height(SkyTheme.size.rangeBarHeight)
+            .clip(SkyTheme.shapes.bar)
             .background(SkyTheme.colors.track),
     ) {
         val total = maxWidth
@@ -118,8 +117,8 @@ private fun RangeBar(startFraction: Float, widthFraction: Float, modifier: Modif
             modifier = Modifier
                 .offset(x = total * startFraction)
                 .width(total * widthFraction)
-                .height(6.dp)
-                .clip(RoundedCornerShape(3.dp))
+                .height(SkyTheme.size.rangeBarHeight)
+                .clip(SkyTheme.shapes.bar)
                 .background(
                     Brush.horizontalGradient(
                         listOf(SkyTheme.colors.primary, SkyTheme.colors.accent),

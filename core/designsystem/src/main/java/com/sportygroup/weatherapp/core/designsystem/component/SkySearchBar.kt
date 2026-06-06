@@ -45,15 +45,15 @@ fun SkySearchBar(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .height(52.dp)
+            .height(SkyTheme.size.searchBarHeight)
             .clip(SkyTheme.shapes.pill)
             .background(SkyTheme.colors.card)
-            .border(1.dp, SkyTheme.colors.cardBorder, SkyTheme.shapes.pill)
+            .border(SkyTheme.size.borderThin, SkyTheme.colors.cardBorder, SkyTheme.shapes.pill)
             .padding(horizontal = SkyTheme.spacing.ml),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(SkyTheme.spacing.md),
     ) {
-        UiIcon(icon = UiIconType.SEARCH, size = 21.dp, tint = SkyTheme.colors.textMedium)
+        UiIcon(icon = UiIconType.SEARCH, size = SkyTheme.size.iconLgPlus, tint = SkyTheme.colors.textMedium)
         Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.CenterStart) {
             if (value.isEmpty()) {
                 Text(
@@ -84,7 +84,7 @@ fun SkySearchBar(
         if (value.isNotEmpty()) {
             Box(
                 modifier = Modifier
-                    .size(26.dp)
+                    .size(SkyTheme.size.clearButton)
                     .clip(CircleShape)
                     .background(SkyTheme.colors.chip)
                     .clickable(onClick = onClear),
@@ -92,7 +92,7 @@ fun SkySearchBar(
             ) {
                 UiIcon(
                     icon = UiIconType.CLOSE,
-                    size = 15.dp,
+                    size = SkyTheme.size.iconXs,
                     tint = SkyTheme.colors.textMedium,
                     contentDescription = stringResource(R.string.ds_clear_search_content_description),
                 )

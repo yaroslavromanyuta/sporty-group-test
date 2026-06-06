@@ -10,7 +10,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.sportygroup.weatherapp.core.designsystem.preview.SkyPreview
 import com.sportygroup.weatherapp.core.designsystem.preview.ThemePreviews
-import androidx.compose.ui.unit.dp
 import com.sportygroup.weatherapp.core.designsystem.theme.SkyTheme
 
 /** Rounded, bordered, soft-shadow surface — the base for every SkyCast card. */
@@ -25,9 +24,9 @@ fun SkyCard(
         modifier = modifier,
         shape = shape,
         color = SkyTheme.colors.card,
-        border = BorderStroke(1.dp, SkyTheme.colors.cardBorder),
-        shadowElevation = if (SkyTheme.colors.isDark) 0.dp else 6.dp,
-        tonalElevation = 0.dp,
+        border = BorderStroke(SkyTheme.size.borderThin, SkyTheme.colors.cardBorder),
+        shadowElevation = if (SkyTheme.colors.isDark) SkyTheme.size.none else SkyTheme.size.cardElevation,
+        tonalElevation = SkyTheme.size.none,
     ) {
         Box(Modifier.padding(contentPadding)) { content() }
     }

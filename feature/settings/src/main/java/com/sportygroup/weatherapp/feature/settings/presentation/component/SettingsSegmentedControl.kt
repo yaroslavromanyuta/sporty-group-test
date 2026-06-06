@@ -17,7 +17,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sportygroup.weatherapp.core.designsystem.icon.UiIcon
 import com.sportygroup.weatherapp.core.designsystem.icon.UiIconType
@@ -83,7 +82,7 @@ private fun Segment(
     val textColor = if (selected) SkyTheme.colors.primary else SkyTheme.colors.textMedium
     Row(
         modifier = modifier
-            .height(44.dp)
+            .height(SkyTheme.size.segmentHeight)
             .clip(SkyTheme.shapes.pill)
             .background(background)
             .selectable(selected = selected, role = Role.RadioButton, onClick = onClick),
@@ -99,7 +98,7 @@ private fun Segment(
         if (selected) {
             UiIcon(
                 icon = UiIconType.CHECK,
-                size = 16.dp,
+                size = SkyTheme.size.iconS,
                 tint = SkyTheme.colors.primary,
                 modifier = Modifier.padding(start = SkyTheme.spacing.s),
             )

@@ -6,7 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
+import com.sportygroup.weatherapp.core.designsystem.theme.SkyTheme
 
 /**
  * Multi-color SkyCast weather glyph, rendered from a vector drawable in
@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 fun WeatherIcon(
     type: WeatherType,
     modifier: Modifier = Modifier,
-    size: Dp = 64.dp,
+    size: Dp = SkyTheme.size.weatherIcon,
     contentDescription: String? = null,
 ) {
     Image(

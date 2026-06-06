@@ -9,7 +9,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.unit.dp
 import com.sportygroup.weatherapp.core.designsystem.icon.UiIcon
 import com.sportygroup.weatherapp.core.designsystem.icon.UiIconType
 import com.sportygroup.weatherapp.core.designsystem.theme.SkyTheme
@@ -24,7 +23,7 @@ fun SkyIconButton(
 ) {
     Box(
         modifier = modifier
-            .size(42.dp)
+            .size(SkyTheme.size.iconContainerLg)
             .clip(CircleShape)
             .background(SkyTheme.colors.chip)
             .clickable(onClick = onClick),
@@ -32,7 +31,7 @@ fun SkyIconButton(
     ) {
         UiIcon(
             icon = icon,
-            size = 21.dp,
+            size = SkyTheme.size.iconLgPlus,
             tint = SkyTheme.colors.textHigh,
             contentDescription = contentDescription,
         )

@@ -12,7 +12,10 @@ data class SkyShapes(
     val card: RoundedCornerShape = RoundedCornerShape(24.dp),
     val chip: RoundedCornerShape = RoundedCornerShape(18.dp),
     val pill: RoundedCornerShape = RoundedCornerShape(percent = 50),
+    val row: RoundedCornerShape = RoundedCornerShape(16.dp),
     val metricIcon: RoundedCornerShape = RoundedCornerShape(14.dp),
+    val iconContainer: RoundedCornerShape = RoundedCornerShape(12.dp),
+    val bar: RoundedCornerShape = RoundedCornerShape(3.dp),
 )
 
 val LocalSkyShapes = staticCompositionLocalOf { SkyShapes() }

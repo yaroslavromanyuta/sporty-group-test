@@ -20,7 +20,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import com.sportygroup.weatherapp.core.designsystem.preview.SkyPreview
 import com.sportygroup.weatherapp.core.designsystem.preview.ThemePreviews
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sportygroup.weatherapp.core.designsystem.component.SkyCard
 import com.sportygroup.weatherapp.core.designsystem.component.SkyGhostButton
@@ -52,13 +51,13 @@ fun ForecastErrorContent(
     ) {
         Box(
             modifier = Modifier
-                .size(130.dp)
+                .size(SkyTheme.size.circleLg)
                 .background(SkyTheme.colors.dangerSoft, CircleShape),
             contentAlignment = Alignment.Center,
         ) {
             UiIcon(
                 icon = UiIconType.WARNING,
-                size = 56.dp,
+                size = SkyTheme.size.iconHuge,
                 tint = SkyTheme.colors.danger,
                 contentDescription = null,
             )

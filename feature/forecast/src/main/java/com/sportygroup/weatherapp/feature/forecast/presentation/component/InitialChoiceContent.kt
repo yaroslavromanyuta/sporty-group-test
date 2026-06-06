@@ -20,7 +20,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import com.sportygroup.weatherapp.core.designsystem.preview.SkyPreview
 import com.sportygroup.weatherapp.core.designsystem.preview.ThemePreviews
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sportygroup.weatherapp.core.designsystem.component.SkyCard
 import com.sportygroup.weatherapp.core.designsystem.component.SkyGhostButton
@@ -57,19 +56,19 @@ fun InitialChoiceContent(
     ) {
         Box(
             modifier = Modifier
-                .size(150.dp)
+                .size(SkyTheme.size.circleXl)
                 .background(SkyTheme.colors.primarySoft, CircleShape),
             contentAlignment = Alignment.Center,
         ) {
             Box(
                 modifier = Modifier
-                    .size(106.dp)
+                    .size(SkyTheme.size.circleMd)
                     .background(SkyTheme.colors.card, CircleShape),
                 contentAlignment = Alignment.Center,
             ) {
                 UiIcon(
                     icon = UiIconType.LOCATION_FILL,
-                    size = 62.dp,
+                    size = SkyTheme.size.iconGiant,
                     tint = SkyTheme.colors.primary,
                     contentDescription = null,
                 )

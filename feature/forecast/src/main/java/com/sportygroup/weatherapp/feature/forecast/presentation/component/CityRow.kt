@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -19,7 +18,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import com.sportygroup.weatherapp.core.designsystem.preview.SkyPreview
 import com.sportygroup.weatherapp.core.designsystem.preview.ThemePreviews
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sportygroup.weatherapp.core.designsystem.icon.UiIcon
 import com.sportygroup.weatherapp.core.designsystem.icon.UiIconType
@@ -38,7 +36,7 @@ fun CityRow(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(16.dp))
+            .clip(SkyTheme.shapes.row)
             .clickable(onClick = onClick)
             .padding(horizontal = SkyTheme.spacing.m, vertical = SkyTheme.spacing.mdPlus),
         verticalAlignment = Alignment.CenterVertically,
@@ -46,11 +44,11 @@ fun CityRow(
     ) {
         Box(
             modifier = Modifier
-                .size(38.dp)
-                .background(SkyTheme.colors.primarySoft, RoundedCornerShape(12.dp)),
+                .size(SkyTheme.size.iconContainer)
+                .background(SkyTheme.colors.primarySoft, SkyTheme.shapes.iconContainer),
             contentAlignment = Alignment.Center,
         ) {
-            UiIcon(icon = leadingIcon, size = 19.dp, tint = SkyTheme.colors.primary)
+            UiIcon(icon = leadingIcon, size = SkyTheme.size.iconMdPlus, tint = SkyTheme.colors.primary)
         }
         Column(modifier = Modifier.weight(1f)) {
             Text(

@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -30,7 +29,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import com.sportygroup.weatherapp.core.designsystem.preview.SkyPreview
 import com.sportygroup.weatherapp.core.designsystem.preview.ThemePreviews
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sportygroup.weatherapp.feature.forecast.R
 import com.sportygroup.weatherapp.core.designsystem.component.SkyIconButton
@@ -146,7 +144,7 @@ private fun UseCurrentLocationRow(onClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(16.dp))
+            .clip(SkyTheme.shapes.row)
             .clickable(onClick = onClick)
             .padding(horizontal = SkyTheme.spacing.m, vertical = SkyTheme.spacing.mdPlus),
         verticalAlignment = Alignment.CenterVertically,
@@ -154,11 +152,11 @@ private fun UseCurrentLocationRow(onClick: () -> Unit) {
     ) {
         Box(
             modifier = Modifier
-                .size(38.dp)
-                .background(SkyTheme.colors.primarySoft, RoundedCornerShape(12.dp)),
+                .size(SkyTheme.size.iconContainer)
+                .background(SkyTheme.colors.primarySoft, SkyTheme.shapes.iconContainer),
             contentAlignment = Alignment.Center,
         ) {
-            UiIcon(icon = UiIconType.LOCATION_FILL, size = 19.dp, tint = SkyTheme.colors.primary)
+            UiIcon(icon = UiIconType.LOCATION_FILL, size = SkyTheme.size.iconMdPlus, tint = SkyTheme.colors.primary)
         }
         Column(modifier = Modifier.weight(1f)) {
             Text(
@@ -173,7 +171,7 @@ private fun UseCurrentLocationRow(onClick: () -> Unit) {
                 fontWeight = FontWeight.Medium,
             )
         }
-        UiIcon(icon = UiIconType.CHEVRON, size = 18.dp, tint = SkyTheme.colors.textLow)
+        UiIcon(icon = UiIconType.CHEVRON, size = SkyTheme.size.iconMd, tint = SkyTheme.colors.textLow)
     }
 }
 
@@ -189,11 +187,11 @@ private fun EmptyResults(query: String) {
     ) {
         Box(
             modifier = Modifier
-                .size(76.dp)
+                .size(SkyTheme.size.circleSm)
                 .background(SkyTheme.colors.primarySoft, CircleShape),
             contentAlignment = Alignment.Center,
         ) {
-            UiIcon(icon = UiIconType.SEARCH, size = 32.dp, tint = SkyTheme.colors.primary)
+            UiIcon(icon = UiIconType.SEARCH, size = SkyTheme.size.iconXxxl, tint = SkyTheme.colors.primary)
         }
         Text(
             text = stringResource(R.string.search_no_matches, query),
