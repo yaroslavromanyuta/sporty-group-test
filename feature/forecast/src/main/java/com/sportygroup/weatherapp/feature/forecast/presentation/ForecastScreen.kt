@@ -5,9 +5,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
@@ -57,7 +60,8 @@ fun ForecastScreen(
                 Brush.verticalGradient(
                     listOf(SkyTheme.colors.gradientTop, SkyTheme.colors.gradientBottom),
                 ),
-            ),
+            )
+            .windowInsetsPadding(WindowInsets.systemBars),
     ) {
         when (state) {
             is ForecastUiState.InitialChoice -> InitialChoiceContent(
