@@ -23,6 +23,11 @@ android {
     buildFeatures {
         compose = true
     }
+    // Shares the Roborazzi screenshot-test harness (RoborazziScreenshotTest) with feature modules.
+    @Suppress("UnstableApiUsage")
+    testFixtures {
+        enable = true
+    }
     testOptions {
         unitTests {
             isIncludeAndroidResources = true
@@ -41,14 +46,20 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     debugImplementation(libs.androidx.compose.ui.tooling)
 
-    // Screenshot tests (Roborazzi + Robolectric, JVM)
-    testImplementation(libs.junit)
-    testImplementation(libs.robolectric)
-    testImplementation(platform(libs.androidx.compose.bom))
-    testImplementation(libs.androidx.compose.ui.test.junit4)
-    testImplementation(libs.roborazzi)
-    testImplementation(libs.roborazzi.compose)
-    testImplementation(libs.roborazzi.junit.rule)
+    // Shared screenshot-test harness (Roborazzi + Robolectric, JVM). Exposed as `api` so consuming
+    // modules get the runtime via `testImplementation(testFixtures(project(":core:designsystem")))`.
+    testFixturesImplementation(platform(libs.androidx.compose.bom))
+    testFixturesImplementation(libs.androidx.compose.ui)
+    testFixturesImplementation(libs.androidx.compose.material3)
+    testFixturesApi(libs.junit)
+    testFixturesApi(libs.robolectric)
+    testFixturesApi(libs.androidx.compose.ui.test.junit4)
+    testFixturesApi(libs.roborazzi)
+    testFixturesApi(libs.roborazzi.compose)
+    testFixturesApi(libs.roborazzi.junit.rule)
+
+    // Screenshot tests for this module reuse the shared harness above.
+    testImplementation(testFixtures(project(":core:designsystem")))
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
     androidTestImplementation(libs.androidx.junit)

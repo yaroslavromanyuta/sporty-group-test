@@ -64,13 +64,8 @@ dependencies {
     testImplementation(libs.turbine)
     testImplementation(libs.kotlinx.coroutines.test)
 
-    // Screenshot tests (Roborazzi + Robolectric, JVM)
-    testImplementation(libs.robolectric)
-    testImplementation(platform(libs.androidx.compose.bom))
-    testImplementation(libs.androidx.compose.ui.test.junit4)
-    testImplementation(libs.roborazzi)
-    testImplementation(libs.roborazzi.compose)
-    testImplementation(libs.roborazzi.junit.rule)
+    // Screenshot tests reuse the shared Roborazzi harness from :core:designsystem test fixtures.
+    testImplementation(testFixtures(project(":core:designsystem")))
 
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

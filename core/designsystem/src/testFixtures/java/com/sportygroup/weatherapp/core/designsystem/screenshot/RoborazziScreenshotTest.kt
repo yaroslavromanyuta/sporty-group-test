@@ -1,4 +1,4 @@
-package com.sportygroup.weatherapp.feature.forecast.screenshot
+package com.sportygroup.weatherapp.core.designsystem.screenshot
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,7 +24,9 @@ data class ThemeVariant(val label: String, val night: Boolean, val fontScale: Fl
 }
 
 /**
- * Base class for JVM (Robolectric + Roborazzi) screenshot tests.
+ * Shared base class for JVM (Robolectric + Roborazzi) screenshot tests across all feature and core
+ * modules. Lives in `:core:designsystem` test fixtures; consume it from a module with
+ * `testImplementation(testFixtures(project(":core:designsystem")))`.
  *
  * Every concrete test is run once per [ThemeVariant], so a single `snapshot(...)` call produces
  * four golden images covering both required dimensions: the two color themes (light/dark) and an
@@ -47,11 +49,7 @@ abstract class RoborazziScreenshotTest(private val variant: ThemeVariant) {
             CompositionLocalProvider(
                 LocalDensity provides Density(density = base.density, fontScale = variant.fontScale),
             ) {
-                SkyPreview {
-                    Box(modifier = Modifier.fillMaxSize()) {
-                        content()
-                    }
-                }
+                SkyPreview(content)
             }
         }
         composeRule.onRoot().captureRoboImage(

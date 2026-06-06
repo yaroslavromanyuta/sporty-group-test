@@ -3,6 +3,8 @@ package com.sportygroup.weatherapp.feature.forecast.screenshot
 import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.sportygroup.weatherapp.core.designsystem.screenshot.RoborazziScreenshotTest
+import com.sportygroup.weatherapp.core.designsystem.screenshot.ThemeVariant
 import com.sportygroup.weatherapp.feature.forecast.presentation.CitySearchScreen
 import com.sportygroup.weatherapp.feature.forecast.presentation.ForecastScreen
 import com.sportygroup.weatherapp.feature.forecast.presentation.component.CityRow

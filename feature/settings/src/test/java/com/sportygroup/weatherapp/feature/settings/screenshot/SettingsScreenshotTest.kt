@@ -1,5 +1,7 @@
 package com.sportygroup.weatherapp.feature.settings.screenshot
 
+import com.sportygroup.weatherapp.core.designsystem.screenshot.RoborazziScreenshotTest
+import com.sportygroup.weatherapp.core.designsystem.screenshot.ThemeVariant
 import com.sportygroup.weatherapp.feature.settings.presentation.SettingsScreen
 import com.sportygroup.weatherapp.feature.settings.presentation.component.SegmentOption
 import com.sportygroup.weatherapp.feature.settings.presentation.component.SettingsDivider
