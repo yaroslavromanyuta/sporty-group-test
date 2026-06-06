@@ -1,5 +1,7 @@
 # SkyCast — Android Weather Forecast App
 
+[![Android CI](https://github.com/yaroslavromanyuta/sporty-group-test/actions/workflows/android-ci.yml/badge.svg?branch=main)](https://github.com/yaroslavromanyuta/sporty-group-test/actions/workflows/android-ci.yml)
+
 SkyCast is a small, production-like Android weather app built for the SkyGroup home
 assignment. It shows the current-day and 7-day forecast for your current location or any
 city you search for, with explicit handling of loading, error, empty and
@@ -184,6 +186,26 @@ Run the screenshot tests:
 > `com.android.compose.screenshot` plugin was evaluated first but its preview discovery does
 > not yet work with this AGP 9.2 / Kotlin 2.3 toolchain (it silently finds zero previews),
 > so Roborazzi was chosen as the robust, actively-maintained alternative.
+
+---
+
+## Continuous integration
+
+GitHub Actions runs the verification build on every pull request targeting `main`
+(`.github/workflows/android-ci.yml`). The workflow triggers on PR `opened`, `synchronize`
+(new commits pushed to the PR branch), `reopened` and `ready_for_review` — it does **not**
+run on arbitrary branch pushes. On an Ubuntu runner it checks out the repo, sets up **JDK
+21** and the **Android SDK**, restores the **Gradle cache**, then runs:
+
+```bash
+./gradlew clean build          # compile + lint + unit tests for all modules
+./gradlew testDebugUnitTest    # JVM unit + integration tests
+./gradlew verifyRoborazziDebug # JVM screenshot regression (no emulator)
+```
+
+No secrets or API keys are needed — the app uses the key-free Open-Meteo APIs. Emulator-based
+connected tests are intentionally left out of CI (run `./gradlew connectedAndroidTest`
+locally against a device/emulator).
 
 ---
 

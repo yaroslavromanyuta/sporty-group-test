@@ -1,0 +1,66 @@
+name: Android CI
+
+# Run only for pull requests targeting `main`. The `pull_request` event with the
+# `synchronize` type also covers new commits pushed to the source branch of an
+# already-open PR, so a separate `push` trigger is not needed.
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review
+
+# Cancel superseded runs when new commits are pushed to the same PR branch.
+concurrency:
+  group: android-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build & verify
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
+      - name: Set up Gradle (with cache)
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Clean verification build
+        run: ./gradlew clean build
+
+      - name: Run JVM unit tests
+        run: ./gradlew testDebugUnitTest
+
+      - name: Verify screenshot tests (Roborazzi, JVM)
+        run: ./gradlew verifyRoborazziDebug
+
+      - name: Upload test & lint reports
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: reports
+          path: |
+            **/build/reports/
+            **/build/outputs/roborazzi/
+          if-no-files-found: ignore
+          retention-days: 7

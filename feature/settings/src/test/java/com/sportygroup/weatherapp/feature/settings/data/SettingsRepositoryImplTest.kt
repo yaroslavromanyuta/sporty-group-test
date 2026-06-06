@@ -20,6 +20,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
+import java.io.File
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class SettingsRepositoryImplTest {
@@ -35,7 +36,10 @@ class SettingsRepositoryImplTest {
     fun setUp() {
         scope = CoroutineScope(UnconfinedTestDispatcher())
         dataStore = PreferenceDataStoreFactory.create(scope = scope) {
-            tmpFolder.newFile("settings.preferences_pb")
+            // Return a not-yet-existing file and let DataStore create it. Pre-creating it
+            // (e.g. tmpFolder.newFile) breaks DataStore's atomic .tmp -> target rename on
+            // Windows, where renameTo cannot overwrite an existing file.
+            File(tmpFolder.root, "settings.preferences_pb")
         }
         repository = SettingsRepositoryImpl(dataStore, SettingsMapper())
     }
