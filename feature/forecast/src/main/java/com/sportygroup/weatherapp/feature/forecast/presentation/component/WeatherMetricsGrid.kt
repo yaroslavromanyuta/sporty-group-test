@@ -13,15 +13,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.text.font.FontWeight
-import com.sportygroup.weatherapp.core.designsystem.preview.SkyPreview
-import com.sportygroup.weatherapp.core.designsystem.preview.ThemePreviews
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.sportygroup.weatherapp.core.designsystem.component.SkyCard
 import com.sportygroup.weatherapp.core.designsystem.icon.UiIcon
+import com.sportygroup.weatherapp.core.designsystem.preview.SkyPreview
+import com.sportygroup.weatherapp.core.designsystem.preview.ThemePreviews
 import com.sportygroup.weatherapp.core.designsystem.theme.SkyTheme
 import com.sportygroup.weatherapp.feature.forecast.presentation.model.WeatherMetricUiModel
 import com.sportygroup.weatherapp.feature.forecast.presentation.preview.ForecastPreviewData
@@ -52,7 +50,7 @@ fun WeatherMetricsGrid(
 @Composable
 private fun WeatherMetricItem(metric: WeatherMetricUiModel, modifier: Modifier = Modifier) {
     Row(
-        modifier = modifier.clearAndSetSemantics { contentDescription = metric.contentDescription },
+        modifier = modifier.semantics(mergeDescendants = true) { contentDescription = metric.contentDescription },
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(SkyTheme.spacing.m),
     ) {

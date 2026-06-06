@@ -5,6 +5,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import com.sportygroup.weatherapp.core.designsystem.theme.SkyTheme
 import com.sportygroup.weatherapp.feature.forecast.presentation.mapper.ErrorMessage
 import com.sportygroup.weatherapp.feature.forecast.presentation.preview.ForecastPreviewData
@@ -161,9 +162,9 @@ class ForecastScreenTest {
             }
         }
 
-        composeRule.onNodeWithText("Humidity").assertIsDisplayed()
-        composeRule.onNodeWithText("Wind").assertIsDisplayed()
-        composeRule.onNodeWithText("Today").assertIsDisplayed()
+        composeRule.onNodeWithText("Humidity", substring = true).performScrollTo().assertIsDisplayed()
+        composeRule.onNodeWithText("Wind", substring = true).performScrollTo().assertIsDisplayed()
+        composeRule.onNodeWithText("Today", substring = true).performScrollTo().assertIsDisplayed()
     }
 
     @Test

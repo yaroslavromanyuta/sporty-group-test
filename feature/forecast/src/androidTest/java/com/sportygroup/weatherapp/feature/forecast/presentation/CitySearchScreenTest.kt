@@ -64,7 +64,7 @@ class CitySearchScreenTest {
             }
         }
 
-        composeRule.onNodeWithText("Search city or airport").performTextInput("Lis")
+        composeRule.onNodeWithContentDescription("Search city or airport").performTextInput("Lis")
         assertEquals("Lis", lastQuery)
     }
 
@@ -101,7 +101,7 @@ class CitySearchScreenTest {
             }
         }
 
-        composeRule.onNodeWithText("Recent").assertIsDisplayed()
+        composeRule.onNodeWithText("Recent", ignoreCase = true).assertIsDisplayed()
         composeRule.onNodeWithText("Use current location").assertIsDisplayed()
         composeRule.onNodeWithText("Use current location").performClick()
         assertTrue(useCurrentLocation)

@@ -71,7 +71,7 @@ class SkyComponentsTest {
         }
 
         composeRule.onNodeWithText("Search city or airport").assertIsDisplayed()
-        composeRule.onNodeWithText("Search city or airport").performTextInput("Malaga")
+        composeRule.onNodeWithContentDescription("Search city or airport").performTextInput("Malaga")
         assertEquals("Malaga", value)
     }
 
