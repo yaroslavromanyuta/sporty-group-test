@@ -14,7 +14,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
-class AndroidLocationProvider @Inject constructor(
+class CurrentLocationProviderImpl @Inject constructor(
     @ApplicationContext private val context: Context,
     private val fusedClient: FusedLocationProviderClient,
 ) : CurrentLocationProvider {

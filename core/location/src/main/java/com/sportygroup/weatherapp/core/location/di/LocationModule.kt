@@ -3,10 +3,10 @@ package com.sportygroup.weatherapp.core.location.di
 import android.content.Context
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.sportygroup.weatherapp.core.location.AndroidCityNameResolver
-import com.sportygroup.weatherapp.core.location.AndroidLocationProvider
 import com.sportygroup.weatherapp.core.location.CurrentCityNameResolver
+import com.sportygroup.weatherapp.core.location.CurrentCityNameResolverImpl
 import com.sportygroup.weatherapp.core.location.CurrentLocationProvider
+import com.sportygroup.weatherapp.core.location.CurrentLocationProviderImpl
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -21,11 +21,11 @@ abstract class LocationModule {
 
     @Binds
     @Singleton
-    abstract fun bindLocationProvider(impl: AndroidLocationProvider): CurrentLocationProvider
+    abstract fun bindLocationProvider(impl: CurrentLocationProviderImpl): CurrentLocationProvider
 
     @Binds
     @Singleton
-    abstract fun bindCityNameResolver(impl: AndroidCityNameResolver): CurrentCityNameResolver
+    abstract fun bindCityNameResolver(impl: CurrentCityNameResolverImpl): CurrentCityNameResolver
 
     companion object {
         @Provides

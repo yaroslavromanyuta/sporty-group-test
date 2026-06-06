@@ -1,17 +1,17 @@
 package com.sportygroup.weatherapp.feature.forecast.di
 
 import com.sportygroup.weatherapp.feature.forecast.data.mapper.CityDataToDomainMapper
+import com.sportygroup.weatherapp.feature.forecast.data.mapper.CityDataToDomainMapperImpl
 import com.sportygroup.weatherapp.feature.forecast.data.mapper.CityDtoToDataMapper
-import com.sportygroup.weatherapp.feature.forecast.data.mapper.DefaultCityDataToDomainMapper
-import com.sportygroup.weatherapp.feature.forecast.data.mapper.DefaultCityDtoToDataMapper
-import com.sportygroup.weatherapp.feature.forecast.data.mapper.DefaultForecastDataToDomainMapper
-import com.sportygroup.weatherapp.feature.forecast.data.mapper.DefaultForecastDtoToDataMapper
+import com.sportygroup.weatherapp.feature.forecast.data.mapper.CityDtoToDataMapperImpl
 import com.sportygroup.weatherapp.feature.forecast.data.mapper.ForecastDataToDomainMapper
+import com.sportygroup.weatherapp.feature.forecast.data.mapper.ForecastDataToDomainMapperImpl
 import com.sportygroup.weatherapp.feature.forecast.data.mapper.ForecastDtoToDataMapper
+import com.sportygroup.weatherapp.feature.forecast.data.mapper.ForecastDtoToDataMapperImpl
 import com.sportygroup.weatherapp.feature.forecast.data.remote.CitySearchRemoteDataSource
-import com.sportygroup.weatherapp.feature.forecast.data.remote.DefaultCitySearchRemoteDataSource
-import com.sportygroup.weatherapp.feature.forecast.data.remote.DefaultForecastRemoteDataSource
+import com.sportygroup.weatherapp.feature.forecast.data.remote.CitySearchRemoteDataSourceImpl
 import com.sportygroup.weatherapp.feature.forecast.data.remote.ForecastRemoteDataSource
+import com.sportygroup.weatherapp.feature.forecast.data.remote.ForecastRemoteDataSourceImpl
 import com.sportygroup.weatherapp.feature.forecast.data.repository.ForecastRepositoryImpl
 import com.sportygroup.weatherapp.feature.forecast.domain.repository.ForecastRepository
 import dagger.Binds
@@ -30,29 +30,29 @@ abstract class ForecastDataModule {
 
     @Binds
     abstract fun bindForecastRemoteDataSource(
-        impl: DefaultForecastRemoteDataSource,
+        impl: ForecastRemoteDataSourceImpl,
     ): ForecastRemoteDataSource
 
     @Binds
     abstract fun bindCitySearchRemoteDataSource(
-        impl: DefaultCitySearchRemoteDataSource,
+        impl: CitySearchRemoteDataSourceImpl,
     ): CitySearchRemoteDataSource
 
     @Binds
     abstract fun bindForecastDtoToDataMapper(
-        impl: DefaultForecastDtoToDataMapper,
+        impl: ForecastDtoToDataMapperImpl,
     ): ForecastDtoToDataMapper
 
     @Binds
     abstract fun bindForecastDataToDomainMapper(
-        impl: DefaultForecastDataToDomainMapper,
+        impl: ForecastDataToDomainMapperImpl,
     ): ForecastDataToDomainMapper
 
     @Binds
-    abstract fun bindCityDtoToDataMapper(impl: DefaultCityDtoToDataMapper): CityDtoToDataMapper
+    abstract fun bindCityDtoToDataMapper(impl: CityDtoToDataMapperImpl): CityDtoToDataMapper
 
     @Binds
     abstract fun bindCityDataToDomainMapper(
-        impl: DefaultCityDataToDomainMapper,
+        impl: CityDataToDomainMapperImpl,
     ): CityDataToDomainMapper
 }

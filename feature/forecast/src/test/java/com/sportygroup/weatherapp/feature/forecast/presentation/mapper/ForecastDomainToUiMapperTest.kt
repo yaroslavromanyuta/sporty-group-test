@@ -21,7 +21,7 @@ import java.time.LocalDateTime
 class ForecastDomainToUiMapperTest {
 
     private val now = LocalDateTime.of(2026, 6, 5, 12, 0)
-    private lateinit var mapper: DefaultForecastDomainToUiMapper
+    private lateinit var mapper: ForecastDomainToUiMapperImpl
 
     @Before
     fun setUp() {
@@ -39,7 +39,7 @@ class ForecastDomainToUiMapperTest {
                 R.string.unit_pressure_inhg to "inHg",
             ),
         )
-        mapper = DefaultForecastDomainToUiMapper(
+        mapper = ForecastDomainToUiMapperImpl(
             temperatureFormatter = TemperatureFormatter(),
             measurementFormatter = MeasurementFormatter(strings),
             conditionMapper = WeatherConditionUiMapper(strings),

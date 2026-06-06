@@ -11,7 +11,7 @@ import java.util.Locale
 import javax.inject.Inject
 
 /** Reverse-geocodes coordinates to a city name using the platform [Geocoder]. Best-effort. */
-class AndroidCityNameResolver @Inject constructor(
+class CurrentCityNameResolverImpl @Inject constructor(
     @ApplicationContext private val context: Context,
     private val dispatchers: DispatcherProvider,
 ) : CurrentCityNameResolver {

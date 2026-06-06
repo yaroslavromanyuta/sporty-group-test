@@ -2,13 +2,13 @@ package com.sportygroup.weatherapp.feature.forecast.data
 
 import com.sportygroup.weatherapp.core.common.AppError
 import com.sportygroup.weatherapp.core.common.AppResult
-import com.sportygroup.weatherapp.feature.forecast.data.mapper.DefaultCityDataToDomainMapper
-import com.sportygroup.weatherapp.feature.forecast.data.mapper.DefaultCityDtoToDataMapper
-import com.sportygroup.weatherapp.feature.forecast.data.mapper.DefaultForecastDataToDomainMapper
-import com.sportygroup.weatherapp.feature.forecast.data.mapper.DefaultForecastDtoToDataMapper
+import com.sportygroup.weatherapp.feature.forecast.data.mapper.CityDataToDomainMapperImpl
+import com.sportygroup.weatherapp.feature.forecast.data.mapper.CityDtoToDataMapperImpl
+import com.sportygroup.weatherapp.feature.forecast.data.mapper.ForecastDataToDomainMapperImpl
+import com.sportygroup.weatherapp.feature.forecast.data.mapper.ForecastDtoToDataMapperImpl
 import com.sportygroup.weatherapp.feature.forecast.data.mapper.ForecastUnitsMapper
-import com.sportygroup.weatherapp.feature.forecast.data.remote.DefaultCitySearchRemoteDataSource
-import com.sportygroup.weatherapp.feature.forecast.data.remote.DefaultForecastRemoteDataSource
+import com.sportygroup.weatherapp.feature.forecast.data.remote.CitySearchRemoteDataSourceImpl
+import com.sportygroup.weatherapp.feature.forecast.data.remote.ForecastRemoteDataSourceImpl
 import com.sportygroup.weatherapp.feature.forecast.data.remote.api.ForecastApi
 import com.sportygroup.weatherapp.feature.forecast.data.remote.api.GeocodingApi
 import com.sportygroup.weatherapp.feature.forecast.data.repository.ForecastRepositoryImpl
@@ -49,12 +49,12 @@ class ForecastRepositoryIntegrationTest {
             .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
             .build()
         repository = ForecastRepositoryImpl(
-            forecastRemote = DefaultForecastRemoteDataSource(retrofit.create(ForecastApi::class.java)),
-            citySearchRemote = DefaultCitySearchRemoteDataSource(retrofit.create(GeocodingApi::class.java)),
-            forecastDtoToData = DefaultForecastDtoToDataMapper(),
-            forecastDataToDomain = DefaultForecastDataToDomainMapper(),
-            cityDtoToData = DefaultCityDtoToDataMapper(),
-            cityDataToDomain = DefaultCityDataToDomainMapper(),
+            forecastRemote = ForecastRemoteDataSourceImpl(retrofit.create(ForecastApi::class.java)),
+            citySearchRemote = CitySearchRemoteDataSourceImpl(retrofit.create(GeocodingApi::class.java)),
+            forecastDtoToData = ForecastDtoToDataMapperImpl(),
+            forecastDataToDomain = ForecastDataToDomainMapperImpl(),
+            cityDtoToData = CityDtoToDataMapperImpl(),
+            cityDataToDomain = CityDataToDomainMapperImpl(),
             forecastUnitsMapper = ForecastUnitsMapper(),
             stringResources = FakeStringResources(),
             dispatchers = TestDispatcherProvider(),

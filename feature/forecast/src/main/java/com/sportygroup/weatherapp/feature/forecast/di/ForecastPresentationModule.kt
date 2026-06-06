@@ -1,7 +1,7 @@
 package com.sportygroup.weatherapp.feature.forecast.di
 
-import com.sportygroup.weatherapp.feature.forecast.presentation.mapper.DefaultForecastDomainToUiMapper
 import com.sportygroup.weatherapp.feature.forecast.presentation.mapper.ForecastDomainToUiMapper
+import com.sportygroup.weatherapp.feature.forecast.presentation.mapper.ForecastDomainToUiMapperImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -13,6 +13,6 @@ abstract class ForecastPresentationModule {
 
     @Binds
     abstract fun bindForecastDomainToUiMapper(
-        impl: DefaultForecastDomainToUiMapper,
+        impl: ForecastDomainToUiMapperImpl,
     ): ForecastDomainToUiMapper
 }

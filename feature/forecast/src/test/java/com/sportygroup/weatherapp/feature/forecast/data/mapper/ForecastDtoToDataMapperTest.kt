@@ -10,11 +10,11 @@ import org.junit.Test
 
 class ForecastDtoToDataMapperTest {
 
-    private lateinit var mapper: DefaultForecastDtoToDataMapper
+    private lateinit var mapper: ForecastDtoToDataMapperImpl
 
     @Before
     fun setUp() {
-        mapper = DefaultForecastDtoToDataMapper()
+        mapper = ForecastDtoToDataMapperImpl()
     }
 
     @Test
