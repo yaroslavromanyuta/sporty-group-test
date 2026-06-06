@@ -46,11 +46,12 @@ fun InitialChoiceContent(
     onSearch: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val spacing = SkyTheme.spacing
     Column(
         modifier = modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = 22.dp, vertical = 24.dp),
+            .padding(horizontal = spacing.xlPlus, vertical = spacing.xxl),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
@@ -75,24 +76,23 @@ fun InitialChoiceContent(
             }
         }
         SkyCard(
-            modifier = Modifier.padding(top = 28.dp),
-            contentPadding = PaddingValues(24.dp),
+            modifier = Modifier.padding(top = spacing.xxxl),
+            contentPadding = PaddingValues(spacing.xxl),
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
                     text = stringResource(R.string.forecast_welcome_title),
                     color = SkyTheme.colors.textHigh,
-                    fontWeight = FontWeight.ExtraBold,
-                    fontSize = 23.sp,
+                    style = SkyTheme.typography.headline,
                     textAlign = TextAlign.Center,
                 )
                 Text(
                     text = stringResource(R.string.forecast_welcome_message),
                     color = SkyTheme.colors.textMedium,
+                    style = SkyTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Medium,
-                    fontSize = 15.sp,
                     textAlign = TextAlign.Center,
-                    modifier = Modifier.padding(top = 10.dp, bottom = 22.dp),
+                    modifier = Modifier.padding(top = spacing.md, bottom = spacing.xlPlus),
                 )
                 if (permissionPermanentlyDenied) {
                     SkyPrimaryButton(
@@ -112,7 +112,7 @@ fun InitialChoiceContent(
                         text = stringResource(R.string.forecast_search_manually),
                         onClick = onSearch,
                         icon = UiIconType.SEARCH,
-                        modifier = Modifier.padding(top = 12.dp),
+                        modifier = Modifier.padding(top = spacing.m),
                     )
                 }
             }
@@ -128,10 +128,10 @@ fun InitialChoiceContent(
             Text(
                 text = deniedMessage,
                 color = SkyTheme.colors.danger,
+                style = SkyTheme.typography.caption,
                 fontWeight = FontWeight.SemiBold,
-                fontSize = 13.sp,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.padding(top = 16.dp),
+                modifier = Modifier.padding(top = spacing.lg),
             )
         }
     }

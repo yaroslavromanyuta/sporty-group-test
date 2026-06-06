@@ -40,9 +40,9 @@ fun CityRow(
             .fillMaxWidth()
             .clip(RoundedCornerShape(16.dp))
             .clickable(onClick = onClick)
-            .padding(horizontal = 12.dp, vertical = 11.dp),
+            .padding(horizontal = SkyTheme.spacing.m, vertical = SkyTheme.spacing.mdPlus),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(13.dp),
+        horizontalArrangement = Arrangement.spacedBy(SkyTheme.spacing.mPlus),
     ) {
         Box(
             modifier = Modifier
@@ -56,16 +56,15 @@ fun CityRow(
             Text(
                 text = city.name,
                 color = SkyTheme.colors.textHigh,
-                fontWeight = FontWeight.Bold,
-                fontSize = 16.sp,
+                style = SkyTheme.typography.body,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
             Text(
                 text = city.region,
                 color = SkyTheme.colors.textMedium,
+                style = SkyTheme.typography.caption,
                 fontWeight = FontWeight.Medium,
-                fontSize = 13.sp,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )

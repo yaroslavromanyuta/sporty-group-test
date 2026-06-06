@@ -48,6 +48,7 @@ fun SettingsScreen(
     modifier: Modifier = Modifier,
 ) {
     val settings = state.settings
+    val spacing = SkyTheme.spacing
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -58,13 +59,13 @@ fun SettingsScreen(
             )
             .windowInsetsPadding(WindowInsets.systemBars)
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = 16.dp)
-            .padding(top = 8.dp, bottom = 36.dp),
+            .padding(horizontal = spacing.screenHorizontal)
+            .padding(top = spacing.sm, bottom = spacing.huge),
     ) {
         Row(
-            modifier = Modifier.padding(bottom = 20.dp),
+            modifier = Modifier.padding(bottom = spacing.xl),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(6.dp),
+            horizontalArrangement = Arrangement.spacedBy(spacing.s),
         ) {
             SkyIconButton(
                 icon = UiIconType.BACK,
@@ -74,8 +75,7 @@ fun SettingsScreen(
             Text(
                 text = stringResource(R.string.settings_title),
                 color = SkyTheme.colors.textHigh,
-                fontWeight = FontWeight.ExtraBold,
-                fontSize = 22.sp,
+                style = SkyTheme.typography.titleXl,
             )
         }
 
@@ -114,7 +114,7 @@ fun SettingsScreen(
             )
         }
 
-        Spacer(Modifier.height(22.dp))
+        Spacer(Modifier.height(spacing.xlPlus))
 
         SettingsSection(label = stringResource(R.string.settings_section_appearance)) {
             SettingsThemePicker(
@@ -123,23 +123,21 @@ fun SettingsScreen(
             )
         }
 
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(spacing.lg))
         Column(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(3.dp),
+            verticalArrangement = Arrangement.spacedBy(spacing.xxs),
         ) {
             Text(
                 text = stringResource(R.string.settings_app_version),
                 color = SkyTheme.colors.textLow,
-                fontWeight = FontWeight.Bold,
-                fontSize = 12.sp,
+                style = SkyTheme.typography.overline,
             )
             Text(
                 text = stringResource(R.string.settings_data_source),
                 color = SkyTheme.colors.textLow,
-                fontWeight = FontWeight.Medium,
-                fontSize = 11.5.sp,
+                style = SkyTheme.typography.footnote,
             )
         }
     }

@@ -41,11 +41,12 @@ fun ForecastErrorContent(
     onSearch: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val spacing = SkyTheme.spacing
     Column(
         modifier = modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = 22.dp, vertical = 24.dp),
+            .padding(horizontal = spacing.xlPlus, vertical = spacing.xxl),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
@@ -63,24 +64,23 @@ fun ForecastErrorContent(
             )
         }
         SkyCard(
-            modifier = Modifier.padding(top = 28.dp),
-            contentPadding = PaddingValues(24.dp),
+            modifier = Modifier.padding(top = spacing.xxxl),
+            contentPadding = PaddingValues(spacing.xxl),
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
                     text = error.title,
                     color = SkyTheme.colors.textHigh,
-                    fontWeight = FontWeight.ExtraBold,
-                    fontSize = 23.sp,
+                    style = SkyTheme.typography.headline,
                     textAlign = TextAlign.Center,
                 )
                 Text(
                     text = error.message,
                     color = SkyTheme.colors.textMedium,
+                    style = SkyTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Medium,
-                    fontSize = 15.sp,
                     textAlign = TextAlign.Center,
-                    modifier = Modifier.padding(top = 10.dp, bottom = 22.dp),
+                    modifier = Modifier.padding(top = spacing.md, bottom = spacing.xlPlus),
                 )
                 if (canRetry) {
                     SkyPrimaryButton(
@@ -94,7 +94,7 @@ fun ForecastErrorContent(
                         text = stringResource(R.string.forecast_error_search_another),
                         onClick = onSearch,
                         icon = UiIconType.SEARCH,
-                        modifier = Modifier.padding(top = 12.dp),
+                        modifier = Modifier.padding(top = spacing.m),
                     )
                 }
             }
@@ -102,9 +102,8 @@ fun ForecastErrorContent(
         Text(
             text = stringResource(R.string.forecast_error_code, error.code),
             color = SkyTheme.colors.textLow,
-            fontWeight = FontWeight.SemiBold,
-            fontSize = 12.5.sp,
-            modifier = Modifier.padding(top = 16.dp),
+            style = SkyTheme.typography.captionSmall,
+            modifier = Modifier.padding(top = spacing.lg),
         )
     }
 }

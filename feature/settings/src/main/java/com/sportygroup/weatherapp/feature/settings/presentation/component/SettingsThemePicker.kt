@@ -45,15 +45,14 @@ fun SettingsThemePicker(
     onSelect: (ThemeMode) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier = modifier.fillMaxWidth().padding(16.dp)) {
+    Column(modifier = modifier.fillMaxWidth().padding(SkyTheme.spacing.lg)) {
         Text(
             text = stringResource(R.string.settings_theme_label),
             color = SkyTheme.colors.textHigh,
-            fontWeight = FontWeight.Bold,
-            fontSize = 16.sp,
-            modifier = Modifier.padding(bottom = 14.dp),
+            style = SkyTheme.typography.body,
+            modifier = Modifier.padding(bottom = SkyTheme.spacing.ml),
         )
-        Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+        Row(horizontalArrangement = Arrangement.spacedBy(SkyTheme.spacing.md)) {
             themeOptions.forEach { option ->
                 ThemeCard(
                     option = option,
@@ -92,9 +91,9 @@ private fun ThemeCard(
                 RoundedCornerShape(16.dp),
             )
             .selectable(selected = selected, role = Role.RadioButton, onClick = onClick)
-            .padding(vertical = 13.dp, horizontal = 6.dp),
+            .padding(vertical = SkyTheme.spacing.mPlus, horizontal = SkyTheme.spacing.s),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(SkyTheme.spacing.sm),
     ) {
         Box(
             modifier = Modifier
@@ -110,8 +109,8 @@ private fun ThemeCard(
         Text(
             text = stringResource(option.labelRes),
             color = contentColor,
+            style = SkyTheme.typography.captionSmall,
             fontWeight = if (selected) FontWeight.ExtraBold else FontWeight.Bold,
-            fontSize = 12.5.sp,
             textAlign = TextAlign.Center,
             lineHeight = 16.sp,
         )

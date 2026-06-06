@@ -31,8 +31,8 @@ fun HourlyForecastRow(
     hours: List<HourlyForecastUiModel>,
     modifier: Modifier = Modifier,
 ) {
-    SkyCard(modifier = modifier, contentPadding = PaddingValues(14.dp)) {
-        LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+    SkyCard(modifier = modifier, contentPadding = PaddingValues(SkyTheme.spacing.ml)) {
+        LazyRow(horizontalArrangement = Arrangement.spacedBy(SkyTheme.spacing.sm)) {
             items(hours, key = { it.timeLabel }) { hour ->
                 HourlyForecastChip(hour)
             }
@@ -54,17 +54,27 @@ private fun HourlyForecastChip(hour: HourlyForecastUiModel) {
                 if (hour.isNow) Modifier
                 else Modifier.border(1.dp, SkyTheme.colors.chipBorder, SkyTheme.shapes.chip),
             )
-            .padding(horizontal = 6.dp, vertical = 12.dp),
+            .padding(horizontal = SkyTheme.spacing.s, vertical = SkyTheme.spacing.m),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(9.dp),
+        verticalArrangement = Arrangement.spacedBy(SkyTheme.spacing.smPlus),
     ) {
-        Text(text = hour.timeLabel, color = timeColor, fontWeight = FontWeight.Bold, fontSize = 12.5.sp)
+        Text(
+            text = hour.timeLabel,
+            color = timeColor,
+            style = SkyTheme.typography.captionSmall,
+            fontWeight = FontWeight.Bold,
+        )
         WeatherIcon(
             type = hour.weatherType,
             size = 32.dp,
             contentDescription = null,
         )
-        Text(text = hour.temperatureLabel, color = tempColor, fontWeight = FontWeight.ExtraBold, fontSize = 16.sp)
+        Text(
+            text = hour.temperatureLabel,
+            color = tempColor,
+            style = SkyTheme.typography.body,
+            fontWeight = FontWeight.ExtraBold,
+        )
     }
 }
 

@@ -41,46 +41,41 @@ fun CurrentWeatherHero(
         Row(
             verticalAlignment = Alignment.Top,
             modifier = Modifier
-                .padding(top = 6.dp)
+                .padding(top = SkyTheme.spacing.s)
                 .clearAndSetSemantics { contentDescription = current.contentDescription },
         ) {
             Text(
                 text = current.temperature,
                 color = SkyTheme.colors.textHigh,
-                fontWeight = FontWeight.Light,
-                fontSize = 96.sp,
-                letterSpacing = (-4).sp,
+                style = SkyTheme.typography.heroTemperature,
             )
             Text(
                 text = "°",
                 color = SkyTheme.colors.textMedium,
-                fontWeight = FontWeight.Normal,
-                fontSize = 34.sp,
-                modifier = Modifier.padding(top = 8.dp),
+                style = SkyTheme.typography.heroDegree,
+                modifier = Modifier.padding(top = SkyTheme.spacing.sm),
             )
         }
         Text(
             text = current.conditionLabel,
             color = SkyTheme.colors.textHigh,
+            style = SkyTheme.typography.titleM,
             fontWeight = FontWeight.Bold,
-            fontSize = 19.sp,
-            modifier = Modifier.padding(top = 4.dp),
+            modifier = Modifier.padding(top = SkyTheme.spacing.xs),
         )
         Row(
-            horizontalArrangement = Arrangement.spacedBy(14.dp),
-            modifier = Modifier.padding(top = 6.dp),
+            horizontalArrangement = Arrangement.spacedBy(SkyTheme.spacing.ml),
+            modifier = Modifier.padding(top = SkyTheme.spacing.s),
         ) {
             Text(
                 text = stringResource(R.string.forecast_hero_high, current.highLabel),
                 color = SkyTheme.colors.textMedium,
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 15.sp,
+                style = SkyTheme.typography.bodyMedium,
             )
             Text(
                 text = stringResource(R.string.forecast_hero_low, current.lowLabel),
                 color = SkyTheme.colors.textMedium,
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 15.sp,
+                style = SkyTheme.typography.bodyMedium,
             )
         }
     }

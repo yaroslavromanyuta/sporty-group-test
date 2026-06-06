@@ -25,22 +25,19 @@ fun SkySectionHeader(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 4.dp, vertical = 2.dp),
+            .padding(horizontal = SkyTheme.spacing.xs, vertical = SkyTheme.spacing.xxxs),
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         Text(
             text = title.uppercase(),
             color = SkyTheme.colors.textMedium,
-            fontWeight = FontWeight.Bold,
-            fontSize = 13.sp,
-            letterSpacing = 0.6.sp,
+            style = SkyTheme.typography.sectionLabel,
         )
         if (actionText != null) {
             Text(
                 text = actionText,
                 color = SkyTheme.colors.primary,
-                fontWeight = FontWeight.Bold,
-                fontSize = 13.sp,
+                style = SkyTheme.typography.caption,
                 textAlign = TextAlign.End,
                 modifier = if (onActionClick != null) Modifier.clickable(onClick = onActionClick) else Modifier,
             )

@@ -38,14 +38,14 @@ fun WeeklyForecastList(
     days: List<DailyForecastUiModel>,
     modifier: Modifier = Modifier,
 ) {
-    SkyCard(modifier = modifier, contentPadding = PaddingValues(14.dp)) {
+    SkyCard(modifier = modifier, contentPadding = PaddingValues(SkyTheme.spacing.ml)) {
         Column {
             days.forEachIndexed { index, day ->
                 DailyForecastRow(day)
                 if (index < days.lastIndex) {
                     HorizontalDivider(
                         color = SkyTheme.colors.cardBorder,
-                        modifier = Modifier.padding(horizontal = 4.dp),
+                        modifier = Modifier.padding(horizontal = SkyTheme.spacing.xs),
                     )
                 }
             }
@@ -58,30 +58,29 @@ private fun DailyForecastRow(day: DailyForecastUiModel) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 11.dp, horizontal = 4.dp),
+            .padding(vertical = SkyTheme.spacing.mdPlus, horizontal = SkyTheme.spacing.xs),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        horizontalArrangement = Arrangement.spacedBy(SkyTheme.spacing.m),
     ) {
         Text(
             text = day.dayLabel,
             color = if (day.isToday) SkyTheme.colors.textHigh else SkyTheme.colors.textMedium,
+            style = SkyTheme.typography.bodyMedium,
             fontWeight = if (day.isToday) FontWeight.ExtraBold else FontWeight.Bold,
-            fontSize = 15.sp,
             modifier = Modifier.width(42.dp),
         )
         WeatherIcon(type = day.weatherType, size = 30.dp, contentDescription = day.conditionLabel)
         Text(
             text = if (day.precipitationProbability > 25) "${day.precipitationProbability}%" else "",
             color = SkyTheme.colors.primary,
-            fontWeight = FontWeight.Bold,
-            fontSize = 12.sp,
+            style = SkyTheme.typography.overline,
             modifier = Modifier.width(34.dp),
         )
         Text(
             text = day.lowLabel,
             color = SkyTheme.colors.textLow,
+            style = SkyTheme.typography.bodyMedium,
             fontWeight = FontWeight.Bold,
-            fontSize = 15.sp,
             textAlign = TextAlign.End,
             modifier = Modifier.width(34.dp),
         )
@@ -93,8 +92,8 @@ private fun DailyForecastRow(day: DailyForecastUiModel) {
         Text(
             text = day.highLabel,
             color = SkyTheme.colors.textHigh,
+            style = SkyTheme.typography.bodyMedium,
             fontWeight = FontWeight.ExtraBold,
-            fontSize = 15.sp,
             textAlign = TextAlign.End,
             modifier = Modifier.width(34.dp),
         )

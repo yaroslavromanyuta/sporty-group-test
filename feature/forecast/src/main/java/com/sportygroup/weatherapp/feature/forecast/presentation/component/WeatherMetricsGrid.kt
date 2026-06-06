@@ -32,12 +32,12 @@ fun WeatherMetricsGrid(
     metrics: List<WeatherMetricUiModel>,
     modifier: Modifier = Modifier,
 ) {
-    SkyCard(modifier = modifier, contentPadding = PaddingValues(18.dp)) {
-        Column(verticalArrangement = Arrangement.spacedBy(18.dp)) {
+    SkyCard(modifier = modifier, contentPadding = PaddingValues(SkyTheme.spacing.lgPlus)) {
+        Column(verticalArrangement = Arrangement.spacedBy(SkyTheme.spacing.lgPlus)) {
             metrics.chunked(2).forEach { rowItems ->
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(14.dp),
+                    horizontalArrangement = Arrangement.spacedBy(SkyTheme.spacing.ml),
                 ) {
                     rowItems.forEach { metric ->
                         WeatherMetricItem(metric = metric, modifier = Modifier.weight(1f))
@@ -54,7 +54,7 @@ private fun WeatherMetricItem(metric: WeatherMetricUiModel, modifier: Modifier =
     Row(
         modifier = modifier.clearAndSetSemantics { contentDescription = metric.contentDescription },
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        horizontalArrangement = Arrangement.spacedBy(SkyTheme.spacing.m),
     ) {
         Box(
             modifier = Modifier
@@ -68,23 +68,20 @@ private fun WeatherMetricItem(metric: WeatherMetricUiModel, modifier: Modifier =
             Text(
                 text = metric.label,
                 color = SkyTheme.colors.textMedium,
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 12.5.sp,
+                style = SkyTheme.typography.captionSmall,
             )
             Row(verticalAlignment = Alignment.Bottom) {
                 Text(
                     text = metric.value,
                     color = SkyTheme.colors.textHigh,
-                    fontWeight = FontWeight.ExtraBold,
-                    fontSize = 17.sp,
+                    style = SkyTheme.typography.value,
                 )
                 if (metric.unit != null) {
                     Text(
                         text = metric.unit,
                         color = SkyTheme.colors.textLow,
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = 12.5.sp,
-                        modifier = Modifier.padding(start = 3.dp, bottom = 1.dp),
+                        style = SkyTheme.typography.captionSmall,
+                        modifier = Modifier.padding(start = SkyTheme.spacing.xxs, bottom = SkyTheme.spacing.hairline),
                     )
                 }
             }

@@ -96,12 +96,13 @@ private fun ForecastContent(
     onOpenSearch: () -> Unit,
     onOpenSettings: () -> Unit,
 ) {
+    val spacing = SkyTheme.spacing
     Column(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = 16.dp)
-            .padding(top = 8.dp, bottom = 28.dp),
+            .padding(horizontal = spacing.screenHorizontal)
+            .padding(top = spacing.sm, bottom = spacing.xxxl),
     ) {
         ForecastTopBar(
             cityName = forecast.cityName,
@@ -111,12 +112,12 @@ private fun ForecastContent(
         )
         CurrentWeatherHero(
             current = forecast.current,
-            modifier = Modifier.padding(top = 10.dp, bottom = 16.dp),
+            modifier = Modifier.padding(top = spacing.md, bottom = spacing.lg),
         )
         Row(
-            modifier = Modifier.align(Alignment.CenterHorizontally).padding(bottom = 22.dp),
+            modifier = Modifier.align(Alignment.CenterHorizontally).padding(bottom = spacing.xlPlus),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(6.dp),
+            horizontalArrangement = Arrangement.spacedBy(spacing.s),
         ) {
             UiIcon(icon = UiIconType.CLOCK, size = 14.dp, tint = SkyTheme.colors.textLow)
             Text(
@@ -125,26 +126,25 @@ private fun ForecastContent(
                     if (forecast.region.isNotBlank()) append(" · ${forecast.region}")
                 },
                 color = SkyTheme.colors.textLow,
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 12.5.sp,
+                style = SkyTheme.typography.captionSmall,
             )
         }
 
         SkySectionHeader(title = stringResource(R.string.forecast_section_hourly))
-        Spacer(Modifier.height(12.dp))
+        Spacer(Modifier.height(spacing.m))
         HourlyForecastRow(hours = forecast.hourly)
 
-        Spacer(Modifier.height(22.dp))
+        Spacer(Modifier.height(spacing.xlPlus))
         SkySectionHeader(
             title = stringResource(R.string.forecast_section_this_week),
             actionText = stringResource(R.string.forecast_section_this_week_action),
         )
-        Spacer(Modifier.height(12.dp))
+        Spacer(Modifier.height(spacing.m))
         WeeklyForecastList(days = forecast.daily)
 
-        Spacer(Modifier.height(22.dp))
+        Spacer(Modifier.height(spacing.xlPlus))
         SkySectionHeader(title = stringResource(R.string.forecast_section_today_details))
-        Spacer(Modifier.height(12.dp))
+        Spacer(Modifier.height(spacing.m))
         WeatherMetricsGrid(metrics = forecast.metrics)
     }
 }

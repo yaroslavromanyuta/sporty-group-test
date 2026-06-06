@@ -18,7 +18,7 @@ import com.sportygroup.weatherapp.core.designsystem.theme.SkyTheme
 fun SkyCard(
     modifier: Modifier = Modifier,
     shape: RoundedCornerShape = SkyTheme.shapes.card,
-    contentPadding: PaddingValues = PaddingValues(20.dp),
+    contentPadding: PaddingValues = PaddingValues(SkyTheme.spacing.xl),
     content: @Composable () -> Unit,
 ) {
     Surface(

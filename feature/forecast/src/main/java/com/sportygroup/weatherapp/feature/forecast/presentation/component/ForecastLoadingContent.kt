@@ -42,13 +42,14 @@ import com.sportygroup.weatherapp.feature.forecast.R
 /** Shimmer skeleton shown while the first forecast loads. */
 @Composable
 fun ForecastLoadingContent(modifier: Modifier = Modifier) {
+    val spacing = SkyTheme.spacing
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
+            .padding(horizontal = spacing.screenHorizontal, vertical = spacing.sm),
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp),
+            modifier = Modifier.fillMaxWidth().padding(vertical = spacing.m),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -56,16 +57,16 @@ fun ForecastLoadingContent(modifier: Modifier = Modifier) {
             ShimmerBox(width = 78.dp, height = 36.dp, radius = 18.dp)
         }
         Column(
-            modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp),
+            modifier = Modifier.fillMaxWidth().padding(vertical = spacing.m),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(18.dp),
+            verticalArrangement = Arrangement.spacedBy(spacing.lgPlus),
         ) {
             ShimmerBox(width = 120.dp, height = 120.dp, radius = 60.dp)
             ShimmerBox(width = 140.dp, height = 60.dp, radius = 16.dp)
             ShimmerBox(width = 120.dp, height = 18.dp, radius = 9.dp)
         }
-        Spacer(Modifier.height(14.dp))
-        SkyCard(contentPadding = androidx.compose.foundation.layout.PaddingValues(14.dp)) {
+        Spacer(Modifier.height(spacing.ml))
+        SkyCard(contentPadding = androidx.compose.foundation.layout.PaddingValues(spacing.ml)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -73,7 +74,7 @@ fun ForecastLoadingContent(modifier: Modifier = Modifier) {
                 repeat(5) {
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(10.dp),
+                        verticalArrangement = Arrangement.spacedBy(spacing.md),
                     ) {
                         ShimmerBox(width = 34.dp, height = 12.dp, radius = 6.dp)
                         ShimmerBox(width = 32.dp, height = 32.dp, radius = 16.dp)
@@ -82,7 +83,7 @@ fun ForecastLoadingContent(modifier: Modifier = Modifier) {
                 }
             }
         }
-        Spacer(Modifier.height(24.dp))
+        Spacer(Modifier.height(spacing.xxl))
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Center,
@@ -96,9 +97,8 @@ fun ForecastLoadingContent(modifier: Modifier = Modifier) {
             Text(
                 text = stringResource(R.string.forecast_loading),
                 color = SkyTheme.colors.textMedium,
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 14.sp,
-                modifier = Modifier.padding(start = 8.dp),
+                style = SkyTheme.typography.label,
+                modifier = Modifier.padding(start = spacing.sm),
             )
         }
     }

@@ -66,12 +66,12 @@ fun SkyGhostButton(
 private fun ButtonContent(text: String, icon: UiIconType?, contentColor: androidx.compose.ui.graphics.Color) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(9.dp),
+        horizontalArrangement = Arrangement.spacedBy(SkyTheme.spacing.smPlus),
     ) {
         if (icon != null) {
             UiIcon(icon = icon, size = 20.dp, tint = contentColor)
         }
-        Text(text = text, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+        Text(text = text, style = SkyTheme.typography.body)
     }
 }
 

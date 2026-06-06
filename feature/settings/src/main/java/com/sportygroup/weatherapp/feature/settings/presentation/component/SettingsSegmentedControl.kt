@@ -36,30 +36,29 @@ fun <T> SettingsSegmentedControl(
     modifier: Modifier = Modifier,
     helper: String? = null,
 ) {
-    Column(modifier = modifier.fillMaxWidth().padding(16.dp)) {
+    Column(modifier = modifier.fillMaxWidth().padding(SkyTheme.spacing.lg)) {
         Text(
             text = label,
             color = SkyTheme.colors.textHigh,
-            fontWeight = FontWeight.Bold,
-            fontSize = 16.sp,
+            style = SkyTheme.typography.body,
         )
         if (helper != null) {
             Text(
                 text = helper,
                 color = SkyTheme.colors.textMedium,
+                style = SkyTheme.typography.captionSmall,
                 fontWeight = FontWeight.Medium,
-                fontSize = 12.5.sp,
-                modifier = Modifier.padding(top = 4.dp),
+                modifier = Modifier.padding(top = SkyTheme.spacing.xs),
             )
         }
         Row(
             modifier = Modifier
-                .padding(top = 12.dp)
+                .padding(top = SkyTheme.spacing.m)
                 .fillMaxWidth()
                 .clip(SkyTheme.shapes.pill)
                 .background(SkyTheme.colors.primarySoft)
-                .padding(3.dp),
-            horizontalArrangement = Arrangement.spacedBy(0.dp),
+                .padding(SkyTheme.spacing.xxs),
+            horizontalArrangement = Arrangement.spacedBy(SkyTheme.spacing.none),
         ) {
             options.forEach { option ->
                 Segment(
@@ -94,15 +93,15 @@ private fun Segment(
         Text(
             text = label,
             color = textColor,
+            style = SkyTheme.typography.bodyMedium,
             fontWeight = if (selected) FontWeight.ExtraBold else FontWeight.Bold,
-            fontSize = 15.sp,
         )
         if (selected) {
             UiIcon(
                 icon = UiIconType.CHECK,
                 size = 16.dp,
                 tint = SkyTheme.colors.primary,
-                modifier = Modifier.padding(start = 6.dp),
+                modifier = Modifier.padding(start = SkyTheme.spacing.s),
             )
         }
     }

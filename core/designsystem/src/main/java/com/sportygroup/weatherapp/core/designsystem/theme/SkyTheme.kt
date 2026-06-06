@@ -44,10 +44,11 @@ fun SkyTheme(
         LocalSkyColors provides skyColors,
         LocalSkySpacing provides SkySpacing(),
         LocalSkyShapes provides SkyShapes(),
+        LocalSkyTypography provides SkyTypography(),
     ) {
         MaterialTheme(
             colorScheme = materialColors,
-            typography = SkyTypography,
+            typography = SkyMaterialTypography,
             content = content,
         )
     }
@@ -61,4 +62,6 @@ object SkyTheme {
         @Composable @ReadOnlyComposable get() = LocalSkySpacing.current
     val shapes: SkyShapes
         @Composable @ReadOnlyComposable get() = LocalSkyShapes.current
+    val typography: SkyTypography
+        @Composable @ReadOnlyComposable get() = LocalSkyTypography.current
 }

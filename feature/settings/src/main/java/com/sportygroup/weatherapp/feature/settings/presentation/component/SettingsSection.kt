@@ -25,12 +25,11 @@ fun SettingsSection(
         Text(
             text = label.uppercase(),
             color = SkyTheme.colors.textMedium,
-            fontWeight = FontWeight.Bold,
-            fontSize = 12.sp,
+            style = SkyTheme.typography.overline,
             letterSpacing = 0.7.sp,
-            modifier = Modifier.padding(start = 4.dp, bottom = 10.dp),
+            modifier = Modifier.padding(start = SkyTheme.spacing.xs, bottom = SkyTheme.spacing.md),
         )
-        SkyCard(contentPadding = PaddingValues(0.dp)) {
+        SkyCard(contentPadding = PaddingValues(SkyTheme.spacing.none)) {
             Column { content() }
         }
     }
@@ -41,6 +40,6 @@ fun SettingsSection(
 fun SettingsDivider() {
     HorizontalDivider(
         color = SkyTheme.colors.cardBorder,
-        modifier = Modifier.padding(horizontal = 16.dp),
+        modifier = Modifier.padding(horizontal = SkyTheme.spacing.lg),
     )
 }

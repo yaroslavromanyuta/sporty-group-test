@@ -50,9 +50,9 @@ fun SkySearchBar(
             .clip(SkyTheme.shapes.pill)
             .background(SkyTheme.colors.card)
             .border(1.dp, SkyTheme.colors.cardBorder, SkyTheme.shapes.pill)
-            .padding(horizontal = 14.dp),
+            .padding(horizontal = SkyTheme.spacing.ml),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(10.dp),
+        horizontalArrangement = Arrangement.spacedBy(SkyTheme.spacing.md),
     ) {
         UiIcon(icon = UiIconType.SEARCH, size = 21.dp, tint = SkyTheme.colors.textMedium)
         Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.CenterStart) {
@@ -60,7 +60,7 @@ fun SkySearchBar(
                 Text(
                     text = placeholder,
                     color = SkyTheme.colors.textLow,
-                    fontSize = 16.sp,
+                    style = SkyTheme.typography.body,
                     fontWeight = FontWeight.Medium,
                 )
             }
@@ -68,9 +68,8 @@ fun SkySearchBar(
                 value = value,
                 onValueChange = onValueChange,
                 singleLine = true,
-                textStyle = TextStyle(
+                textStyle = SkyTheme.typography.body.copy(
                     color = SkyTheme.colors.textHigh,
-                    fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold,
                 ),
                 cursorBrush = SolidColor(SkyTheme.colors.primary),

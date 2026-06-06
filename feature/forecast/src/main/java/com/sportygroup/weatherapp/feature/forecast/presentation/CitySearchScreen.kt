@@ -53,6 +53,7 @@ fun CitySearchScreen(
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val spacing = SkyTheme.spacing
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -62,13 +63,13 @@ fun CitySearchScreen(
                 ),
             )
             .windowInsetsPadding(WindowInsets.systemBars)
-            .padding(horizontal = 16.dp)
-            .padding(top = 8.dp, bottom = 16.dp),
+            .padding(horizontal = spacing.screenHorizontal)
+            .padding(top = spacing.sm, bottom = spacing.lg),
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
+            modifier = Modifier.fillMaxWidth().padding(bottom = spacing.lg),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            horizontalArrangement = Arrangement.spacedBy(spacing.md),
         ) {
             SkyIconButton(
                 icon = UiIconType.BACK,
@@ -78,8 +79,7 @@ fun CitySearchScreen(
             Text(
                 text = stringResource(R.string.search_choose_location),
                 color = SkyTheme.colors.textHigh,
-                fontWeight = FontWeight.ExtraBold,
-                fontSize = 20.sp,
+                style = SkyTheme.typography.titleL,
             )
         }
 
@@ -111,7 +111,7 @@ private fun ResultList(
     leadingIcon: UiIconType,
     onPick: (CityUiModel) -> Unit,
 ) {
-    LazyColumn(modifier = Modifier.padding(top = 18.dp)) {
+    LazyColumn(modifier = Modifier.padding(top = SkyTheme.spacing.lgPlus)) {
         items(cities, key = { "${it.name}-${it.latitude}-${it.longitude}" }) { city ->
             CityRow(city = city, onClick = { onPick(city) }, leadingIcon = leadingIcon)
         }
@@ -124,7 +124,7 @@ private fun SuggestionsList(
     onPick: (CityUiModel) -> Unit,
     onUseCurrentLocation: () -> Unit,
 ) {
-    Column(modifier = Modifier.padding(top = 22.dp)) {
+    Column(modifier = Modifier.padding(top = SkyTheme.spacing.xlPlus)) {
         if (recent.isNotEmpty()) {
             SkySectionHeader(title = stringResource(R.string.search_recent))
             recent.forEach { city ->
@@ -134,7 +134,7 @@ private fun SuggestionsList(
                     leadingIcon = UiIconType.HISTORY,
                 )
             }
-            Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(SkyTheme.spacing.sm))
         }
         SkySectionHeader(title = stringResource(R.string.search_suggested))
         UseCurrentLocationRow(onClick = onUseCurrentLocation)
@@ -148,9 +148,9 @@ private fun UseCurrentLocationRow(onClick: () -> Unit) {
             .fillMaxWidth()
             .clip(RoundedCornerShape(16.dp))
             .clickable(onClick = onClick)
-            .padding(horizontal = 12.dp, vertical = 11.dp),
+            .padding(horizontal = SkyTheme.spacing.m, vertical = SkyTheme.spacing.mdPlus),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(13.dp),
+        horizontalArrangement = Arrangement.spacedBy(SkyTheme.spacing.mPlus),
     ) {
         Box(
             modifier = Modifier
@@ -164,14 +164,13 @@ private fun UseCurrentLocationRow(onClick: () -> Unit) {
             Text(
                 text = stringResource(R.string.forecast_use_current_location),
                 color = SkyTheme.colors.textHigh,
-                fontWeight = FontWeight.Bold,
-                fontSize = 16.sp,
+                style = SkyTheme.typography.body,
             )
             Text(
                 text = stringResource(R.string.search_detect_city),
                 color = SkyTheme.colors.textMedium,
+                style = SkyTheme.typography.caption,
                 fontWeight = FontWeight.Medium,
-                fontSize = 13.sp,
             )
         }
         UiIcon(icon = UiIconType.CHEVRON, size = 18.dp, tint = SkyTheme.colors.textLow)
@@ -180,10 +179,11 @@ private fun UseCurrentLocationRow(onClick: () -> Unit) {
 
 @Composable
 private fun EmptyResults(query: String) {
+    val spacing = SkyTheme.spacing
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(40.dp),
+            .padding(spacing.giant),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
@@ -198,18 +198,16 @@ private fun EmptyResults(query: String) {
         Text(
             text = stringResource(R.string.search_no_matches, query),
             color = SkyTheme.colors.textHigh,
-            fontWeight = FontWeight.ExtraBold,
-            fontSize = 18.sp,
+            style = SkyTheme.typography.titleS,
             textAlign = TextAlign.Center,
-            modifier = Modifier.padding(top = 16.dp),
+            modifier = Modifier.padding(top = spacing.lg),
         )
         Text(
             text = stringResource(R.string.search_no_matches_hint),
             color = SkyTheme.colors.textMedium,
-            fontWeight = FontWeight.Medium,
-            fontSize = 14.5.sp,
+            style = SkyTheme.typography.bodySmall,
             textAlign = TextAlign.Center,
-            modifier = Modifier.padding(top = 6.dp),
+            modifier = Modifier.padding(top = spacing.s),
         )
     }
 }

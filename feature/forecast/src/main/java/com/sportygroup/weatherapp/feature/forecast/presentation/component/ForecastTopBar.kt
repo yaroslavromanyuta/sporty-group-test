@@ -35,17 +35,17 @@ fun ForecastTopBar(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = 6.dp),
+            .padding(vertical = SkyTheme.spacing.s),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(10.dp),
+        horizontalArrangement = Arrangement.spacedBy(SkyTheme.spacing.md),
     ) {
         Row(
             modifier = Modifier
                 .weight(1f)
                 .clickable(onClick = onOpenSearch)
-                .padding(vertical = 6.dp),
+                .padding(vertical = SkyTheme.spacing.s),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(SkyTheme.spacing.sm),
         ) {
             UiIcon(
                 icon = if (isCurrentLocation) UiIconType.LOCATION_FILL else UiIconType.LOCATION,
@@ -58,8 +58,7 @@ fun ForecastTopBar(
                     Text(
                         text = cityName,
                         color = SkyTheme.colors.textHigh,
-                        fontWeight = FontWeight.ExtraBold,
-                        fontSize = 19.sp,
+                        style = SkyTheme.typography.titleM,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )
@@ -67,15 +66,15 @@ fun ForecastTopBar(
                         icon = UiIconType.CHEVRON_DOWN,
                         size = 17.dp,
                         tint = SkyTheme.colors.textMedium,
-                        modifier = Modifier.padding(start = 4.dp),
+                        modifier = Modifier.padding(start = SkyTheme.spacing.xs),
                     )
                 }
                 if (isCurrentLocation) {
                     Text(
                         text = stringResource(R.string.forecast_current_location),
                         color = SkyTheme.colors.textMedium,
+                        style = SkyTheme.typography.overline,
                         fontWeight = FontWeight.SemiBold,
-                        fontSize = 12.sp,
                     )
                 }
             }
