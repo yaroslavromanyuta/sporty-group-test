@@ -6,9 +6,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.LayoutDirection
 import com.github.takahirom.roborazzi.captureRoboImage
 import com.sportygroup.weatherapp.core.designsystem.preview.SkyPreview
 import org.junit.Rule
@@ -19,7 +21,12 @@ import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
 
 /** A rendering variant: a color theme optionally combined with an accessibility font scale. */
-data class ThemeVariant(val label: String, val night: Boolean, val fontScale: Float) {
+data class ThemeVariant(
+    val label: String,
+    val night: Boolean,
+    val fontScale: Float,
+    val layoutDirection: LayoutDirection = LayoutDirection.Ltr
+) {
     override fun toString(): String = label
 }
 
@@ -44,10 +51,14 @@ abstract class RoborazziScreenshotTest(private val variant: ThemeVariant) {
     /** Renders [content] wrapped in `SkyTheme` for the active variant and records a golden image. */
     protected fun snapshot(name: String, content: @Composable () -> Unit) {
         RuntimeEnvironment.setQualifiers(if (variant.night) "+night" else "+notnight")
+        if (variant.layoutDirection == LayoutDirection.Rtl) {
+            RuntimeEnvironment.setQualifiers("+ldrtl")
+        }
         composeRule.setContent {
             val base = LocalDensity.current
             CompositionLocalProvider(
                 LocalDensity provides Density(density = base.density, fontScale = variant.fontScale),
+                LocalLayoutDirection provides variant.layoutDirection,
             ) {
                 SkyPreview(content)
             }
@@ -61,10 +72,14 @@ abstract class RoborazziScreenshotTest(private val variant: ThemeVariant) {
         @JvmStatic
         @ParameterizedRobolectricTestRunner.Parameters(name = "{0}")
         fun variants(): List<Array<Any>> = listOf(
-            arrayOf(ThemeVariant(label = "light", night = false, fontScale = 1f)),
-            arrayOf(ThemeVariant(label = "dark", night = true, fontScale = 1f)),
-            arrayOf(ThemeVariant(label = "a11yLargeFontLight", night = false, fontScale = 1.5f)),
-            arrayOf(ThemeVariant(label = "a11yLargeFontDark", night = true, fontScale = 1.5f)),
+            arrayOf(ThemeVariant(label = "light_ltr", night = false, fontScale = 1f, layoutDirection = LayoutDirection.Ltr)),
+            arrayOf(ThemeVariant(label = "light_rtl", night = false, fontScale = 1f, layoutDirection = LayoutDirection.Rtl)),
+            arrayOf(ThemeVariant(label = "dark_ltr", night = true, fontScale = 1f, layoutDirection = LayoutDirection.Ltr)),
+            arrayOf(ThemeVariant(label = "dark_rtl", night = true, fontScale = 1f, layoutDirection = LayoutDirection.Rtl)),
+            arrayOf(ThemeVariant(label = "a11y_light_ltr", night = false, fontScale = 1.5f, layoutDirection = LayoutDirection.Ltr)),
+            arrayOf(ThemeVariant(label = "a11y_light_rtl", night = false, fontScale = 1.5f, layoutDirection = LayoutDirection.Rtl)),
+            arrayOf(ThemeVariant(label = "a11y_dark_ltr", night = true, fontScale = 1.5f, layoutDirection = LayoutDirection.Ltr)),
+            arrayOf(ThemeVariant(label = "a11y_dark_rtl", night = true, fontScale = 1.5f, layoutDirection = LayoutDirection.Rtl)),
         )
     }
 }
