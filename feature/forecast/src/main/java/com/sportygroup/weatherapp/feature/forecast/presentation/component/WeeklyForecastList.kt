@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
@@ -67,14 +68,16 @@ private fun DailyForecastRow(day: DailyForecastUiModel) {
             color = if (day.isToday) SkyTheme.colors.textHigh else SkyTheme.colors.textMedium,
             style = SkyTheme.typography.bodyMedium,
             fontWeight = if (day.isToday) FontWeight.ExtraBold else FontWeight.Bold,
-            modifier = Modifier.width(42.dp),
+            maxLines = 1,
+            modifier = Modifier.widthIn(min = 42.dp),
         )
         WeatherIcon(type = day.weatherType, size = 30.dp, contentDescription = day.conditionLabel)
         Text(
             text = if (day.precipitationProbability > 25) "${day.precipitationProbability}%" else "",
             color = SkyTheme.colors.primary,
             style = SkyTheme.typography.overline,
-            modifier = Modifier.width(34.dp),
+            maxLines = 1,
+            modifier = Modifier.widthIn(min = 34.dp),
         )
         Text(
             text = day.lowLabel,
@@ -82,7 +85,8 @@ private fun DailyForecastRow(day: DailyForecastUiModel) {
             style = SkyTheme.typography.bodyMedium,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.End,
-            modifier = Modifier.width(34.dp),
+            maxLines = 1,
+            modifier = Modifier.widthIn(min = 34.dp),
         )
         RangeBar(
             startFraction = day.barStartFraction,
@@ -95,7 +99,8 @@ private fun DailyForecastRow(day: DailyForecastUiModel) {
             style = SkyTheme.typography.bodyMedium,
             fontWeight = FontWeight.ExtraBold,
             textAlign = TextAlign.End,
-            modifier = Modifier.width(34.dp),
+            maxLines = 1,
+            modifier = Modifier.widthIn(min = 34.dp),
         )
     }
 }

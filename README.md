@@ -161,9 +161,13 @@ back to showing "Current location".
   search results/empty/input).
 - **Screenshot:** `DesignSystemScreenshotTest`, `ForecastScreenshotTest`,
   `SettingsScreenshotTest` — JVM (Robolectric + **Roborazzi**) golden-image tests covering
-  every reusable component and every screen state. Each composable is captured in **four
-  variants**: light theme, dark theme, and a 1.5× large-font **accessibility** variant of
-  each. Goldens live under `<module>/src/test/screenshots/` and are committed.
+  every reusable component and every screen state. Each composable is captured in **eight
+  variants** — light/dark theme × LTR/RTL layout × normal and 1.5× large-font
+  **accessibility** scale — so both color themes, RTL, and large-font accessibility are
+  asserted at once. The shared harness (`RoborazziScreenshotTest`) lives in
+  `:core:designsystem` **test fixtures** and is reused by every module via
+  `testImplementation(testFixtures(project(":core:designsystem")))`. Goldens live under
+  `<module>/src/test/screenshots/` and are committed.
 
 Run the screenshot tests:
 
