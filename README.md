@@ -15,20 +15,20 @@ HTML/CSS.
 
 ## Requirement coverage
 
-| Requirement | Where |
-|---|---|
-| Current-day forecast | `CurrentWeatherHero`, `WeatherMetricsGrid`, hourly row |
-| Weekly forecast | `WeeklyForecastList` (7 days from Open-Meteo `daily`) |
-| Current location forecast | `GetCurrentLocationForecastUseCase` + `CurrentLocationProvider` |
-| Choose another city | `CitySearchScreen` + Open-Meteo Geocoding |
-| Settings (units + theme) | `:feature:settings` `SettingsScreen`, persisted with DataStore |
-| Units affect API + UI, reload on change | `ForecastUnitsMapper` → Open-Meteo params; ViewModel reloads on unit change |
-| Theme reacts to setting | `MainViewModel` observes `ThemeMode` → `SkyTheme` |
-| 100% executable | `./gradlew :app:assembleDebug` builds a runnable APK |
-| No API key committed | Open-Meteo needs no key |
-| Kotlin / Coroutines / Compose | Throughout |
-| Clean Architecture + feature module | `:feature:forecast` with data/domain/presentation layers |
-| Loading / error / empty / permission states | `ForecastUiState` + dedicated composables |
+| Requirement                                 | Where                                                                       |
+|---------------------------------------------|-----------------------------------------------------------------------------|
+| Current-day forecast                        | `CurrentWeatherHero`, `WeatherMetricsGrid`, hourly row                      |
+| Weekly forecast                             | `WeeklyForecastList` (7 days from Open-Meteo `daily`)                       |
+| Current location forecast                   | `GetCurrentLocationForecastUseCase` + `CurrentLocationProvider`             |
+| Choose another city                         | `CitySearchScreen` + Open-Meteo Geocoding                                   |
+| Settings (units + theme)                    | `:feature:settings` `SettingsScreen`, persisted with DataStore              |
+| Units affect API + UI, reload on change     | `ForecastUnitsMapper` → Open-Meteo params; ViewModel reloads on unit change |
+| Theme reacts to setting                     | `MainViewModel` observes `ThemeMode` → `SkyTheme`                           |
+| 100% executable                             | `./gradlew :app:assembleDebug` builds a runnable APK                        |
+| No API key committed                        | Open-Meteo needs no key                                                     |
+| Kotlin / Coroutines / Compose               | Throughout                                                                  |
+| Clean Architecture + feature module         | `:feature:forecast` with data/domain/presentation layers                    |
+| Loading / error / empty / permission states | `ForecastUiState` + dedicated composables                                   |
 
 ---
 
@@ -40,7 +40,8 @@ HTML/CSS.
 - **Retrofit + OkHttp** with **kotlinx.serialization**
 - **Open-Meteo** Forecast & Geocoding APIs (no key required)
 - **AGP 9.2.1** (built-in Kotlin), **Gradle 9.4.1**, JDK 21, `compileSdk 37`, `minSdk 24`
-- Tests: **JUnit4**, **MockK**, **Turbine**, **kotlinx-coroutines-test**, **MockWebServer**, **Compose UI Test**
+- Tests: **JUnit4**, **MockK**, **Turbine**, **kotlinx-coroutines-test**, **MockWebServer**, *
+  *Compose UI Test**
 
 ---
 
@@ -144,11 +145,8 @@ The debug APK is written to `app/build/outputs/apk/debug/app-debug.apk`.
 
 ## Location permission
 
-On first launch SkyCast tries the current-location flow. If location permission is not
-granted it shows a **first-class permission screen** with "Use my location" (which triggers
-the runtime permission request) and "Search a city instead". Manual city search works fully
-without any location permission. If a city name cannot be reverse-geocoded, the app falls
-back to showing "Current location".
+On first launch SkyCast shows an explicit choice: use current location or search a city manually.
+The runtime location permission request is triggered only after the user taps “Use my location”.
 
 ---
 
@@ -209,6 +207,18 @@ locally against a device/emulator).
 
 ---
 
+# AI Usage
+
+Tools used:
+
+- Claude / Claude Code: implementation assistance.
+- Design handoff tooling: visual direction exploration for the SkyCast UI.
+
+All final implementation decisions, architecture, code structure, and requirement coverage were
+manually reviewed and adjusted.
+
+---
+
 ## Notes / known trade-offs
 
 - The design font (Manrope) is substituted with the platform sans-serif to avoid bundling
@@ -216,4 +226,3 @@ locally against a device/emulator).
 - The "Today's details" grid shows the four metrics available from the forecast request
   (feels-like, humidity, wind, pressure); sunrise/visibility from the mock design are
   omitted since they aren’t part of the live request.
-- See `AI_USAGE.md` for how AI tooling was used on this assignment.
