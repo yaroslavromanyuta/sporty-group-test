@@ -159,11 +159,27 @@ back to showing "Current location".
   **MockWebServer** (success, empty search, HTTP error → typed failure).
 - **Compose UI:** `ForecastScreenTest`, `CitySearchScreenTest` (content/error/permission,
   search results/empty/input).
+- **Screenshot:** `DesignSystemScreenshotTest`, `ForecastScreenshotTest`,
+  `SettingsScreenshotTest` — JVM (Robolectric + **Roborazzi**) golden-image tests covering
+  every reusable component and every screen state. Each composable is captured in **four
+  variants**: light theme, dark theme, and a 1.5× large-font **accessibility** variant of
+  each. Goldens live under `<module>/src/test/screenshots/` and are committed.
 
-> **Screenshot tests:** not wired up. The available screenshot tooling (Paparazzi 2.x
-> alpha) is not yet stable against AGP 9.2, so to keep the project 100% buildable the visual
-> states are covered by extensive `@Preview`s and Compose UI tests instead. Enabling
-> Compose Preview screenshot testing is the intended follow-up once tooling stabilises.
+Run the screenshot tests:
+
+```bash
+# Verify the UI against the committed golden images (run on every CI build)
+./gradlew verifyRoborazziDebug
+
+# Re-record the goldens after an intentional UI change, then review the diff
+./gradlew recordRoborazziDebug
+```
+
+> Screenshot tests use Roborazzi on Robolectric (pinned to `@Config(sdk = 34)`) with native
+> graphics, so they run entirely on the JVM — no emulator required. The official
+> `com.android.compose.screenshot` plugin was evaluated first but its preview discovery does
+> not yet work with this AGP 9.2 / Kotlin 2.3 toolchain (it silently finds zero previews),
+> so Roborazzi was chosen as the robust, actively-maintained alternative.
 
 ---
 
