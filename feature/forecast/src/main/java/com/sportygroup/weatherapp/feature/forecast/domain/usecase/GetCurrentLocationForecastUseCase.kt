@@ -29,6 +29,7 @@ class GetCurrentLocationForecastUseCase @Inject constructor(
                     is AppResult.Failure -> forecast
                     is AppResult.Success -> {
                         val resolved = cityNameResolver.resolve(coordinates.value)
+                            ?.takeIf { it.name.isNotEmpty() }
                         val city = (resolved ?: forecast.value.city).copy(isCurrentLocation = true)
                         AppResult.Success(forecast.value.copy(city = city))
                     }

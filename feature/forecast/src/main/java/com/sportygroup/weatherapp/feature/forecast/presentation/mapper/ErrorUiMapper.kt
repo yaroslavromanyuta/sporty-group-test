@@ -39,6 +39,11 @@ class ErrorUiMapper @Inject constructor(
             message = stringResources.getString(R.string.error_empty_message),
             code = "EMPTY",
         )
+        is AppError.ServerError -> ErrorMessage(
+            title = stringResources.getString(R.string.error_generic_title),
+            message = stringResources.getString(R.string.error_server_message, error.code),
+            code = "SERVER_${error.code}",
+        )
         is AppError.Unknown -> ErrorMessage(
             title = stringResources.getString(R.string.error_generic_title),
             message = stringResources.getString(R.string.error_unknown_message),

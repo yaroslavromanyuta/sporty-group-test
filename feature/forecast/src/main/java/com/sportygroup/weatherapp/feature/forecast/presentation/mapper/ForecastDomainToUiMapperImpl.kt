@@ -1,6 +1,5 @@
 package com.sportygroup.weatherapp.feature.forecast.presentation.mapper
 
-import com.sportygroup.weatherapp.core.common.DateTimeProvider
 import com.sportygroup.weatherapp.core.common.StringResources
 import com.sportygroup.weatherapp.core.designsystem.icon.UiIconType
 import com.sportygroup.weatherapp.core.model.DailyForecast
@@ -21,7 +20,6 @@ class ForecastDomainToUiMapperImpl @Inject constructor(
     private val temperatureFormatter: TemperatureFormatter,
     private val measurementFormatter: MeasurementFormatter,
     private val conditionMapper: WeatherConditionUiMapper,
-    private val dateTimeProvider: DateTimeProvider,
     private val stringResources: StringResources,
 ) : ForecastDomainToUiMapper {
 
@@ -59,7 +57,7 @@ class ForecastDomainToUiMapperImpl @Inject constructor(
     }
 
     private fun mapHourly(forecast: Forecast): List<HourlyForecastUiModel> {
-        val currentHour = dateTimeProvider.now().truncatedTo(ChronoUnit.HOURS)
+        val currentHour = forecast.current.updatedAt.truncatedTo(ChronoUnit.HOURS)
         val upcoming = forecast.hourly.filter { !it.time.isBefore(currentHour) }
             .ifEmpty { forecast.hourly }
             .take(24)
@@ -84,7 +82,7 @@ class ForecastDomainToUiMapperImpl @Inject constructor(
         val minLow = days.minOf { it.low }
         val maxHigh = days.maxOf { it.high }
         val span = (maxHigh - minLow).takeIf { it != 0.0 } ?: 1.0
-        val today = dateTimeProvider.now().toLocalDate()
+        val today = forecast.current.updatedAt.toLocalDate()
         return days.map { day ->
             val isToday = day.date == today
             DailyForecastUiModel(

@@ -58,6 +58,7 @@
     <string name="error_empty_title">Nothing to show</string>
     <string name="error_empty_message">We couldn\'t find any forecast data. Try another city.</string>
     <string name="error_unknown_message">An unexpected error occurred. Please try again.</string>
+    <string name="error_server_message">The weather service returned an error (%1$d). Please try again later.</string>
 
     <!-- Error screen -->
     <string name="forecast_error_try_again">Try again</string>

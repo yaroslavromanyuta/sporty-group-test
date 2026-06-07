@@ -8,7 +8,6 @@ import com.sportygroup.weatherapp.core.model.Forecast
 import com.sportygroup.weatherapp.core.model.HourlyForecast
 import com.sportygroup.weatherapp.core.model.WeatherCondition
 import com.sportygroup.weatherapp.feature.forecast.R
-import com.sportygroup.weatherapp.feature.forecast.testutil.FakeDateTimeProvider
 import com.sportygroup.weatherapp.feature.forecast.testutil.FakeStringResources
 import com.sportygroup.weatherapp.lib.settings.model.MeasurementSystem
 import org.junit.Assert.assertEquals
@@ -43,7 +42,6 @@ class ForecastDomainToUiMapperTest {
             temperatureFormatter = TemperatureFormatter(),
             measurementFormatter = MeasurementFormatter(strings),
             conditionMapper = WeatherConditionUiMapper(strings),
-            dateTimeProvider = FakeDateTimeProvider(now),
             stringResources = strings,
         )
     }

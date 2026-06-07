@@ -12,9 +12,15 @@ class WeatherCodeMapperTest {
     }
 
     @Test
-    fun `partly cloudy codes map to partly cloudy`() {
-        assertEquals(WeatherCondition.PARTLY_CLOUDY, WeatherCodeMapper.toCondition(1))
+    fun `mainly clear maps to clear day or night`() {
+        assertEquals(WeatherCondition.CLEAR_DAY, WeatherCodeMapper.toCondition(1))
+        assertEquals(WeatherCondition.CLEAR_NIGHT, WeatherCodeMapper.toCondition(1, isNight = true))
+    }
+
+    @Test
+    fun `partly cloudy maps to partly cloudy regardless of time`() {
         assertEquals(WeatherCondition.PARTLY_CLOUDY, WeatherCodeMapper.toCondition(2))
+        assertEquals(WeatherCondition.PARTLY_CLOUDY, WeatherCodeMapper.toCondition(2, isNight = true))
     }
 
     @Test

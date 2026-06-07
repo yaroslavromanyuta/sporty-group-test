@@ -17,7 +17,8 @@ suspend inline fun <T> safeApiCall(block: () -> T): AppResult<T> = try {
 } catch (e: IOException) {
     AppResult.Failure(AppError.Network)
 } catch (e: HttpException) {
-    AppResult.Failure(AppError.Network)
+    if (e.code() in 500..599) AppResult.Failure(AppError.Network)
+    else AppResult.Failure(AppError.ServerError(e.code()))
 } catch (e: Exception) {
     AppResult.Failure(AppError.Unknown(e))
 }

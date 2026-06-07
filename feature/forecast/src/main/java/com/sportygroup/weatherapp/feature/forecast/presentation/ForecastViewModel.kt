@@ -22,12 +22,13 @@ import com.sportygroup.weatherapp.lib.settings.model.AppSettings
 import com.sportygroup.weatherapp.lib.settings.usecase.ObserveSettingsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -49,8 +50,8 @@ class ForecastViewModel @Inject constructor(
     private val _searchState = MutableStateFlow(CitySearchUiState())
     val searchState: StateFlow<CitySearchUiState> = _searchState.asStateFlow()
 
-    private val _events = Channel<ForecastUiEvent>(Channel.BUFFERED)
-    val events = _events.receiveAsFlow()
+    private val _events = MutableSharedFlow<ForecastUiEvent>(extraBufferCapacity = 64)
+    val events: SharedFlow<ForecastUiEvent> = _events.asSharedFlow()
 
     private var settings: AppSettings = AppSettings.DEFAULT
     private var settingsInitialized = false
@@ -105,13 +106,20 @@ class ForecastViewModel @Inject constructor(
      * will no longer show the permission dialog and the user must enable it from Settings.
      */
     fun onLocationPermissionDenied(permanently: Boolean = false) {
-        usingCurrentLocation = false
         _uiState.update { current ->
-            if (current is ForecastUiState.Content) current
-            else ForecastUiState.InitialChoice(
-                permissionDenied = true,
-                permissionPermanentlyDenied = permanently,
-            )
+            if (current is ForecastUiState.Content) {
+                // Permission revoked while forecast is visible — preserve the data so the
+                // user can still see it. usingCurrentLocation stays true so the next
+                // reload (e.g. pull-to-refresh) will hit NoLocationPermission and redirect
+                // to the start screen with an appropriate message.
+                current
+            } else {
+                usingCurrentLocation = false
+                ForecastUiState.InitialChoice(
+                    permissionDenied = true,
+                    permissionPermanentlyDenied = permanently,
+                )
+            }
         }
     }
 
@@ -177,10 +185,14 @@ class ForecastViewModel @Inject constructor(
                     forecast = forecastUiMapper.map(result.value, settings.measurementSystem),
                 )
             }
-            is AppResult.Failure -> _uiState.value = when (result.error) {
-                // Permission revoked between launch and load: return to the start screen.
-                AppError.NoLocationPermission -> ForecastUiState.InitialChoice(permissionDenied = true)
-                else -> ForecastUiState.Error(errorUiMapper.map(result.error))
+            is AppResult.Failure -> {
+                if (result.error == AppError.NoLocationPermission) {
+                    usingCurrentLocation = false
+                }
+                _uiState.value = when (result.error) {
+                    AppError.NoLocationPermission -> ForecastUiState.InitialChoice(permissionDenied = true)
+                    else -> ForecastUiState.Error(errorUiMapper.map(result.error))
+                }
             }
         }
     }
@@ -218,7 +230,7 @@ class ForecastViewModel @Inject constructor(
     }
 
     private fun emitEvent(event: ForecastUiEvent) {
-        viewModelScope.launch { _events.send(event) }
+        viewModelScope.launch { _events.emit(event) }
     }
 
     private fun AppSettings.affectsForecastUnits(other: AppSettings): Boolean =

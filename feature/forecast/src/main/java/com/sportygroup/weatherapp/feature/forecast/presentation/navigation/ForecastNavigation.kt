@@ -31,6 +31,7 @@ import com.sportygroup.weatherapp.feature.forecast.presentation.ForecastScreen
 import com.sportygroup.weatherapp.feature.forecast.presentation.ForecastViewModel
 import com.sportygroup.weatherapp.feature.forecast.presentation.state.CitySearchUiAction
 import com.sportygroup.weatherapp.feature.forecast.presentation.state.ForecastUiEvent
+import com.sportygroup.weatherapp.feature.forecast.presentation.state.ForecastUiState
 import kotlinx.coroutines.flow.collectLatest
 
 /**
@@ -79,10 +80,13 @@ private fun ForecastRoute(
         onRequesting = viewModel::onLocationPermissionRequested,
     )
 
-    // Re-check on resume so granting from system Settings unblocks the start screen.
+    // Re-check on resume: unblock the start screen after a Settings grant, or signal that
+    // permission was revoked while the app was backgrounded.
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
         if (context.hasLocationPermission()) {
             viewModel.onLocationPermissionAvailable()
+        } else {
+            viewModel.onLocationPermissionDenied(context.isLocationPermissionPermanentlyDenied())
         }
     }
 
@@ -116,6 +120,19 @@ private fun CitySearchRoute(
         viewModel.events.collectLatest { event ->
             if (event is ForecastUiEvent.ShowMessage) {
                 Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    // Recover from a stuck RequestingPermission state — this happens on some devices when the
+    // system dialog is dismissed via the back/home gesture instead of accepting/denying.
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
+        if (viewModel.uiState.value is ForecastUiState.RequestingPermission) {
+            if (context.hasLocationPermission()) {
+                viewModel.onLocationPermissionGranted()
+                onBack()
+            } else {
+                viewModel.onLocationPermissionDenied(context.isLocationPermissionPermanentlyDenied())
             }
         }
     }
