@@ -147,7 +147,6 @@ class ForecastViewModel @Inject constructor(
         _uiState.value = ForecastUiState.Loading
         viewModelScope.launch {
             handleForecastResult(getForecastByCity(city, settings))
-            emitEvent(ForecastUiEvent.NavigateToHome)
         }
     }
 
