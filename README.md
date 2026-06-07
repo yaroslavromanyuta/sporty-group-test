@@ -205,6 +205,19 @@ No secrets or API keys are needed — the app uses the key-free Open-Meteo APIs.
 connected tests are intentionally left out of CI (run `./gradlew connectedAndroidTest`
 locally against a device/emulator).
 
+**Branch protection:** `main` requires the `Build & verify` check to pass and the branch to
+be up to date before a PR can be merged.
+
+**Updating screenshot baselines:** screenshot goldens are generated on the Linux CI runner
+to avoid cross-platform rendering differences. After an intentional UI change, comment
+`/record-screenshots` on the open PR — the `Record & commit screenshot baselines` job will
+re-record the goldens and push them back to the branch automatically. The same job can be
+triggered manually from the GitHub Actions UI or via:
+
+```bash
+gh workflow run android-ci.yml --ref <branch>
+```
+
 ---
 
 # AI Usage
