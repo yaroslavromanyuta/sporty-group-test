@@ -106,10 +106,13 @@ class ForecastViewModel @Inject constructor(
      */
     fun onLocationPermissionDenied(permanently: Boolean = false) {
         usingCurrentLocation = false
-        _uiState.value = ForecastUiState.InitialChoice(
-            permissionDenied = true,
-            permissionPermanentlyDenied = permanently,
-        )
+        _uiState.update { current ->
+            if (current is ForecastUiState.Content) current
+            else ForecastUiState.InitialChoice(
+                permissionDenied = true,
+                permissionPermanentlyDenied = permanently,
+            )
+        }
     }
 
     /**

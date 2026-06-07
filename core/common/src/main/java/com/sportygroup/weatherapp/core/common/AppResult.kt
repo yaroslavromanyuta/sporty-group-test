@@ -10,7 +10,13 @@ sealed interface AppResult<out T> {
 }
 
 inline fun <T, R> AppResult<T>.map(transform: (T) -> R): AppResult<R> = when (this) {
-    is AppResult.Success -> AppResult.Success(transform(value))
+    is AppResult.Success -> try {
+        AppResult.Success(transform(value))
+    } catch (e: kotlinx.coroutines.CancellationException) {
+        throw e
+    } catch (e: Exception) {
+        AppResult.Failure(AppError.Unknown(e))
+    }
     is AppResult.Failure -> this
 }
 

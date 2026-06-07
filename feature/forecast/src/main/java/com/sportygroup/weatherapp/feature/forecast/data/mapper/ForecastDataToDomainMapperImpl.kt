@@ -16,25 +16,26 @@ class ForecastDataToDomainMapperImpl @Inject constructor() : ForecastDataToDomai
     override fun map(model: ForecastDataModel, city: City): Forecast {
         val today = model.daily.firstOrNull()
         val current = model.current
+        val currentTime = parseDateTime(current.time) ?: LocalDateTime.now()
         return Forecast(
             city = city,
             current = CurrentWeather(
                 temperature = current.temperature,
                 apparentTemperature = current.apparentTemperature,
-                condition = WeatherCodeMapper.toCondition(current.weatherCode),
+                condition = WeatherCodeMapper.toCondition(current.weatherCode, isNight(currentTime.hour)),
                 humidityPercent = current.humidityPercent,
                 windSpeed = current.windSpeed,
                 pressureHpa = current.pressureHpa,
                 high = today?.high ?: current.temperature,
                 low = today?.low ?: current.temperature,
-                updatedAt = parseDateTime(current.time) ?: LocalDateTime.now(),
+                updatedAt = currentTime,
             ),
             hourly = model.hourly.mapNotNull { entry ->
                 val time = parseDateTime(entry.time) ?: return@mapNotNull null
                 HourlyForecast(
                     time = time,
                     temperature = entry.temperature,
-                    condition = WeatherCodeMapper.toCondition(entry.weatherCode),
+                    condition = WeatherCodeMapper.toCondition(entry.weatherCode, isNight(time.hour)),
                     precipitationProbability = entry.precipitationProbability,
                 )
             },
@@ -62,4 +63,6 @@ class ForecastDataToDomainMapperImpl @Inject constructor() : ForecastDataToDomai
                 null
             }
         }
+
+    private fun isNight(hour: Int): Boolean = hour < 6 || hour >= 20
 }

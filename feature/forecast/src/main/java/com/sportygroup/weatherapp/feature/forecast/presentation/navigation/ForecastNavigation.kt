@@ -110,6 +110,15 @@ private fun CitySearchRoute(
     onBack: () -> Unit,
 ) {
     val state by viewModel.searchState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+
+    LaunchedEffect(viewModel) {
+        viewModel.events.collectLatest { event ->
+            if (event is ForecastUiEvent.ShowMessage) {
+                Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
 
     val requestLocation = rememberLocationPermissionRequester(
         onGranted = {

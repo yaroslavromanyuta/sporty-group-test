@@ -20,6 +20,7 @@ class ForecastDtoToDataMapperTest {
     @Test
     fun `zips parallel hourly arrays into rows`() {
         val dto = ForecastResponseDto(
+            current = CurrentDto(temperature = 0.0),
             hourly = HourlyDto(
                 time = listOf("2026-06-05T12:00", "2026-06-05T13:00"),
                 temperature = listOf(24.0, 25.0),
@@ -53,6 +54,7 @@ class ForecastDtoToDataMapperTest {
     @Test
     fun `maps daily highs and lows`() {
         val dto = ForecastResponseDto(
+            current = CurrentDto(temperature = 0.0),
             daily = DailyDto(
                 time = listOf("2026-06-05"),
                 weatherCode = listOf(61),

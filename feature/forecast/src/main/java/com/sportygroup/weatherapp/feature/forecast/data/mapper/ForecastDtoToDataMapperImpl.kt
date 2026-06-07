@@ -11,19 +11,19 @@ import javax.inject.Inject
 class ForecastDtoToDataMapperImpl @Inject constructor() : ForecastDtoToDataMapper {
 
     override fun map(dto: ForecastResponseDto): ForecastDataModel {
-        val current = dto.current
+        val current = requireNotNull(dto.current) { "Forecast response missing current weather block" }
         return ForecastDataModel(
             latitude = dto.latitude,
             longitude = dto.longitude,
             timezone = dto.timezone,
             current = CurrentDataModel(
-                time = current?.time,
-                temperature = current?.temperature ?: 0.0,
-                apparentTemperature = current?.apparentTemperature ?: current?.temperature ?: 0.0,
-                humidityPercent = current?.relativeHumidity ?: 0,
-                weatherCode = current?.weatherCode ?: -1,
-                windSpeed = current?.windSpeed ?: 0.0,
-                pressureHpa = current?.pressure ?: 0.0,
+                time = current.time,
+                temperature = current.temperature ?: 0.0,
+                apparentTemperature = current.apparentTemperature ?: current.temperature ?: 0.0,
+                humidityPercent = current.relativeHumidity ?: 0,
+                weatherCode = current.weatherCode ?: -1,
+                windSpeed = current.windSpeed ?: 0.0,
+                pressureHpa = current.pressure ?: 0.0,
             ),
             hourly = mapHourly(dto),
             daily = mapDaily(dto),

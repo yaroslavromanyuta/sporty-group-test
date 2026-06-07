@@ -12,7 +12,6 @@ import com.sportygroup.weatherapp.feature.forecast.data.remote.ForecastRemoteDat
 import com.sportygroup.weatherapp.feature.forecast.data.remote.api.ForecastApi
 import com.sportygroup.weatherapp.feature.forecast.data.remote.api.GeocodingApi
 import com.sportygroup.weatherapp.feature.forecast.data.repository.ForecastRepositoryImpl
-import com.sportygroup.weatherapp.feature.forecast.testutil.FakeStringResources
 import com.sportygroup.weatherapp.feature.forecast.testutil.TestDispatcherProvider
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.json.Json
@@ -52,7 +51,6 @@ class CitySearchRepositoryIntegrationTest {
             cityDtoToData = CityDtoToDataMapperImpl(),
             cityDataToDomain = CityDataToDomainMapperImpl(),
             forecastUnitsMapper = ForecastUnitsMapper(),
-            stringResources = FakeStringResources(),
             dispatchers = TestDispatcherProvider(),
         )
     }

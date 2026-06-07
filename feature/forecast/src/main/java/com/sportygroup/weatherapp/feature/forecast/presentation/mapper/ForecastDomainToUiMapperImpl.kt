@@ -28,8 +28,11 @@ class ForecastDomainToUiMapperImpl @Inject constructor(
     override fun map(forecast: Forecast, measurementSystem: MeasurementSystem): ForecastUiModel {
         val current = forecast.current
         val conditionLabel = conditionMapper.label(current.condition)
+        val cityName = forecast.city.name.ifEmpty {
+            stringResources.getString(R.string.forecast_current_location)
+        }
         return ForecastUiModel(
-            cityName = forecast.city.name,
+            cityName = cityName,
             region = forecast.city.region,
             isCurrentLocation = forecast.city.isCurrentLocation,
             updatedLabel = stringResources.getString(

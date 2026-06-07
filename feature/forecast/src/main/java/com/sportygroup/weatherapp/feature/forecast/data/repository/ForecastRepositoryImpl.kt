@@ -2,9 +2,7 @@ package com.sportygroup.weatherapp.feature.forecast.data.repository
 
 import com.sportygroup.weatherapp.core.common.AppResult
 import com.sportygroup.weatherapp.core.common.DispatcherProvider
-import com.sportygroup.weatherapp.core.common.StringResources
 import com.sportygroup.weatherapp.core.common.map
-import com.sportygroup.weatherapp.feature.forecast.R
 import com.sportygroup.weatherapp.feature.forecast.data.mapper.CityDataToDomainMapper
 import com.sportygroup.weatherapp.feature.forecast.data.mapper.CityDtoToDataMapper
 import com.sportygroup.weatherapp.feature.forecast.data.mapper.ForecastDataToDomainMapper
@@ -28,7 +26,6 @@ class ForecastRepositoryImpl @Inject constructor(
     private val cityDtoToData: CityDtoToDataMapper,
     private val cityDataToDomain: CityDataToDomainMapper,
     private val forecastUnitsMapper: ForecastUnitsMapper,
-    private val stringResources: StringResources,
     private val dispatchers: DispatcherProvider,
 ) : ForecastRepository {
 
@@ -46,7 +43,7 @@ class ForecastRepositoryImpl @Inject constructor(
         withContext(dispatchers.io) {
             val units = forecastUnitsMapper.map(settings)
             val fallbackCity = City(
-                name = stringResources.getString(R.string.forecast_current_location),
+                name = "",
                 region = "",
                 coordinates = coordinates,
                 isCurrentLocation = true,

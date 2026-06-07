@@ -4,8 +4,8 @@ import com.sportygroup.weatherapp.core.model.WeatherCondition
 
 /** Maps WMO weather interpretation codes (Open-Meteo) to domain [WeatherCondition]s. */
 object WeatherCodeMapper {
-    fun toCondition(code: Int): WeatherCondition = when (code) {
-        0 -> WeatherCondition.CLEAR_DAY
+    fun toCondition(code: Int, isNight: Boolean = false): WeatherCondition = when (code) {
+        0 -> if (isNight) WeatherCondition.CLEAR_NIGHT else WeatherCondition.CLEAR_DAY
         1, 2 -> WeatherCondition.PARTLY_CLOUDY
         3 -> WeatherCondition.CLOUDY
         45, 48 -> WeatherCondition.FOG

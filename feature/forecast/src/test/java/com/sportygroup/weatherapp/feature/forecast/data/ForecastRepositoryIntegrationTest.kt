@@ -14,7 +14,6 @@ import com.sportygroup.weatherapp.feature.forecast.data.remote.api.GeocodingApi
 import com.sportygroup.weatherapp.feature.forecast.data.repository.ForecastRepositoryImpl
 import com.sportygroup.weatherapp.core.model.City
 import com.sportygroup.weatherapp.core.model.Coordinates
-import com.sportygroup.weatherapp.feature.forecast.testutil.FakeStringResources
 import com.sportygroup.weatherapp.feature.forecast.testutil.TestDispatcherProvider
 import com.sportygroup.weatherapp.lib.settings.model.AppSettings
 import com.sportygroup.weatherapp.lib.settings.model.MeasurementSystem
@@ -56,7 +55,6 @@ class ForecastRepositoryIntegrationTest {
             cityDtoToData = CityDtoToDataMapperImpl(),
             cityDataToDomain = CityDataToDomainMapperImpl(),
             forecastUnitsMapper = ForecastUnitsMapper(),
-            stringResources = FakeStringResources(),
             dispatchers = TestDispatcherProvider(),
         )
     }
