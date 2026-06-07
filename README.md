@@ -245,18 +245,6 @@ gh workflow run android-ci.yml --ref <branch>
 
 ---
 
-# AI Usage
-
-Tools used:
-
-- Claude / Claude Code: implementation assistance.
-- Design handoff tooling: visual direction exploration for the SkyCast UI.
-
-All final implementation decisions, architecture, code structure, and requirement coverage were
-manually reviewed and adjusted.
-
----
-
 ## Notes / known trade-offs
 
 - The design font (Manrope) is substituted with the platform sans-serif to avoid bundling
