@@ -119,6 +119,20 @@ class ForecastScreenshotTest(variant: ThemeVariant) : RoborazziScreenshotTest(va
     }
 
     @Test
+    fun screenContentOffline() = snapshot("screenContentOffline") {
+        ForecastScreen(
+            state = ForecastUiState.Content(
+                ForecastPreviewData.forecast.copy(isOffline = true, isOutdated = true),
+            ),
+            onAction = {},
+            onUseCurrentLocation = {},
+            onOpenAppSettings = {},
+            onOpenSearch = {},
+            onOpenSettings = {},
+        )
+    }
+
+    @Test
     fun screenLoading() = snapshot("screenLoading") {
         ForecastScreen(
             state = ForecastUiState.Loading,
