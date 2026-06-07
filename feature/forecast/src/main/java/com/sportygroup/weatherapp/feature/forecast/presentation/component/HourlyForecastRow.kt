@@ -18,7 +18,6 @@ import androidx.compose.ui.text.font.FontWeight
 import com.sportygroup.weatherapp.core.designsystem.preview.SkyPreview
 import com.sportygroup.weatherapp.core.designsystem.preview.ThemePreviews
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.sportygroup.weatherapp.core.designsystem.component.SkyCard
 import com.sportygroup.weatherapp.core.designsystem.icon.WeatherIcon
 import com.sportygroup.weatherapp.core.designsystem.theme.SkyTheme

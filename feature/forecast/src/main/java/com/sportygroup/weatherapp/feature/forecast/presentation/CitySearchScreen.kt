@@ -29,7 +29,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import com.sportygroup.weatherapp.core.designsystem.preview.SkyPreview
 import com.sportygroup.weatherapp.core.designsystem.preview.ThemePreviews
-import androidx.compose.ui.unit.sp
 import com.sportygroup.weatherapp.feature.forecast.R
 import com.sportygroup.weatherapp.core.designsystem.component.SkyIconButton
 import com.sportygroup.weatherapp.core.designsystem.component.SkySearchBar
