@@ -68,6 +68,10 @@
     <!-- Loading -->
     <string name="forecast_loading">Fetching latest forecast…</string>
 
+    <!-- Offline / cached data indicator -->
+    <string name="forecast_offline">Offline data</string>
+    <string name="forecast_offline_outdated">Offline · may be outdated</string>
+
     <!-- Initial choice screen -->
     <string name="forecast_welcome_title">Welcome to SkyCast</string>
     <string name="forecast_welcome_message">Use your current location for local weather, or search for any city. We only request location after you choose it.</string>

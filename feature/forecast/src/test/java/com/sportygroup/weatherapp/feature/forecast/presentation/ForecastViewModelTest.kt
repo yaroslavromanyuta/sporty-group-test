@@ -5,8 +5,10 @@ import com.sportygroup.weatherapp.core.common.AppResult
 import com.sportygroup.weatherapp.core.model.City
 import com.sportygroup.weatherapp.core.model.Coordinates
 import com.sportygroup.weatherapp.core.model.Forecast
+import com.sportygroup.weatherapp.feature.forecast.domain.usecase.AddRecentCityUseCase
 import com.sportygroup.weatherapp.feature.forecast.domain.usecase.GetCurrentLocationForecastUseCase
 import com.sportygroup.weatherapp.feature.forecast.domain.usecase.GetForecastByCityUseCase
+import com.sportygroup.weatherapp.feature.forecast.domain.usecase.ObserveRecentCitiesUseCase
 import com.sportygroup.weatherapp.feature.forecast.domain.usecase.SearchCitiesUseCase
 import com.sportygroup.weatherapp.feature.forecast.presentation.mapper.CityUiMapper
 import com.sportygroup.weatherapp.feature.forecast.presentation.mapper.ErrorUiMapper
@@ -14,13 +16,14 @@ import com.sportygroup.weatherapp.feature.forecast.presentation.mapper.ForecastD
 import com.sportygroup.weatherapp.feature.forecast.presentation.model.CityUiModel
 import com.sportygroup.weatherapp.feature.forecast.presentation.preview.ForecastPreviewData
 import com.sportygroup.weatherapp.feature.forecast.presentation.state.ForecastUiAction
+import com.sportygroup.weatherapp.feature.forecast.presentation.state.ForecastUiEvent
 import com.sportygroup.weatherapp.feature.forecast.presentation.state.ForecastUiState
 import com.sportygroup.weatherapp.feature.forecast.testutil.FakeStringResources
 import com.sportygroup.weatherapp.lib.settings.model.AppSettings
 import com.sportygroup.weatherapp.lib.settings.model.MeasurementSystem
 import com.sportygroup.weatherapp.lib.settings.model.ThemeMode
 import com.sportygroup.weatherapp.lib.settings.usecase.ObserveSettingsUseCase
-import androidx.lifecycle.SavedStateHandle
+import app.cash.turbine.test
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -43,14 +46,17 @@ import org.junit.Test
 class ForecastViewModelTest {
 
     private val observeSettings = mockk<ObserveSettingsUseCase>()
+    private val observeRecentCities = mockk<ObserveRecentCitiesUseCase>()
     private val getCurrentLocationForecast = mockk<GetCurrentLocationForecastUseCase>()
     private val getForecastByCity = mockk<GetForecastByCityUseCase>()
     private val searchCities = mockk<SearchCitiesUseCase>()
+    private val addRecentCity = mockk<AddRecentCityUseCase>(relaxed = true)
     private val forecastUiMapper = mockk<ForecastDomainToUiMapper>()
     private val cityUiMapper = CityUiMapper()
     private val errorUiMapper = ErrorUiMapper(FakeStringResources())
 
     private val settingsFlow = MutableStateFlow(AppSettings.DEFAULT)
+    private val recentFlow = MutableStateFlow<List<City>>(emptyList())
 
     private val domainForecast = Forecast(
         city = City("Malaga", "Spain", Coordinates(36.7, -4.4), isCurrentLocation = true),
@@ -63,6 +69,7 @@ class ForecastViewModelTest {
     fun setUp() {
         Dispatchers.setMain(UnconfinedTestDispatcher())
         every { observeSettings() } returns settingsFlow
+        every { observeRecentCities() } returns recentFlow
         every { forecastUiMapper.map(any(), any()) } returns ForecastPreviewData.forecast
     }
 
@@ -72,11 +79,12 @@ class ForecastViewModelTest {
     }
 
     private fun viewModel() = ForecastViewModel(
-        savedStateHandle = SavedStateHandle(),
         observeSettings = observeSettings,
+        observeRecentCities = observeRecentCities,
         getCurrentLocationForecast = getCurrentLocationForecast,
         getForecastByCity = getForecastByCity,
         searchCities = searchCities,
+        addRecentCity = addRecentCity,
         forecastUiMapper = forecastUiMapper,
         cityUiMapper = cityUiMapper,
         errorUiMapper = errorUiMapper,
@@ -229,5 +237,64 @@ class ForecastViewModelTest {
         vm.onLocationPermissionRequested()
 
         assertEquals(ForecastUiState.RequestingPermission, vm.uiState.value)
+    }
+
+    @Test
+    fun `recent cities from the repository are exposed for the empty search screen`() = runTest {
+        val vm = viewModel()
+        assertTrue(vm.searchState.value.recent.isEmpty())
+
+        recentFlow.value = listOf(City("Lisbon", "Portugal", Coordinates(38.72, -9.14)))
+
+        val recent = vm.searchState.value.recent
+        assertEquals(1, recent.size)
+        assertEquals("Lisbon", recent.first().name)
+    }
+
+    @Test
+    fun `pull-to-refresh reloads and shows content without a refreshing flag left set`() = runTest {
+        coEvery { getCurrentLocationForecast(any()) } returns AppResult.Success(domainForecast)
+        val vm = viewModel()
+        vm.onLocationPermissionGranted()
+        assertTrue(vm.uiState.value is ForecastUiState.Content)
+
+        vm.onAction(ForecastUiAction.OnRefresh)
+
+        // Initial grant load + the refresh load.
+        coVerify(exactly = 2) { getCurrentLocationForecast(any()) }
+        val state = vm.uiState.value
+        assertTrue(state is ForecastUiState.Content)
+        assertFalse((state as ForecastUiState.Content).isRefreshing)
+    }
+
+    @Test
+    fun `pull-to-refresh failure keeps the current content and emits a message`() = runTest {
+        coEvery { getCurrentLocationForecast(any()) } returns AppResult.Success(domainForecast)
+        val vm = viewModel()
+        vm.onLocationPermissionGranted()
+        // Next refresh fails (e.g. no network and no cache).
+        coEvery { getCurrentLocationForecast(any()) } returns AppResult.Failure(AppError.Network)
+
+        vm.events.test {
+            vm.onAction(ForecastUiAction.OnRefresh)
+            assertTrue(awaitItem() is ForecastUiEvent.ShowMessage)
+        }
+
+        // Existing forecast stays on screen instead of being replaced by an error.
+        val state = vm.uiState.value
+        assertTrue(state is ForecastUiState.Content)
+        assertFalse((state as ForecastUiState.Content).isRefreshing)
+    }
+
+    @Test
+    fun `selecting a city from search persists it as a recent city`() = runTest {
+        coEvery { getForecastByCity(any(), any()) } returns AppResult.Success(domainForecast)
+        val vm = viewModel()
+        val city = CityUiModel("Lisbon", "Portugal", 38.72, -9.14)
+
+        vm.onSearchAction(com.sportygroup.weatherapp.feature.forecast.presentation.state.CitySearchUiAction.OnCitySelected(city))
+
+        coVerify(exactly = 1) { addRecentCity(cityUiMapper.toDomain(city)) }
+        assertTrue(vm.uiState.value is ForecastUiState.Content)
     }
 }

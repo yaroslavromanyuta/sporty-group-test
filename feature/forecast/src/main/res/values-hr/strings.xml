@@ -51,6 +51,8 @@
     <string name="forecast_error_search_another">Traži drugi grad</string>
     <string name="forecast_error_code">Kod pogreške: %1$s</string>
     <string name="forecast_loading">Dohvaćanje najnovije prognoze…</string>
+    <string name="forecast_offline">Izvanmrežni podaci</string>
+    <string name="forecast_offline_outdated">Izvanmrežno · možda zastarjelo</string>
     <string name="forecast_welcome_title">Dobrodošli u SkyCast</string>
     <string name="forecast_welcome_message">Koristite svoju trenutnu lokaciju za lokalno vrijeme ili pretražite bilo koji grad. Pristup lokaciji tražimo tek kada to odaberete.</string>
     <string name="forecast_use_current_location">Koristi trenutnu lokaciju</string>

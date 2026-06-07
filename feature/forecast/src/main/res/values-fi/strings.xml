@@ -51,6 +51,8 @@
     <string name="forecast_error_search_another">Hae toinen kaupunki</string>
     <string name="forecast_error_code">Virhekoodi: %1$s</string>
     <string name="forecast_loading">Haetaan uusinta ennustetta…</string>
+    <string name="forecast_offline">Offline-tiedot</string>
+    <string name="forecast_offline_outdated">Offline · voi olla vanhentunut</string>
     <string name="forecast_welcome_title">Tervetuloa SkyCastiin</string>
     <string name="forecast_welcome_message">Käytä nykyistä sijaintiasi paikalliseen säähän tai hae mitä tahansa kaupunkia. Pyydämme sijaintilupaa vasta, kun valitset sen.</string>
     <string name="forecast_use_current_location">Käytä nykyistä sijaintia</string>

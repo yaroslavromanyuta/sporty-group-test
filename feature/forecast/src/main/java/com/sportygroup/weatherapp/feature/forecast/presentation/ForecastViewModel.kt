@@ -1,19 +1,19 @@
 package com.sportygroup.weatherapp.feature.forecast.presentation
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sportygroup.weatherapp.core.common.AppError
 import com.sportygroup.weatherapp.core.common.AppResult
 import com.sportygroup.weatherapp.core.model.City
 import com.sportygroup.weatherapp.core.model.Forecast
+import com.sportygroup.weatherapp.feature.forecast.domain.usecase.AddRecentCityUseCase
 import com.sportygroup.weatherapp.feature.forecast.domain.usecase.GetCurrentLocationForecastUseCase
 import com.sportygroup.weatherapp.feature.forecast.domain.usecase.GetForecastByCityUseCase
+import com.sportygroup.weatherapp.feature.forecast.domain.usecase.ObserveRecentCitiesUseCase
 import com.sportygroup.weatherapp.feature.forecast.domain.usecase.SearchCitiesUseCase
 import com.sportygroup.weatherapp.feature.forecast.presentation.mapper.CityUiMapper
 import com.sportygroup.weatherapp.feature.forecast.presentation.mapper.ErrorUiMapper
 import com.sportygroup.weatherapp.feature.forecast.presentation.mapper.ForecastDomainToUiMapper
-import com.sportygroup.weatherapp.feature.forecast.presentation.model.CityUiModel
 import com.sportygroup.weatherapp.feature.forecast.presentation.state.CitySearchUiAction
 import com.sportygroup.weatherapp.feature.forecast.presentation.state.CitySearchUiState
 import com.sportygroup.weatherapp.feature.forecast.presentation.state.ForecastUiAction
@@ -36,11 +36,12 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ForecastViewModel @Inject constructor(
-    private val savedStateHandle: SavedStateHandle,
     observeSettings: ObserveSettingsUseCase,
+    observeRecentCities: ObserveRecentCitiesUseCase,
     private val getCurrentLocationForecast: GetCurrentLocationForecastUseCase,
     private val getForecastByCity: GetForecastByCityUseCase,
     private val searchCities: SearchCitiesUseCase,
+    private val addRecentCity: AddRecentCityUseCase,
     private val forecastUiMapper: ForecastDomainToUiMapper,
     private val cityUiMapper: CityUiMapper,
     private val errorUiMapper: ErrorUiMapper,
@@ -49,13 +50,7 @@ class ForecastViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<ForecastUiState>(ForecastUiState.InitialChoice())
     val uiState: StateFlow<ForecastUiState> = _uiState.asStateFlow()
 
-    private val _searchState = MutableStateFlow(
-        CitySearchUiState(
-            // Restore recent cities from saved state (survives process death and rotation).
-            recent = savedStateHandle.get<ArrayList<CityUiModel>>(KEY_RECENT_CITIES)?.toList()
-                ?: emptyList(),
-        )
-    )
+    private val _searchState = MutableStateFlow(CitySearchUiState())
     val searchState: StateFlow<CitySearchUiState> = _searchState.asStateFlow()
 
     private val _events = MutableSharedFlow<ForecastUiEvent>(extraBufferCapacity = 64)
@@ -79,14 +74,19 @@ class ForecastViewModel @Inject constructor(
                 if (unitsChanged && hasLoadedForecast()) reload()
             }
         }
+        // Recent cities are persisted in the data layer and survive process death / app restarts.
+        viewModelScope.launch {
+            observeRecentCities().collect { cities ->
+                _searchState.update { it.copy(recent = cities.map(cityUiMapper::toUi)) }
+            }
+        }
     }
 
     fun onAction(action: ForecastUiAction) {
         when (action) {
-            ForecastUiAction.OnRetryClick,
-            ForecastUiAction.OnRefresh,
-            -> reload()
-            is ForecastUiAction.OnCitySelected -> selectCity(action.city)
+            ForecastUiAction.OnRetryClick -> reload()
+            ForecastUiAction.OnRefresh -> refresh()
+            is ForecastUiAction.OnCitySelected -> selectCity(cityUiMapper.toDomain(action.city))
         }
     }
 
@@ -141,8 +141,11 @@ class ForecastViewModel @Inject constructor(
             is CitySearchUiAction.OnQueryChanged -> onQueryChanged(action.query)
             CitySearchUiAction.OnClearQuery -> onQueryChanged("")
             is CitySearchUiAction.OnCitySelected -> {
-                addToRecent(action.city)
-                selectCity(action.city)
+                // Persist as a recent search (current-location entries are filtered out in the
+                // use case), then load its forecast.
+                val city = cityUiMapper.toDomain(action.city)
+                viewModelScope.launch { addRecentCity(city) }
+                selectCity(city)
             }
             // "Use current location" inside search is handled by the route (permission flow),
             // which then calls onLocationPermissionGranted()/Denied(); nothing to do here.
@@ -150,8 +153,7 @@ class ForecastViewModel @Inject constructor(
         }
     }
 
-    private fun selectCity(cityUi: CityUiModel) {
-        val city = cityUiMapper.toDomain(cityUi)
+    private fun selectCity(city: City) {
         lastSelectedCity = city
         usingCurrentLocation = false
         _uiState.value = ForecastUiState.Loading
@@ -161,19 +163,49 @@ class ForecastViewModel @Inject constructor(
     }
 
     private fun reload() {
-        val city = lastSelectedCity
-        if (city == null && !usingCurrentLocation) {
+        if (!hasLoadedForecast()) {
             // Nothing loaded yet — keep the start screen as the decision point.
             return
         }
         _uiState.value = ForecastUiState.Loading
+        viewModelScope.launch { handleForecastResult(loadForecast()) }
+    }
+
+    /**
+     * Pull-to-refresh: re-fetches the current forecast while keeping the content on screen with a
+     * refreshing indicator. A transient failure preserves the existing forecast and surfaces a
+     * message instead of replacing the screen with an error.
+     */
+    private fun refresh() {
+        val current = _uiState.value
+        if (current !is ForecastUiState.Content) {
+            // Nothing on screen to refresh in place — fall back to a normal (full-screen) load.
+            reload()
+            return
+        }
+        if (!hasLoadedForecast()) return
+        _uiState.value = current.copy(isRefreshing = true)
         viewModelScope.launch {
-            val result = if (city == null) {
-                getCurrentLocationForecast(settings)
-            } else {
-                getForecastByCity(city, settings)
+            when (val result = loadForecast()) {
+                is AppResult.Success -> _uiState.value = ForecastUiState.Content(
+                    forecast = forecastUiMapper.map(result.value, settings.measurementSystem),
+                )
+                is AppResult.Failure -> if (result.error == AppError.NoLocationPermission) {
+                    handleForecastResult(result)
+                } else {
+                    _uiState.value = current.copy(isRefreshing = false)
+                    emitEvent(ForecastUiEvent.ShowMessage(errorUiMapper.map(result.error).message))
+                }
             }
-            handleForecastResult(result)
+        }
+    }
+
+    private suspend fun loadForecast(): AppResult<Forecast> {
+        val city = lastSelectedCity
+        return if (city == null) {
+            getCurrentLocationForecast(settings)
+        } else {
+            getForecastByCity(city, settings)
         }
     }
 
@@ -221,16 +253,6 @@ class ForecastViewModel @Inject constructor(
         }
     }
 
-    private fun addToRecent(city: CityUiModel) {
-        _searchState.update { state ->
-            val updated = (listOf(city) + state.recent)
-                .distinctBy { it.name to it.region }
-                .take(MAX_RECENT)
-            savedStateHandle[KEY_RECENT_CITIES] = ArrayList(updated)
-            state.copy(recent = updated)
-        }
-    }
-
     private fun emitEvent(event: ForecastUiEvent) {
         viewModelScope.launch { _events.emit(event) }
     }
@@ -240,7 +262,5 @@ class ForecastViewModel @Inject constructor(
 
     private companion object {
         const val SEARCH_DEBOUNCE_MS = 300L
-        const val MAX_RECENT = 5
-        const val KEY_RECENT_CITIES = "recent_cities"
     }
 }

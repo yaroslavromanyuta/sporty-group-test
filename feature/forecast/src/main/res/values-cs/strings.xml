@@ -51,6 +51,8 @@
     <string name="forecast_error_search_another">Hledat jiné město</string>
     <string name="forecast_error_code">Kód chyby: %1$s</string>
     <string name="forecast_loading">Načítání aktuální předpovědi…</string>
+    <string name="forecast_offline">Offline data</string>
+    <string name="forecast_offline_outdated">Offline · může být zastaralé</string>
     <string name="forecast_welcome_title">Vítejte v SkyCast</string>
     <string name="forecast_welcome_message">Použijte svou aktuální polohu pro místní počasí nebo vyhledejte libovolné město. O přístup k poloze žádáme až po vašem souhlasu.</string>
     <string name="forecast_use_current_location">Použít aktuální polohu</string>

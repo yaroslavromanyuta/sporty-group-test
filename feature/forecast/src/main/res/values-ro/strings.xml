@@ -51,6 +51,8 @@
     <string name="forecast_error_search_another">Caută alt oraș</string>
     <string name="forecast_error_code">Cod eroare: %1$s</string>
     <string name="forecast_loading">Se obține prognoza…</string>
+    <string name="forecast_offline">Date offline</string>
+    <string name="forecast_offline_outdated">Offline · poate fi învechit</string>
     <string name="forecast_welcome_title">Bine ai venit la SkyCast</string>
     <string name="forecast_welcome_message">Folosește locația curentă pentru vreme locală sau caută orice oraș. Solicităm locația doar după ce alegi această opțiune.</string>
     <string name="forecast_use_current_location">Folosește locația curentă</string>

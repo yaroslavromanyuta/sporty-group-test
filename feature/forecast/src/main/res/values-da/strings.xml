@@ -51,6 +51,8 @@
     <string name="forecast_error_search_another">Søg en anden by</string>
     <string name="forecast_error_code">Fejlkode: %1$s</string>
     <string name="forecast_loading">Henter seneste vejrudsigt…</string>
+    <string name="forecast_offline">Offlinedata</string>
+    <string name="forecast_offline_outdated">Offline · kan være forældet</string>
     <string name="forecast_welcome_title">Velkommen til SkyCast</string>
     <string name="forecast_welcome_message">Brug din aktuelle placering til lokalt vejr, eller søg efter en hvilken som helst by. Vi anmoder kun om placeringsadgang, når du vælger det.</string>
     <string name="forecast_use_current_location">Brug aktuel placering</string>

@@ -51,6 +51,8 @@
     <string name="forecast_error_search_another">Търси друг град</string>
     <string name="forecast_error_code">Код на грешка: %1$s</string>
     <string name="forecast_loading">Зареждане на прогнозата…</string>
+    <string name="forecast_offline">Офлайн данни</string>
+    <string name="forecast_offline_outdated">Офлайн · може да е остаряло</string>
     <string name="forecast_welcome_title">Добре дошъл в SkyCast</string>
     <string name="forecast_welcome_message">Използвай текущото си местоположение за местно време или потърси произволен град. Искаме достъп до местоположението само ако ти го избереш.</string>
     <string name="forecast_use_current_location">Използвай текущото местоположение</string>

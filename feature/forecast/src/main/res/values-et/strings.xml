@@ -51,6 +51,8 @@
     <string name="forecast_error_search_another">Otsi teist linna</string>
     <string name="forecast_error_code">Veakood: %1$s</string>
     <string name="forecast_loading">Laadib viimast ilmaprognoosi…</string>
+    <string name="forecast_offline">Võrguühenduseta andmed</string>
+    <string name="forecast_offline_outdated">Võrguühenduseta · võib olla aegunud</string>
     <string name="forecast_welcome_title">Tere tulemast SkyCasti</string>
     <string name="forecast_welcome_message">Kasuta oma praegust asukohta kohaliku ilma jaoks või otsi mis tahes linna. Küsime asukohta ainult siis, kui sa selle valid.</string>
     <string name="forecast_use_current_location">Kasuta praegust asukohta</string>

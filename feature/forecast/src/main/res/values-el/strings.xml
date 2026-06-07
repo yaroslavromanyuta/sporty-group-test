@@ -51,6 +51,8 @@
     <string name="forecast_error_search_another">Αναζήτηση άλλης πόλης</string>
     <string name="forecast_error_code">Κωδικός σφάλματος: %1$s</string>
     <string name="forecast_loading">Λήψη τελευταίας πρόγνωσης…</string>
+    <string name="forecast_offline">Δεδομένα εκτός σύνδεσης</string>
+    <string name="forecast_offline_outdated">Εκτός σύνδεσης · ίσως παρωχημένα</string>
     <string name="forecast_welcome_title">Καλώς ήρθες στο SkyCast</string>
     <string name="forecast_welcome_message">Χρησιμοποίησε την τρέχουσα τοποθεσία σου για τοπικό καιρό ή αναζήτησε οποιαδήποτε πόλη. Ζητάμε τοποθεσία μόνο αν το επιλέξεις.</string>
     <string name="forecast_use_current_location">Χρήση τρέχουσας τοποθεσίας</string>

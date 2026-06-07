@@ -51,6 +51,8 @@
     <string name="forecast_error_search_another">Másik város keresése</string>
     <string name="forecast_error_code">Hibakód: %1$s</string>
     <string name="forecast_loading">Előrejelzés betöltése…</string>
+    <string name="forecast_offline">Offline adatok</string>
+    <string name="forecast_offline_outdated">Offline · elavult lehet</string>
     <string name="forecast_welcome_title">Üdvözöl a SkyCast</string>
     <string name="forecast_welcome_message">Használd a jelenlegi helyszínedet a helyi időjáráshoz, vagy keress bármely várost. A helyszínt csak akkor kérjük, ha te választod ezt.</string>
     <string name="forecast_use_current_location">Jelenlegi helyszín használata</string>

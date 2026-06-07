@@ -51,6 +51,8 @@
     <string name="forecast_error_search_another">Pesquisar outra cidade</string>
     <string name="forecast_error_code">Código de erro: %1$s</string>
     <string name="forecast_loading">A obter a previsão mais recente…</string>
+    <string name="forecast_offline">Dados offline</string>
+    <string name="forecast_offline_outdated">Offline · pode estar desatualizado</string>
     <string name="forecast_welcome_title">Bem-vindo ao SkyCast</string>
     <string name="forecast_welcome_message">Use a sua localização atual para o tempo local ou pesquise qualquer cidade. Só pedimos acesso à localização quando você o escolher.</string>
     <string name="forecast_use_current_location">Usar localização atual</string>
