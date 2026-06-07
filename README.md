@@ -6,10 +6,35 @@ SkyCast is a small, production-like Android weather app built for the SkyGroup h
 assignment. It shows the current-day and 7-day forecast for your current location or any
 city you search for, with explicit handling of loading, error, empty and
 location-permission states, plus a **Settings** screen for units and theme. The UI is a
-native Jetpack Compose recreation of the **SkyCast design handoff** — no WebView, no copied
-HTML/CSS.
+native Jetpack Compose recreation of the **SkyCast design handoff**.
 
-> Add screenshots/recordings here once captured from an emulator (e.g. Pixel, API 34).
+## Screenshots
+
+### Light Mode
+<p align="center">
+  <img src="assets/welcome_screen_light.png" width="30%" />
+  <img src="assets/main_forecast_screen_light.png" width="30%" />
+  <img src="assets/city_search_light.png" width="30%" />
+</p>
+
+### Dark Mode
+<p align="center">
+  <img src="assets/welcome_screen.png" width="30%" />
+  <img src="assets/main_forecast_screen.png" width="30%" />
+  <img src="assets/city_search_empty.png" width="30%" />
+</p>
+
+### Features & States
+<p align="center">
+  <img src="assets/weekly_forecast_details.png" width="30%" />
+  <img src="assets/settings_screen.png" width="30%" />
+  <img src="assets/welcome_screen_permission_error.png" width="30%" />
+</p>
+
+### Demo
+[Watch the app demo](assets/app_demo.mp4)
+
+
 
 ---
 
