@@ -13,6 +13,7 @@ import com.sportygroup.weatherapp.feature.forecast.data.remote.api.ForecastApi
 import com.sportygroup.weatherapp.feature.forecast.data.remote.api.GeocodingApi
 import com.sportygroup.weatherapp.feature.forecast.data.repository.ForecastRepositoryImpl
 import com.sportygroup.weatherapp.feature.forecast.testutil.FakeForecastLocalDataSource
+import com.sportygroup.weatherapp.feature.forecast.testutil.FakeLastForecastSelectionLocalDataSource
 import com.sportygroup.weatherapp.feature.forecast.testutil.FakeRecentCitiesLocalDataSource
 import com.sportygroup.weatherapp.feature.forecast.testutil.TestDispatcherProvider
 import kotlinx.coroutines.test.runTest
@@ -50,6 +51,7 @@ class CitySearchRepositoryIntegrationTest {
             citySearchRemote = CitySearchRemoteDataSourceImpl(retrofit.create(GeocodingApi::class.java)),
             forecastLocal = FakeForecastLocalDataSource(),
             recentCitiesLocal = FakeRecentCitiesLocalDataSource(),
+            lastSelectionLocal = FakeLastForecastSelectionLocalDataSource(),
             forecastDtoToData = ForecastDtoToDataMapperImpl(),
             forecastDataToDomain = ForecastDataToDomainMapperImpl(),
             cityDtoToData = CityDtoToDataMapperImpl(),

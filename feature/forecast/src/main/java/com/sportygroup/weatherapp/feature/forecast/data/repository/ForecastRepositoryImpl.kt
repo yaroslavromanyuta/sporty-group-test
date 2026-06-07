@@ -7,6 +7,7 @@ import com.sportygroup.weatherapp.core.common.flatMap
 import com.sportygroup.weatherapp.core.common.map
 import com.sportygroup.weatherapp.feature.forecast.data.local.ForecastCacheKey
 import com.sportygroup.weatherapp.feature.forecast.data.local.ForecastLocalDataSource
+import com.sportygroup.weatherapp.feature.forecast.data.local.LastForecastSelectionLocalDataSource
 import com.sportygroup.weatherapp.feature.forecast.data.local.RecentCitiesLocalDataSource
 import com.sportygroup.weatherapp.feature.forecast.data.mapper.CityDataToDomainMapper
 import com.sportygroup.weatherapp.feature.forecast.data.mapper.CityDtoToDataMapper
@@ -19,6 +20,7 @@ import com.sportygroup.weatherapp.feature.forecast.data.remote.dto.ForecastRespo
 import com.sportygroup.weatherapp.core.model.City
 import com.sportygroup.weatherapp.core.model.Coordinates
 import com.sportygroup.weatherapp.core.model.Forecast
+import com.sportygroup.weatherapp.feature.forecast.domain.model.LastForecastSelection
 import com.sportygroup.weatherapp.feature.forecast.domain.repository.ForecastRepository
 import com.sportygroup.weatherapp.lib.settings.model.AppSettings
 import kotlinx.coroutines.flow.Flow
@@ -30,6 +32,7 @@ class ForecastRepositoryImpl @Inject constructor(
     private val citySearchRemote: CitySearchRemoteDataSource,
     private val forecastLocal: ForecastLocalDataSource,
     private val recentCitiesLocal: RecentCitiesLocalDataSource,
+    private val lastSelectionLocal: LastForecastSelectionLocalDataSource,
     private val forecastDtoToData: ForecastDtoToDataMapper,
     private val forecastDataToDomain: ForecastDataToDomainMapper,
     private val cityDtoToData: CityDtoToDataMapper,
@@ -88,6 +91,13 @@ class ForecastRepositoryImpl @Inject constructor(
 
     override suspend fun addRecentCity(city: City) {
         withContext(dispatchers.io) { recentCitiesLocal.add(city) }
+    }
+
+    override suspend fun getLastSelection(): LastForecastSelection? =
+        withContext(dispatchers.io) { lastSelectionLocal.read() }
+
+    override suspend fun saveLastSelection(selection: LastForecastSelection) {
+        withContext(dispatchers.io) { lastSelectionLocal.save(selection) }
     }
 
     override suspend fun searchCities(query: String): AppResult<List<City>> =

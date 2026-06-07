@@ -8,6 +8,10 @@ import com.sportygroup.weatherapp.feature.forecast.data.local.ForecastCacheMappe
 import com.sportygroup.weatherapp.feature.forecast.data.local.ForecastCacheMapperImpl
 import com.sportygroup.weatherapp.feature.forecast.data.local.ForecastLocalDataSource
 import com.sportygroup.weatherapp.feature.forecast.data.local.ForecastLocalDataSourceImpl
+import com.sportygroup.weatherapp.feature.forecast.data.local.LastForecastSelectionLocalDataSource
+import com.sportygroup.weatherapp.feature.forecast.data.local.LastForecastSelectionLocalDataSourceImpl
+import com.sportygroup.weatherapp.feature.forecast.data.local.LastForecastSelectionMapper
+import com.sportygroup.weatherapp.feature.forecast.data.local.LastForecastSelectionMapperImpl
 import com.sportygroup.weatherapp.feature.forecast.data.local.RecentCitiesLocalDataSource
 import com.sportygroup.weatherapp.feature.forecast.data.local.RecentCitiesLocalDataSourceImpl
 import com.sportygroup.weatherapp.feature.forecast.data.mapper.CityDataToDomainMapper
@@ -53,6 +57,16 @@ abstract class ForecastDataModule {
     abstract fun bindRecentCitiesLocalDataSource(
         impl: RecentCitiesLocalDataSourceImpl,
     ): RecentCitiesLocalDataSource
+
+    @Binds
+    abstract fun bindLastForecastSelectionLocalDataSource(
+        impl: LastForecastSelectionLocalDataSourceImpl,
+    ): LastForecastSelectionLocalDataSource
+
+    @Binds
+    abstract fun bindLastForecastSelectionMapper(
+        impl: LastForecastSelectionMapperImpl,
+    ): LastForecastSelectionMapper
 
     @Binds
     abstract fun bindForecastCacheMapper(impl: ForecastCacheMapperImpl): ForecastCacheMapper
