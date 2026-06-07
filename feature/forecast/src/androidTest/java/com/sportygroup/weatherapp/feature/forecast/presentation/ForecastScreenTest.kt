@@ -1,7 +1,7 @@
 package com.sportygroup.weatherapp.feature.forecast.presentation
 
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -38,6 +38,26 @@ class ForecastScreenTest {
         composeRule.onNodeWithText("Malaga").assertIsDisplayed()
         composeRule.onNodeWithText("Partly cloudy").assertIsDisplayed()
         composeRule.onNodeWithText("HOURLY").assertIsDisplayed()
+    }
+
+    @Test
+    fun content_offlineForecast_showsOfflineLabel() {
+        composeRule.setContent {
+            SkyTheme {
+                ForecastScreen(
+                    state = ForecastUiState.Content(
+                        ForecastPreviewData.forecast.copy(isOffline = true, isOutdated = true),
+                    ),
+                    onAction = {},
+                    onUseCurrentLocation = {},
+                    onOpenAppSettings = {},
+                    onOpenSearch = {},
+                    onOpenSettings = {},
+                )
+            }
+        }
+
+        composeRule.onNodeWithText("Offline", substring = true).assertIsDisplayed()
     }
 
     @Test

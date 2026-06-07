@@ -5,12 +5,14 @@ import com.sportygroup.weatherapp.core.model.Coordinates
 import com.sportygroup.weatherapp.core.model.CurrentWeather
 import com.sportygroup.weatherapp.core.model.DailyForecast
 import com.sportygroup.weatherapp.core.model.Forecast
+import com.sportygroup.weatherapp.core.model.ForecastSource
 import com.sportygroup.weatherapp.core.model.HourlyForecast
 import com.sportygroup.weatherapp.core.model.WeatherCondition
 import com.sportygroup.weatherapp.feature.forecast.R
 import com.sportygroup.weatherapp.feature.forecast.testutil.FakeStringResources
 import com.sportygroup.weatherapp.lib.settings.model.MeasurementSystem
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -113,5 +115,28 @@ class ForecastDomainToUiMapperTest {
         val ui = mapper.map(forecast(), MeasurementSystem.METRIC)
         assertEquals("Today", ui.daily.first().dayLabel)
         assertTrue(ui.daily.first().isToday)
+    }
+
+    @Test
+    fun `network forecast is neither offline nor outdated`() {
+        val ui = mapper.map(forecast(), MeasurementSystem.METRIC)
+        assertFalse(ui.isOffline)
+        assertFalse(ui.isOutdated)
+    }
+
+    @Test
+    fun `fresh cached forecast is offline but not outdated`() {
+        val cached = forecast().copy(source = ForecastSource.CACHE, isStale = false)
+        val ui = mapper.map(cached, MeasurementSystem.METRIC)
+        assertTrue(ui.isOffline)
+        assertFalse(ui.isOutdated)
+    }
+
+    @Test
+    fun `stale cached forecast is both offline and outdated`() {
+        val cached = forecast().copy(source = ForecastSource.CACHE, isStale = true)
+        val ui = mapper.map(cached, MeasurementSystem.METRIC)
+        assertTrue(ui.isOffline)
+        assertTrue(ui.isOutdated)
     }
 }
