@@ -94,12 +94,12 @@ jobs:
               repo: context.repo.repo,
               pull_number: context.issue.number,
             });
-            core.setOutput('ref', pr.data.head.sha);
+            core.setOutput('branch', pr.data.head.ref);
 
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          ref: ${{ steps.pr-info.outputs.ref || github.event.inputs.branch || github.ref }}
+          ref: ${{ steps.pr-info.outputs.branch || github.event.inputs.branch || github.ref_name }}
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up JDK 21
@@ -121,6 +121,8 @@ jobs:
         run: ./gradlew recordRoborazziDebug
 
       - name: Commit updated baselines
+        env:
+          BRANCH: ${{ steps.pr-info.outputs.branch || github.event.inputs.branch || github.ref_name }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -129,5 +131,5 @@ jobs:
             echo "No screenshot changes to commit."
           else
             git commit -m "Update Roborazzi screenshot baselines"
-            git push
+            git push origin HEAD:"$BRANCH"
           fi
