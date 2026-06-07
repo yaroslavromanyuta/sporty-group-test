@@ -20,6 +20,7 @@ import com.sportygroup.weatherapp.lib.settings.model.AppSettings
 import com.sportygroup.weatherapp.lib.settings.model.MeasurementSystem
 import com.sportygroup.weatherapp.lib.settings.model.ThemeMode
 import com.sportygroup.weatherapp.lib.settings.usecase.ObserveSettingsUseCase
+import androidx.lifecycle.SavedStateHandle
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -71,13 +72,14 @@ class ForecastViewModelTest {
     }
 
     private fun viewModel() = ForecastViewModel(
-        observeSettings,
-        getCurrentLocationForecast,
-        getForecastByCity,
-        searchCities,
-        forecastUiMapper,
-        cityUiMapper,
-        errorUiMapper,
+        savedStateHandle = SavedStateHandle(),
+        observeSettings = observeSettings,
+        getCurrentLocationForecast = getCurrentLocationForecast,
+        getForecastByCity = getForecastByCity,
+        searchCities = searchCities,
+        forecastUiMapper = forecastUiMapper,
+        cityUiMapper = cityUiMapper,
+        errorUiMapper = errorUiMapper,
     )
 
     @Test

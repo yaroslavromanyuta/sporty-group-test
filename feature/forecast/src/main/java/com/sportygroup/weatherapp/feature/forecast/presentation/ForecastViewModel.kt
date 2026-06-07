@@ -1,5 +1,6 @@
 package com.sportygroup.weatherapp.feature.forecast.presentation
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sportygroup.weatherapp.core.common.AppError
@@ -35,6 +36,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ForecastViewModel @Inject constructor(
+    private val savedStateHandle: SavedStateHandle,
     observeSettings: ObserveSettingsUseCase,
     private val getCurrentLocationForecast: GetCurrentLocationForecastUseCase,
     private val getForecastByCity: GetForecastByCityUseCase,
@@ -47,31 +49,34 @@ class ForecastViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<ForecastUiState>(ForecastUiState.InitialChoice())
     val uiState: StateFlow<ForecastUiState> = _uiState.asStateFlow()
 
-    private val _searchState = MutableStateFlow(CitySearchUiState())
+    private val _searchState = MutableStateFlow(
+        CitySearchUiState(
+            // Restore recent cities from saved state (survives process death and rotation).
+            recent = savedStateHandle.get<ArrayList<CityUiModel>>(KEY_RECENT_CITIES)?.toList()
+                ?: emptyList(),
+        )
+    )
     val searchState: StateFlow<CitySearchUiState> = _searchState.asStateFlow()
 
     private val _events = MutableSharedFlow<ForecastUiEvent>(extraBufferCapacity = 64)
     val events: SharedFlow<ForecastUiEvent> = _events.asSharedFlow()
 
     private var settings: AppSettings = AppSettings.DEFAULT
-    private var settingsInitialized = false
     private var lastSelectedCity: City? = null
     /** True once the user has opted into current-location weather (after granting permission). */
     private var usingCurrentLocation = false
     private var searchJob: Job? = null
 
     init {
-        // Observe settings for unit changes only. We intentionally do NOT load weather on
-        // launch — the start screen (InitialChoice) stays the decision point until the user
-        // taps "Use current location" (and grants permission) or picks a city manually.
+        // Observe settings for unit changes only — drop(1) skips the initial emission so
+        // we only reload when the user actively changes units, not on every cold start.
         viewModelScope.launch {
+            var previousSettings: AppSettings? = null
             observeSettings().collect { newSettings ->
-                val unitsChanged = settingsInitialized && newSettings.affectsForecastUnits(settings)
+                val unitsChanged = previousSettings?.let { newSettings.affectsForecastUnits(it) } ?: false
+                previousSettings = newSettings
                 settings = newSettings
-                settingsInitialized = true
-                if (unitsChanged && hasLoadedForecast()) {
-                    reload()
-                }
+                if (unitsChanged && hasLoadedForecast()) reload()
             }
         }
     }
@@ -106,21 +111,15 @@ class ForecastViewModel @Inject constructor(
      * will no longer show the permission dialog and the user must enable it from Settings.
      */
     fun onLocationPermissionDenied(permanently: Boolean = false) {
-        _uiState.update { current ->
-            if (current is ForecastUiState.Content) {
-                // Permission revoked while forecast is visible — preserve the data so the
-                // user can still see it. usingCurrentLocation stays true so the next
-                // reload (e.g. pull-to-refresh) will hit NoLocationPermission and redirect
-                // to the start screen with an appropriate message.
-                current
-            } else {
-                usingCurrentLocation = false
-                ForecastUiState.InitialChoice(
-                    permissionDenied = true,
-                    permissionPermanentlyDenied = permanently,
-                )
-            }
-        }
+        // Preserve the forecast when permission is revoked while Content is visible.
+        // usingCurrentLocation stays true so the next reload hits NoLocationPermission
+        // and routes back to the start screen with an appropriate message.
+        if (_uiState.value is ForecastUiState.Content) return
+        usingCurrentLocation = false
+        _uiState.value = ForecastUiState.InitialChoice(
+            permissionDenied = true,
+            permissionPermanentlyDenied = permanently,
+        )
     }
 
     /**
@@ -187,11 +186,11 @@ class ForecastViewModel @Inject constructor(
             }
             is AppResult.Failure -> {
                 if (result.error == AppError.NoLocationPermission) {
-                    usingCurrentLocation = false
-                }
-                _uiState.value = when (result.error) {
-                    AppError.NoLocationPermission -> ForecastUiState.InitialChoice(permissionDenied = true)
-                    else -> ForecastUiState.Error(errorUiMapper.map(result.error))
+                    // Delegate to the shared permission-denied path so state transitions
+                    // stay in one place and flags stay consistent.
+                    onLocationPermissionDenied(permanently = false)
+                } else {
+                    _uiState.value = ForecastUiState.Error(errorUiMapper.map(result.error))
                 }
             }
         }
@@ -200,12 +199,12 @@ class ForecastViewModel @Inject constructor(
     private fun hasLoadedForecast(): Boolean = lastSelectedCity != null || usingCurrentLocation
 
     private fun onQueryChanged(query: String) {
-        _searchState.update { it.copy(query = query, isSearching = query.isNotBlank()) }
         searchJob?.cancel()
         if (query.isBlank()) {
-            _searchState.update { it.copy(results = emptyList(), isSearching = false) }
+            _searchState.update { it.copy(query = "", results = emptyList(), isSearching = false) }
             return
         }
+        _searchState.update { it.copy(query = query, isSearching = true) }
         searchJob = viewModelScope.launch {
             delay(SEARCH_DEBOUNCE_MS)
             when (val result = searchCities(query)) {
@@ -225,6 +224,7 @@ class ForecastViewModel @Inject constructor(
             val updated = (listOf(city) + state.recent)
                 .distinctBy { it.name to it.region }
                 .take(MAX_RECENT)
+            savedStateHandle[KEY_RECENT_CITIES] = ArrayList(updated)
             state.copy(recent = updated)
         }
     }
@@ -239,5 +239,6 @@ class ForecastViewModel @Inject constructor(
     private companion object {
         const val SEARCH_DEBOUNCE_MS = 300L
         const val MAX_RECENT = 5
+        const val KEY_RECENT_CITIES = "recent_cities"
     }
 }

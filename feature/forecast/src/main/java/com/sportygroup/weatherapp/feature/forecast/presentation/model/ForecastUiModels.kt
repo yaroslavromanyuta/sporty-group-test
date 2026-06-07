@@ -1,8 +1,10 @@
 package com.sportygroup.weatherapp.feature.forecast.presentation.model
 
+import android.os.Parcelable
 import androidx.compose.runtime.Immutable
 import com.sportygroup.weatherapp.core.designsystem.icon.UiIconType
 import com.sportygroup.weatherapp.core.designsystem.icon.WeatherType
+import kotlinx.parcelize.Parcelize
 
 /** Display-ready forecast for a single city. All values are pre-formatted for Compose. */
 @Immutable
@@ -61,6 +63,7 @@ data class WeatherMetricUiModel(
 )
 
 /** A selectable city result (search row / recent). Carries coordinates for selection. */
+@Parcelize
 @Immutable
 data class CityUiModel(
     val name: String,
@@ -68,4 +71,4 @@ data class CityUiModel(
     val latitude: Double,
     val longitude: Double,
     val isCurrentLocation: Boolean = false,
-)
+) : Parcelable

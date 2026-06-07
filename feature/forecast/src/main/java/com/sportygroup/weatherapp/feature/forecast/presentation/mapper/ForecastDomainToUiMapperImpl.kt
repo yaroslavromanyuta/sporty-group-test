@@ -98,7 +98,7 @@ class ForecastDomainToUiMapperImpl @Inject constructor(
                 lowLabel = temperatureFormatter.degrees(day.low),
                 precipitationProbability = day.precipitationProbability,
                 barStartFraction = ((day.low - minLow) / span).toFloat().coerceIn(0f, 1f),
-                barWidthFraction = ((day.high - day.low) / span).toFloat().coerceIn(0.08f, 1f),
+                barWidthFraction = ((day.high - day.low) / span).toFloat().coerceIn(0f, 1f),
             )
         }
     }

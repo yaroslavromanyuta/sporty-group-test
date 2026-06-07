@@ -82,11 +82,19 @@ private fun ForecastRoute(
 
     // Re-check on resume: unblock the start screen after a Settings grant, or signal that
     // permission was revoked while the app was backgrounded.
+    // Guard: do NOT call onLocationPermissionDenied on a fresh start — before the user has
+    // been asked, shouldShowRequestPermissionRationale returns false (same as "don't ask
+    // again"), causing isLocationPermissionPermanentlyDenied() to produce a false positive.
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
         if (context.hasLocationPermission()) {
             viewModel.onLocationPermissionAvailable()
         } else {
-            viewModel.onLocationPermissionDenied(context.isLocationPermissionPermanentlyDenied())
+            val state = viewModel.uiState.value
+            val onFreshStart = state is ForecastUiState.InitialChoice &&
+                !state.permissionDenied && !state.permissionPermanentlyDenied
+            if (!onFreshStart) {
+                viewModel.onLocationPermissionDenied(context.isLocationPermissionPermanentlyDenied())
+            }
         }
     }
 

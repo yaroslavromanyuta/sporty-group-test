@@ -16,7 +16,12 @@ class ForecastDataToDomainMapperImpl @Inject constructor() : ForecastDataToDomai
     override fun map(model: ForecastDataModel, city: City): Forecast {
         val today = model.daily.firstOrNull()
         val current = model.current
-        val currentTime = parseDateTime(current.time) ?: LocalDateTime.now()
+        // Prefer the first hourly timestamp as fallback — it's already in the city's local
+        // timezone (API uses timezone=auto). LocalDateTime.now() uses the device's clock
+        // and would be wrong for cities in a different timezone.
+        val currentTime = parseDateTime(current.time)
+            ?: model.hourly.firstOrNull()?.let { parseDateTime(it.time) }
+            ?: LocalDateTime.now()
         return Forecast(
             city = city,
             current = CurrentWeather(

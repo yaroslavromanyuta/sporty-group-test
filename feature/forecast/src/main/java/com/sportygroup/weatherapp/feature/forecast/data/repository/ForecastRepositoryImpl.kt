@@ -1,7 +1,9 @@
 package com.sportygroup.weatherapp.feature.forecast.data.repository
 
+import com.sportygroup.weatherapp.core.common.AppError
 import com.sportygroup.weatherapp.core.common.AppResult
 import com.sportygroup.weatherapp.core.common.DispatcherProvider
+import com.sportygroup.weatherapp.core.common.flatMap
 import com.sportygroup.weatherapp.core.common.map
 import com.sportygroup.weatherapp.feature.forecast.data.mapper.CityDataToDomainMapper
 import com.sportygroup.weatherapp.feature.forecast.data.mapper.CityDtoToDataMapper
@@ -33,7 +35,10 @@ class ForecastRepositoryImpl @Inject constructor(
         withContext(dispatchers.io) {
             val units = forecastUnitsMapper.map(settings)
             forecastRemote.getForecast(city.coordinates.latitude, city.coordinates.longitude, units)
-                .map { dto -> forecastDataToDomain.map(forecastDtoToData.map(dto), city) }
+                .flatMap { dto ->
+                    if (dto.current == null) return@flatMap AppResult.Failure(AppError.Network)
+                    AppResult.Success(forecastDataToDomain.map(forecastDtoToData.map(dto), city))
+                }
         }
 
     override suspend fun getForecastByCoordinates(
@@ -49,7 +54,10 @@ class ForecastRepositoryImpl @Inject constructor(
                 isCurrentLocation = true,
             )
             forecastRemote.getForecast(coordinates.latitude, coordinates.longitude, units)
-                .map { dto -> forecastDataToDomain.map(forecastDtoToData.map(dto), fallbackCity) }
+                .flatMap { dto ->
+                    if (dto.current == null) return@flatMap AppResult.Failure(AppError.Network)
+                    AppResult.Success(forecastDataToDomain.map(forecastDtoToData.map(dto), fallbackCity))
+                }
         }
 
     override suspend fun searchCities(query: String): AppResult<List<City>> =
