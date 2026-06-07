@@ -121,6 +121,8 @@ jobs:
         run: ./gradlew recordRoborazziDebug
 
       - name: Commit updated baselines
+        env:
+          BRANCH: ${{ steps.pr-info.outputs.branch || github.event.inputs.branch || github.ref_name }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -129,5 +131,5 @@ jobs:
             echo "No screenshot changes to commit."
           else
             git commit -m "Update Roborazzi screenshot baselines"
-            git push
+            git push origin HEAD:"$BRANCH"
           fi
