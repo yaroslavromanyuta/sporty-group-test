@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_title">Postavke</string>
+    <string name="settings_back_content_description">Natrag</string>
+    <string name="settings_section_units">Jedinice</string>
+    <string name="settings_section_appearance">Izgled</string>
+    <string name="settings_measurement_label">Mjerni sustav</string>
+    <string name="settings_measurement_helper">Utječe na brzinu vjetra, tlak i vidljivost</string>
+    <string name="settings_measurement_metric">Metrički</string>
+    <string name="settings_measurement_imperial">Imperijalni</string>
+    <string name="settings_temperature_label">Temperatura</string>
+    <string name="settings_temperature_celsius">Celsius</string>
+    <string name="settings_temperature_fahrenheit">Fahrenheit</string>
+    <string name="settings_theme_label">Tema</string>
+    <string name="settings_theme_system">Kao\nuređaj</string>
+    <string name="settings_theme_light">Svijetla</string>
+    <string name="settings_theme_dark">Tamna</string>
+    <string name="settings_app_version">SkyCast 1.0</string>
+    <string name="settings_data_source">Vremenski podaci od Open-Meteo</string>
+</resources>

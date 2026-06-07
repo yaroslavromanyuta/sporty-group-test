@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_title">Seaded</string>
+    <string name="settings_back_content_description">Tagasi</string>
+    <string name="settings_section_units">Ühikud</string>
+    <string name="settings_section_appearance">Välimus</string>
+    <string name="settings_measurement_label">Mõõtmissüsteem</string>
+    <string name="settings_measurement_helper">Mõjutab tuule kiirust, rõhku ja nähtavust</string>
+    <string name="settings_measurement_metric">Meetriline</string>
+    <string name="settings_measurement_imperial">Imperiaal</string>
+    <string name="settings_temperature_label">Temperatuur</string>
+    <string name="settings_temperature_celsius">Celsius</string>
+    <string name="settings_temperature_fahrenheit">Fahrenheit</string>
+    <string name="settings_theme_label">Teema</string>
+    <string name="settings_theme_system">Nagu\nseadmes</string>
+    <string name="settings_theme_light">Hele</string>
+    <string name="settings_theme_dark">Tume</string>
+    <string name="settings_app_version">SkyCast 1.0</string>
+    <string name="settings_data_source">Weather data by Open-Meteo</string>
+</resources>

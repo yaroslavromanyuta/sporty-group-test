@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_title">Nustatymai</string>
+    <string name="settings_back_content_description">Atgal</string>
+    <string name="settings_section_units">Vienetai</string>
+    <string name="settings_section_appearance">Išvaizda</string>
+    <string name="settings_measurement_label">Matavimo sistema</string>
+    <string name="settings_measurement_helper">Paveikia vėjo greitį, slėgį ir matomumą</string>
+    <string name="settings_measurement_metric">Metrinė</string>
+    <string name="settings_measurement_imperial">Imperinė</string>
+    <string name="settings_temperature_label">Temperatūra</string>
+    <string name="settings_temperature_celsius">Celsijus</string>
+    <string name="settings_temperature_fahrenheit">Fahrenheit</string>
+    <string name="settings_theme_label">Tema</string>
+    <string name="settings_theme_system">Kaip\nįrenginyje</string>
+    <string name="settings_theme_light">Šviesi</string>
+    <string name="settings_theme_dark">Tamsi</string>
+    <string name="settings_app_version">SkyCast 1.0</string>
+    <string name="settings_data_source">Weather data by Open-Meteo</string>
+</resources>

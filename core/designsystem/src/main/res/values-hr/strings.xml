@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ds_search_placeholder">Pretraži grad ili zračnu luku</string>
+    <string name="ds_clear_search_content_description">Očisti pretragu</string>
+</resources>
