@@ -16,12 +16,14 @@ import com.sportygroup.weatherapp.feature.forecast.presentation.mapper.ForecastD
 import com.sportygroup.weatherapp.feature.forecast.presentation.model.CityUiModel
 import com.sportygroup.weatherapp.feature.forecast.presentation.preview.ForecastPreviewData
 import com.sportygroup.weatherapp.feature.forecast.presentation.state.ForecastUiAction
+import com.sportygroup.weatherapp.feature.forecast.presentation.state.ForecastUiEvent
 import com.sportygroup.weatherapp.feature.forecast.presentation.state.ForecastUiState
 import com.sportygroup.weatherapp.feature.forecast.testutil.FakeStringResources
 import com.sportygroup.weatherapp.lib.settings.model.AppSettings
 import com.sportygroup.weatherapp.lib.settings.model.MeasurementSystem
 import com.sportygroup.weatherapp.lib.settings.model.ThemeMode
 import com.sportygroup.weatherapp.lib.settings.usecase.ObserveSettingsUseCase
+import app.cash.turbine.test
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -247,6 +249,41 @@ class ForecastViewModelTest {
         val recent = vm.searchState.value.recent
         assertEquals(1, recent.size)
         assertEquals("Lisbon", recent.first().name)
+    }
+
+    @Test
+    fun `pull-to-refresh reloads and shows content without a refreshing flag left set`() = runTest {
+        coEvery { getCurrentLocationForecast(any()) } returns AppResult.Success(domainForecast)
+        val vm = viewModel()
+        vm.onLocationPermissionGranted()
+        assertTrue(vm.uiState.value is ForecastUiState.Content)
+
+        vm.onAction(ForecastUiAction.OnRefresh)
+
+        // Initial grant load + the refresh load.
+        coVerify(exactly = 2) { getCurrentLocationForecast(any()) }
+        val state = vm.uiState.value
+        assertTrue(state is ForecastUiState.Content)
+        assertFalse((state as ForecastUiState.Content).isRefreshing)
+    }
+
+    @Test
+    fun `pull-to-refresh failure keeps the current content and emits a message`() = runTest {
+        coEvery { getCurrentLocationForecast(any()) } returns AppResult.Success(domainForecast)
+        val vm = viewModel()
+        vm.onLocationPermissionGranted()
+        // Next refresh fails (e.g. no network and no cache).
+        coEvery { getCurrentLocationForecast(any()) } returns AppResult.Failure(AppError.Network)
+
+        vm.events.test {
+            vm.onAction(ForecastUiAction.OnRefresh)
+            assertTrue(awaitItem() is ForecastUiEvent.ShowMessage)
+        }
+
+        // Existing forecast stays on screen instead of being replaced by an error.
+        val state = vm.uiState.value
+        assertTrue(state is ForecastUiState.Content)
+        assertFalse((state as ForecastUiState.Content).isRefreshing)
     }
 
     @Test

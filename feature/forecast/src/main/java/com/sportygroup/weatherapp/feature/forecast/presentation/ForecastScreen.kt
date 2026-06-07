@@ -13,7 +13,9 @@ import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -80,6 +82,8 @@ fun ForecastScreen(
             )
             is ForecastUiState.Content -> ForecastContent(
                 forecast = state.forecast,
+                isRefreshing = state.isRefreshing,
+                onRefresh = { onAction(ForecastUiAction.OnRefresh) },
                 onOpenSearch = onOpenSearch,
                 onOpenSettings = onOpenSettings,
             )
@@ -87,8 +91,30 @@ fun ForecastScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ForecastContent(
+    forecast: ForecastUiModel,
+    isRefreshing: Boolean,
+    onRefresh: () -> Unit,
+    onOpenSearch: () -> Unit,
+    onOpenSettings: () -> Unit,
+) {
+    PullToRefreshBox(
+        isRefreshing = isRefreshing,
+        onRefresh = onRefresh,
+        modifier = Modifier.fillMaxSize(),
+    ) {
+        ForecastContentBody(
+            forecast = forecast,
+            onOpenSearch = onOpenSearch,
+            onOpenSettings = onOpenSettings,
+        )
+    }
+}
+
+@Composable
+private fun ForecastContentBody(
     forecast: ForecastUiModel,
     onOpenSearch: () -> Unit,
     onOpenSettings: () -> Unit,

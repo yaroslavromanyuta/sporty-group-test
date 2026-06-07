@@ -84,9 +84,8 @@ class ForecastViewModel @Inject constructor(
 
     fun onAction(action: ForecastUiAction) {
         when (action) {
-            ForecastUiAction.OnRetryClick,
-            ForecastUiAction.OnRefresh,
-            -> reload()
+            ForecastUiAction.OnRetryClick -> reload()
+            ForecastUiAction.OnRefresh -> refresh()
             is ForecastUiAction.OnCitySelected -> selectCity(cityUiMapper.toDomain(action.city))
         }
     }
@@ -164,19 +163,49 @@ class ForecastViewModel @Inject constructor(
     }
 
     private fun reload() {
-        val city = lastSelectedCity
-        if (city == null && !usingCurrentLocation) {
+        if (!hasLoadedForecast()) {
             // Nothing loaded yet — keep the start screen as the decision point.
             return
         }
         _uiState.value = ForecastUiState.Loading
+        viewModelScope.launch { handleForecastResult(loadForecast()) }
+    }
+
+    /**
+     * Pull-to-refresh: re-fetches the current forecast while keeping the content on screen with a
+     * refreshing indicator. A transient failure preserves the existing forecast and surfaces a
+     * message instead of replacing the screen with an error.
+     */
+    private fun refresh() {
+        val current = _uiState.value
+        if (current !is ForecastUiState.Content) {
+            // Nothing on screen to refresh in place — fall back to a normal (full-screen) load.
+            reload()
+            return
+        }
+        if (!hasLoadedForecast()) return
+        _uiState.value = current.copy(isRefreshing = true)
         viewModelScope.launch {
-            val result = if (city == null) {
-                getCurrentLocationForecast(settings)
-            } else {
-                getForecastByCity(city, settings)
+            when (val result = loadForecast()) {
+                is AppResult.Success -> _uiState.value = ForecastUiState.Content(
+                    forecast = forecastUiMapper.map(result.value, settings.measurementSystem),
+                )
+                is AppResult.Failure -> if (result.error == AppError.NoLocationPermission) {
+                    handleForecastResult(result)
+                } else {
+                    _uiState.value = current.copy(isRefreshing = false)
+                    emitEvent(ForecastUiEvent.ShowMessage(errorUiMapper.map(result.error).message))
+                }
             }
-            handleForecastResult(result)
+        }
+    }
+
+    private suspend fun loadForecast(): AppResult<Forecast> {
+        val city = lastSelectedCity
+        return if (city == null) {
+            getCurrentLocationForecast(settings)
+        } else {
+            getForecastByCity(city, settings)
         }
     }
 
