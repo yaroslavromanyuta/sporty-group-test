@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ds_search_placeholder">Város vagy repülőtér keresése</string>
+    <string name="ds_clear_search_content_description">Keresés törlése</string>
+</resources>

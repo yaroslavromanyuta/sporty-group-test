@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_title">Indstillinger</string>
+    <string name="settings_back_content_description">Tilbage</string>
+    <string name="settings_section_units">Enheder</string>
+    <string name="settings_section_appearance">Udseende</string>
+    <string name="settings_measurement_label">Målesystem</string>
+    <string name="settings_measurement_helper">Påvirker vindhastighed, lufttryk og sigtbarhed</string>
+    <string name="settings_measurement_metric">Metrisk</string>
+    <string name="settings_measurement_imperial">Imperialt</string>
+    <string name="settings_temperature_label">Temperatur</string>
+    <string name="settings_temperature_celsius">Celsius</string>
+    <string name="settings_temperature_fahrenheit">Fahrenheit</string>
+    <string name="settings_theme_label">Tema</string>
+    <string name="settings_theme_system">Samme som\nenheden</string>
+    <string name="settings_theme_light">Lyst</string>
+    <string name="settings_theme_dark">Mørkt</string>
+    <string name="settings_app_version">SkyCast 1.0</string>
+    <string name="settings_data_source">Vejrdata fra Open-Meteo</string>
+</resources>

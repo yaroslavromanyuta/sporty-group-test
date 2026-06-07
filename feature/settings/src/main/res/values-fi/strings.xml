@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_title">Asetukset</string>
+    <string name="settings_back_content_description">Takaisin</string>
+    <string name="settings_section_units">Yksiköt</string>
+    <string name="settings_section_appearance">Ulkoasu</string>
+    <string name="settings_measurement_label">Mittausjärjestelmä</string>
+    <string name="settings_measurement_helper">Vaikuttaa tuulennopeuteen, paineeseen ja näkyvyyteen</string>
+    <string name="settings_measurement_metric">Metrinen</string>
+    <string name="settings_measurement_imperial">Imperiaalinen</string>
+    <string name="settings_temperature_label">Lämpötila</string>
+    <string name="settings_temperature_celsius">Celsius</string>
+    <string name="settings_temperature_fahrenheit">Fahrenheit</string>
+    <string name="settings_theme_label">Teema</string>
+    <string name="settings_theme_system">Sama kuin\nlaite</string>
+    <string name="settings_theme_light">Vaalea</string>
+    <string name="settings_theme_dark">Tumma</string>
+    <string name="settings_app_version">SkyCast 1.0</string>
+    <string name="settings_data_source">Säätiedot: Open-Meteo</string>
+</resources>

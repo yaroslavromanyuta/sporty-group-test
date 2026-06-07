@@ -1,0 +1,24 @@
+<resources>
+    <string name="settings_title">Settings</string>
+    <string name="settings_back_content_description">Back</string>
+
+    <string name="settings_section_units">Units</string>
+    <string name="settings_section_appearance">Appearance</string>
+
+    <string name="settings_measurement_label">Measurement system</string>
+    <string name="settings_measurement_helper">Affects wind speed, pressure, and visibility</string>
+    <string name="settings_measurement_metric">Metric</string>
+    <string name="settings_measurement_imperial">Imperial</string>
+
+    <string name="settings_temperature_label">Temperature</string>
+    <string name="settings_temperature_celsius">Celsius</string>
+    <string name="settings_temperature_fahrenheit">Fahrenheit</string>
+
+    <string name="settings_theme_label">Theme</string>
+    <string name="settings_theme_system">Same as\ndevice</string>
+    <string name="settings_theme_light">Light</string>
+    <string name="settings_theme_dark">Dark</string>
+
+    <string name="settings_app_version">SkyCast 1.0</string>
+    <string name="settings_data_source">Weather data by Open-Meteo</string>
+</resources>

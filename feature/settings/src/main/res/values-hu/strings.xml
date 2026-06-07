@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_title">Beállítások</string>
+    <string name="settings_back_content_description">Vissza</string>
+    <string name="settings_section_units">Mértékegységek</string>
+    <string name="settings_section_appearance">Megjelenés</string>
+    <string name="settings_measurement_label">Mértékrendszer</string>
+    <string name="settings_measurement_helper">A szélsebességet, a nyomást és a láthatóságot érinti</string>
+    <string name="settings_measurement_metric">Metrikus</string>
+    <string name="settings_measurement_imperial">Angolszász</string>
+    <string name="settings_temperature_label">Hőmérséklet</string>
+    <string name="settings_temperature_celsius">Celsius</string>
+    <string name="settings_temperature_fahrenheit">Fahrenheit</string>
+    <string name="settings_theme_label">Téma</string>
+    <string name="settings_theme_system">Eszköz\nbeállítása</string>
+    <string name="settings_theme_light">Világos</string>
+    <string name="settings_theme_dark">Sötét</string>
+    <string name="settings_app_version">SkyCast 1.0</string>
+    <string name="settings_data_source">Weather data by Open-Meteo</string>
+</resources>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_title">Nastavení</string>
+    <string name="settings_back_content_description">Zpět</string>
+    <string name="settings_section_units">Jednotky</string>
+    <string name="settings_section_appearance">Vzhled</string>
+    <string name="settings_measurement_label">Soustava měření</string>
+    <string name="settings_measurement_helper">Ovlivňuje rychlost větru, tlak a viditelnost</string>
+    <string name="settings_measurement_metric">Metrická</string>
+    <string name="settings_measurement_imperial">Imperiální</string>
+    <string name="settings_temperature_label">Teplota</string>
+    <string name="settings_temperature_celsius">Celsius</string>
+    <string name="settings_temperature_fahrenheit">Fahrenheit</string>
+    <string name="settings_theme_label">Motiv</string>
+    <string name="settings_theme_system">Podle\nzařízení</string>
+    <string name="settings_theme_light">Světlý</string>
+    <string name="settings_theme_dark">Tmavý</string>
+    <string name="settings_app_version">SkyCast 1.0</string>
+    <string name="settings_data_source">Meteorologická data od Open-Meteo</string>
+</resources>

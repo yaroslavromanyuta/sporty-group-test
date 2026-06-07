@@ -1,0 +1,88 @@
+<resources>
+    <!-- Top bar / sections -->
+    <string name="forecast_current_location">Current location</string>
+    <string name="forecast_settings_content_description">Settings</string>
+    <string name="forecast_section_hourly">Hourly</string>
+    <string name="forecast_section_this_week">This week</string>
+    <string name="forecast_section_this_week_action">7 days</string>
+    <string name="forecast_section_today_details">Today\'s details</string>
+
+    <!-- Hero -->
+    <string name="forecast_hero_high">H:%1$s</string>
+    <string name="forecast_hero_low">L:%1$s</string>
+
+    <!-- Mapper labels -->
+    <string name="forecast_label_now">Now</string>
+    <string name="forecast_label_today">Today</string>
+    <string name="forecast_updated">Updated %1$02d:%2$02d</string>
+    <string name="forecast_hour_format">%1$02d:00</string>
+    <string name="forecast_metric_feels_like">Feels like</string>
+    <string name="forecast_metric_humidity">Humidity</string>
+    <string name="forecast_metric_wind">Wind</string>
+    <string name="forecast_metric_pressure">Pressure</string>
+
+    <!-- Units -->
+    <string name="unit_wind_kmh">km/h</string>
+    <string name="unit_wind_mph">mph</string>
+    <string name="unit_pressure_hpa">hPa</string>
+    <string name="unit_pressure_inhg">inHg</string>
+
+    <!-- Weather conditions -->
+    <string name="condition_clear_day">Sunny</string>
+    <string name="condition_clear_night">Clear</string>
+    <string name="condition_partly_cloudy">Partly cloudy</string>
+    <string name="condition_cloudy">Cloudy</string>
+    <string name="condition_fog">Fog</string>
+    <string name="condition_showers">Light showers</string>
+    <string name="condition_rain">Rain</string>
+    <string name="condition_snow">Snow</string>
+    <string name="condition_thunderstorm">Thunderstorm</string>
+    <string name="condition_unknown">—</string>
+
+    <!-- Content descriptions -->
+    <string name="forecast_cd_current_weather">%1$s, %2$s</string>
+    <string name="forecast_cd_feels_like">Feels like %1$s</string>
+    <string name="forecast_cd_humidity">Humidity %1$d percent</string>
+    <string name="forecast_cd_wind">Wind %1$s %2$s</string>
+    <string name="forecast_cd_pressure">Pressure %1$s %2$s</string>
+
+    <!-- Errors -->
+    <string name="error_generic_title">Something went wrong</string>
+    <string name="error_network_message">We couldn\'t reach the weather service. Check your connection and try again.</string>
+    <string name="error_timeout_title">Taking too long</string>
+    <string name="error_timeout_message">The weather service didn\'t respond in time. Please try again.</string>
+    <string name="error_location_unavailable_title">Location unavailable</string>
+    <string name="error_location_unavailable_message">We couldn\'t determine your location. Try again or search for a city.</string>
+    <string name="error_no_permission_title">Location permission needed</string>
+    <string name="error_no_permission_message">Grant location access or search for a city to see its forecast.</string>
+    <string name="error_empty_title">Nothing to show</string>
+    <string name="error_empty_message">We couldn\'t find any forecast data. Try another city.</string>
+    <string name="error_unknown_message">An unexpected error occurred. Please try again.</string>
+    <string name="error_server_message">The weather service returned an error (%1$d). Please try again later.</string>
+
+    <!-- Error screen -->
+    <string name="forecast_error_try_again">Try again</string>
+    <string name="forecast_error_search_another">Search another city</string>
+    <string name="forecast_error_code">Error code: %1$s</string>
+
+    <!-- Loading -->
+    <string name="forecast_loading">Fetching latest forecast…</string>
+
+    <!-- Initial choice screen -->
+    <string name="forecast_welcome_title">Welcome to SkyCast</string>
+    <string name="forecast_welcome_message">Use your current location for local weather, or search for any city. We only request location after you choose it.</string>
+    <string name="forecast_use_current_location">Use current location</string>
+    <string name="forecast_search_manually">Search city manually</string>
+    <string name="forecast_open_settings">Open settings</string>
+    <string name="forecast_permission_denied">Location permission denied. You can still search for a city manually.</string>
+    <string name="forecast_permission_permanently_denied">Location permission is turned off. Enable it in Settings, or search for a city manually.</string>
+
+    <!-- City search -->
+    <string name="search_back_content_description">Back</string>
+    <string name="search_choose_location">Choose location</string>
+    <string name="search_detect_city">Detect my city automatically</string>
+    <string name="search_recent">Recent</string>
+    <string name="search_suggested">Suggested</string>
+    <string name="search_no_matches">No matches for “%1$s”</string>
+    <string name="search_no_matches_hint">Check the spelling or try searching for a nearby city or airport.</string>
+</resources>

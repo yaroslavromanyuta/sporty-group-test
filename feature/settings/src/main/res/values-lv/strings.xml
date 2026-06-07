@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_title">Iestatījumi</string>
+    <string name="settings_back_content_description">Atpakaļ</string>
+    <string name="settings_section_units">Mērvienības</string>
+    <string name="settings_section_appearance">Izskats</string>
+    <string name="settings_measurement_label">Mērīšanas sistēma</string>
+    <string name="settings_measurement_helper">Ietekmē vēja ātrumu, spiedienu un redzamību</string>
+    <string name="settings_measurement_metric">Metriskā</string>
+    <string name="settings_measurement_imperial">Imperiālā</string>
+    <string name="settings_temperature_label">Temperatūra</string>
+    <string name="settings_temperature_celsius">Celsijs</string>
+    <string name="settings_temperature_fahrenheit">Fahrenheit</string>
+    <string name="settings_theme_label">Motīvs</string>
+    <string name="settings_theme_system">Kā\nierīcē</string>
+    <string name="settings_theme_light">Gaišs</string>
+    <string name="settings_theme_dark">Tumšs</string>
+    <string name="settings_app_version">SkyCast 1.0</string>
+    <string name="settings_data_source">Weather data by Open-Meteo</string>
+</resources>

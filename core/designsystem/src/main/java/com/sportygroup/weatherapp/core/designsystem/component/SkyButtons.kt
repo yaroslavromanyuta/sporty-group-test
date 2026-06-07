@@ -1,0 +1,93 @@
+package com.sportygroup.weatherapp.core.designsystem.component
+
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import com.sportygroup.weatherapp.core.designsystem.preview.SkyPreview
+import com.sportygroup.weatherapp.core.designsystem.preview.ThemePreviews
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.sportygroup.weatherapp.core.designsystem.icon.UiIcon
+import com.sportygroup.weatherapp.core.designsystem.icon.UiIconType
+import com.sportygroup.weatherapp.core.designsystem.theme.SkyTheme
+
+/** Full-width pill primary CTA. */
+@Composable
+fun SkyPrimaryButton(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    icon: UiIconType? = null,
+) {
+    Button(
+        onClick = onClick,
+        modifier = modifier.fillMaxWidth().heightIn(min = SkyTheme.size.buttonHeight),
+        shape = SkyTheme.shapes.pill,
+        colors = ButtonDefaults.buttonColors(
+            containerColor = SkyTheme.colors.primary,
+            contentColor = SkyTheme.colors.onPrimary,
+        ),
+    ) {
+        ButtonContent(text, icon, SkyTheme.colors.onPrimary)
+    }
+}
+
+/** Outlined secondary action. */
+@Composable
+fun SkyGhostButton(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    icon: UiIconType? = null,
+) {
+    OutlinedButton(
+        onClick = onClick,
+        modifier = modifier.fillMaxWidth().heightIn(min = SkyTheme.size.buttonHeightSecondary),
+        shape = SkyTheme.shapes.pill,
+        border = BorderStroke(SkyTheme.size.border, SkyTheme.colors.cardBorder),
+        colors = ButtonDefaults.outlinedButtonColors(contentColor = SkyTheme.colors.primary),
+    ) {
+        ButtonContent(text, icon, SkyTheme.colors.primary)
+    }
+}
+
+@Composable
+private fun ButtonContent(text: String, icon: UiIconType?, contentColor: androidx.compose.ui.graphics.Color) {
+    Row(
+        modifier = Modifier.padding(vertical = SkyTheme.spacing.sm),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(SkyTheme.spacing.smPlus),
+    ) {
+        if (icon != null) {
+            UiIcon(icon = icon, size = SkyTheme.size.iconLg, tint = contentColor)
+        }
+        Text(text = text, style = SkyTheme.typography.body, textAlign = TextAlign.Center)
+    }
+}
+
+@ThemePreviews
+@Composable
+private fun SkyButtonsPreview() {
+    SkyPreview {
+        androidx.compose.foundation.layout.Column(
+            modifier = Modifier.size(width = 280.dp, height = 160.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            SkyPrimaryButton(text = "Use my location", onClick = {}, icon = UiIconType.LOCATION_FILL)
+            SkyGhostButton(text = "Search a city instead", onClick = {}, icon = UiIconType.SEARCH)
+        }
+    }
+}
