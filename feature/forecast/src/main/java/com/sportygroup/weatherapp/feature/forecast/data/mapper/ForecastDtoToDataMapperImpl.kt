@@ -11,22 +11,9 @@ import javax.inject.Inject
 class ForecastDtoToDataMapperImpl @Inject constructor() : ForecastDtoToDataMapper {
 
     override fun map(dto: ForecastResponseDto): ForecastDataModel {
-        val current = dto.current ?: return ForecastDataModel(
-            latitude = dto.latitude,
-            longitude = dto.longitude,
-            timezone = dto.timezone,
-            current = CurrentDataModel(
-                time = null,
-                temperature = 0.0,
-                apparentTemperature = 0.0,
-                humidityPercent = 0,
-                weatherCode = -1,
-                windSpeed = 0.0,
-                pressureHpa = 0.0,
-            ),
-            hourly = mapHourly(dto),
-            daily = mapDaily(dto),
-        )
+        val current = requireNotNull(dto.current) {
+            "dto.current must not be null; callers must validate before invoking map()"
+        }
         return ForecastDataModel(
             latitude = dto.latitude,
             longitude = dto.longitude,

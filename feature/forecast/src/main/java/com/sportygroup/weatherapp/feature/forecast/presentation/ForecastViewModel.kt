@@ -186,9 +186,11 @@ class ForecastViewModel @Inject constructor(
             }
             is AppResult.Failure -> {
                 if (result.error == AppError.NoLocationPermission) {
-                    // Delegate to the shared permission-denied path so state transitions
-                    // stay in one place and flags stay consistent.
-                    onLocationPermissionDenied(permanently = false)
+                    usingCurrentLocation = false
+                    // permissionPermanentlyDenied defaults to false here — Android APIs to
+                    // determine the permanent state are UI-layer-only. ForecastRoute corrects
+                    // the flag immediately via a LaunchedEffect when the state is visible.
+                    _uiState.value = ForecastUiState.InitialChoice(permissionDenied = true)
                 } else {
                     _uiState.value = ForecastUiState.Error(errorUiMapper.map(result.error))
                 }

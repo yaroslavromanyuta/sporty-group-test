@@ -85,16 +85,31 @@ private fun ForecastRoute(
     // Guard: do NOT call onLocationPermissionDenied on a fresh start — before the user has
     // been asked, shouldShowRequestPermissionRationale returns false (same as "don't ask
     // again"), causing isLocationPermissionPermanentlyDenied() to produce a false positive.
+    // Also skip during Loading — an in-flight city fetch should not be interrupted.
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
         if (context.hasLocationPermission()) {
             viewModel.onLocationPermissionAvailable()
         } else {
-            val state = viewModel.uiState.value
-            val onFreshStart = state is ForecastUiState.InitialChoice &&
-                !state.permissionDenied && !state.permissionPermanentlyDenied
-            if (!onFreshStart) {
+            val resumeState = viewModel.uiState.value
+            val onFreshStart = resumeState is ForecastUiState.InitialChoice &&
+                !resumeState.permissionDenied && !resumeState.permissionPermanentlyDenied
+            val isMidLoad = resumeState is ForecastUiState.Loading
+            if (!onFreshStart && !isMidLoad) {
                 viewModel.onLocationPermissionDenied(context.isLocationPermissionPermanentlyDenied())
             }
+        }
+    }
+
+    // Correct the permissionPermanentlyDenied flag when it arrives via the data layer
+    // (handleForecastResult has no access to Android permission APIs and sets false conservatively).
+    LaunchedEffect(state) {
+        val s = state
+        if (s is ForecastUiState.InitialChoice &&
+            s.permissionDenied && !s.permissionPermanentlyDenied &&
+            !context.hasLocationPermission() &&
+            context.isLocationPermissionPermanentlyDenied()
+        ) {
+            viewModel.onLocationPermissionDenied(permanently = true)
         }
     }
 

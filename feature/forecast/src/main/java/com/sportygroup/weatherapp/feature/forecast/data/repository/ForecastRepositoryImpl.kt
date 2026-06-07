@@ -12,6 +12,7 @@ import com.sportygroup.weatherapp.feature.forecast.data.mapper.ForecastDtoToData
 import com.sportygroup.weatherapp.feature.forecast.data.mapper.ForecastUnitsMapper
 import com.sportygroup.weatherapp.feature.forecast.data.remote.CitySearchRemoteDataSource
 import com.sportygroup.weatherapp.feature.forecast.data.remote.ForecastRemoteDataSource
+import com.sportygroup.weatherapp.feature.forecast.data.remote.dto.ForecastResponseDto
 import com.sportygroup.weatherapp.core.model.City
 import com.sportygroup.weatherapp.core.model.Coordinates
 import com.sportygroup.weatherapp.core.model.Forecast
@@ -35,10 +36,7 @@ class ForecastRepositoryImpl @Inject constructor(
         withContext(dispatchers.io) {
             val units = forecastUnitsMapper.map(settings)
             forecastRemote.getForecast(city.coordinates.latitude, city.coordinates.longitude, units)
-                .flatMap { dto ->
-                    if (dto.current == null) return@flatMap AppResult.Failure(AppError.Network)
-                    AppResult.Success(forecastDataToDomain.map(forecastDtoToData.map(dto), city))
-                }
+                .flatMap { dto -> mapDtoToForecast(dto, city) }
         }
 
     override suspend fun getForecastByCoordinates(
@@ -54,11 +52,16 @@ class ForecastRepositoryImpl @Inject constructor(
                 isCurrentLocation = true,
             )
             forecastRemote.getForecast(coordinates.latitude, coordinates.longitude, units)
-                .flatMap { dto ->
-                    if (dto.current == null) return@flatMap AppResult.Failure(AppError.Network)
-                    AppResult.Success(forecastDataToDomain.map(forecastDtoToData.map(dto), fallbackCity))
-                }
+                .flatMap { dto -> mapDtoToForecast(dto, fallbackCity) }
         }
+
+    private fun mapDtoToForecast(
+        dto: ForecastResponseDto,
+        city: City,
+    ): AppResult<Forecast> {
+        if (dto.current == null) return AppResult.Failure(AppError.Network)
+        return AppResult.Success(forecastDataToDomain.map(forecastDtoToData.map(dto), city))
+    }
 
     override suspend fun searchCities(query: String): AppResult<List<City>> =
         withContext(dispatchers.io) {
