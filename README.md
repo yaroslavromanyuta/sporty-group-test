@@ -10,7 +10,9 @@ native Jetpack Compose recreation of the **SkyCast design handoff**.
 
 Forecasts are **cached locally**, so the last successful result is still shown (with an
 "offline" indicator) when the network is unavailable; **recently searched cities** are
-persisted across restarts, and the forecast screen supports **pull-to-refresh**.
+persisted across restarts, and the forecast screen supports **pull-to-refresh**. The app also
+**remembers your last forecast source** (current location or a chosen city) and restores it on
+launch, so the initial choice screen only appears until you make a first selection.
 
 ## Screenshots
 
@@ -55,6 +57,7 @@ persisted across restarts, and the forecast screen supports **pull-to-refresh**.
 | Theme reacts to setting                     | `MainViewModel` observes `ThemeMode` → `SkyTheme`                           |
 | Offline forecast cache                      | `ForecastLocalDataSource` (DataStore + kotlinx.serialization); network-first with cache fallback |
 | Recent searched cities                      | `RecentCitiesLocalDataSource` (persisted), shown on empty city search       |
+| Remembers last forecast source              | `LastForecastSelectionLocalDataSource` + `Get`/`SaveLastForecastSelectionUseCase`; restored on launch |
 | Pull-to-refresh                             | `PullToRefreshBox` on `ForecastScreen` → in-place `OnRefresh`               |
 | 100% executable                             | `./gradlew :app:assembleDebug` builds a runnable APK                        |
 | No API key committed                        | Open-Meteo needs no key                                                     |
@@ -72,8 +75,8 @@ persisted across restarts, and the forecast screen supports **pull-to-refresh**.
 - **Retrofit + OkHttp** with **kotlinx.serialization**
 - **Open-Meteo** Forecast & Geocoding APIs (no key required)
 - **AGP 9.2.1** (built-in Kotlin), **Gradle 9.4.1**, JDK 21, `compileSdk 37`, `minSdk 24`
-- Tests: **JUnit4**, **MockK**, **Turbine**, **kotlinx-coroutines-test**, **MockWebServer**, *
-  *Compose UI Test**
+- Tests: **JUnit4**, **MockK**, **Turbine**, **kotlinx-coroutines-test**, **MockWebServer**,
+  **Compose UI Test**, **Roborazzi** (JVM screenshots)
 
 ---
 
@@ -89,26 +92,30 @@ Remote DTO  ──►  Data model  ──►  Domain model  ──►  UI model
 Dependency direction: `presentation → domain ← data`. The domain layer has no Android,
 Retrofit or Compose dependencies. UI composables never touch repositories or DTOs;
 formatting (temperatures, day labels, "Updated 09:30") lives only in presentation mappers.
+The shared models (`:core:model`) and settings contracts (`:lib:settings`) are **pure-JVM
+Kotlin modules** (they apply `kotlin-jvm`, not the Android library plugin), so an accidental
+Android/Retrofit/Compose import there fails to compile — a structural guarantee on top of the
+convention, and a slightly faster build.
 
 State is exposed as `StateFlow<ForecastUiState>` / `StateFlow<CitySearchUiState>` from a
 single `@HiltViewModel` shared across the forecast nav-graph; one-time effects use a
-`Channel`-backed flow. Screens are stateless (`ForecastScreen`, `CitySearchScreen`) and
+`SharedFlow`. Screens are stateless (`ForecastScreen`, `CitySearchScreen`) and
 driven by hoisted state + action callbacks, each with `@Preview`s for every major state.
 
 ### Module structure
 
 ```
 :app                  Application, MainActivity, root NavHost, theming entry point
-:core:model           Platform-free domain models (Coordinates, City, Forecast, WeatherCondition…)
+:core:model           Pure-JVM, platform-free domain models (Coordinates, City, Forecast, WeatherCondition…)
 :core:common          AppResult/AppError, DispatcherProvider, DateTimeProvider, Mapper (+ DI)
 :core:designsystem    SkyTheme, tokens, native WeatherIcon/UiIcon, reusable components
 :core:network         Shared OkHttp + JSON providers
 :core:location        CurrentLocationProvider / CurrentCityNameResolver (+ Android impls, DI)
-:lib:settings         Public settings contracts: AppSettings, MeasurementSystem,
+:lib:settings         Pure-JVM settings contracts: AppSettings, MeasurementSystem,
                       TemperatureUnit, ThemeMode, SettingsRepository, observe/update use cases
 :feature:forecast     The weather feature:
   data                DTOs, Retrofit APIs, data models, mappers (incl. ForecastUnitsMapper), repository impl
-  data/local          DataStore-backed forecast cache + recent-cities store (kotlinx.serialization)
+  data/local          DataStore-backed forecast cache, recent-cities + last-selection stores (kotlinx.serialization)
   domain              repository interface, use cases (models live in :core:model)
   presentation        UI models, mappers, state, ViewModel, screens, components, navigation
   di                  feature Hilt modules (ApiModule, data bindings, presentation bindings)
@@ -141,7 +148,7 @@ depends on it, **never** on `:feature:settings`. The DataStore-backed implementa
 - Pressure is converted to inHg for Imperial in the presentation mapper (Open-Meteo always
   returns hPa).
 
-### Offline cache & recent cities
+### Offline cache, recent cities & last selection
 
 - **Forecast cache** (`:feature:forecast/data/local`): every successful forecast is stored
   in **Preferences DataStore** as `kotlinx.serialization` JSON of a data-layer model (never
@@ -154,6 +161,12 @@ depends on it, **never** on `:feature:settings`. The DataStore-backed implementa
 - **Recent cities**: manually selected cities are persisted (deduplicated, most-recent-first,
   capped at 5; current-location is never stored) and surfaced on the city search screen when
   the query is empty. They survive process death and app restarts.
+- **Last forecast source**: the source last viewed — current location or a specific city — is
+  persisted **separately** from both the cache and recent cities, and restored on launch so the
+  initial choice screen is skipped once a choice has been made. A saved *current-location*
+  selection is auto-loaded only when permission is still granted; it never triggers a permission
+  prompt on start (the use case checks permission without requesting it). A manual city is saved
+  on selection; current location is saved only after a successful permission-granted load.
 - **Pull-to-refresh**: the forecast content refreshes in place — the existing data stays
   visible with a spinner; a transient failure keeps the current forecast and shows a message
   instead of replacing the screen with an error.
@@ -198,19 +211,26 @@ The debug APK is written to `app/build/outputs/apk/debug/app-debug.apk`.
 On first launch SkyCast shows an explicit choice: use current location or search a city manually.
 The runtime location permission request is triggered only after the user taps “Use my location”.
 
+On later launches the previously chosen source is restored automatically — a saved current-location
+source is reloaded only if permission is still granted. The permission dialog is **never** shown
+without an explicit tap: the restore path checks whether permission is held without requesting it,
+and falls back to the choice screen when it isn’t.
+
 ---
 
 ## Testing
 
 - **Unit:** `WeatherCodeMapperTest`, `ForecastDtoToDataMapperTest`,
   `ForecastDomainToUiMapperTest`, `SearchCitiesUseCaseTest`,
-  `GetCurrentLocationForecastUseCaseTest`, `ForecastViewModelTest` (incl. recent-cities and
-  pull-to-refresh behavior), `ForecastCacheKeyTest`, `ForecastCacheMapperTest`,
-  `ForecastCachePolicyTest`, `ForecastLocalDataSourceTest`, `RecentCitiesLocalDataSourceTest`.
-- **Integration:** `ForecastRepositoryIntegrationTest` — real Retrofit + mappers against
-  **MockWebServer** (success, empty search, HTTP error → typed failure);
-  `ForecastRepositoryCacheTest` — network-first caching (success saves, failure falls back to
-  cache, no cache → error, stale cache still served).
+  `GetCurrentLocationForecastUseCaseTest`, `ForecastViewModelTest` (incl. recent-cities,
+  last-selection restore and pull-to-refresh behavior), `ForecastCacheKeyTest`,
+  `ForecastCacheMapperTest`, `ForecastCachePolicyTest`, `ForecastLocalDataSourceTest`,
+  `RecentCitiesLocalDataSourceTest`, `LastForecastSelectionLocalDataSourceTest`,
+  `LastForecastSelectionMapperTest`.
+- **Integration:** `ForecastRepositoryIntegrationTest` and `CitySearchRepositoryIntegrationTest`
+  — real Retrofit + mappers against **MockWebServer** (success, empty search, HTTP error → typed
+  failure); `ForecastRepositoryCacheTest` — network-first caching (success saves, failure falls
+  back to cache, no cache → error, stale cache still served).
 - **Compose UI:** `ForecastScreenTest`, `CitySearchScreenTest` (content/error/permission,
   search results/empty/input).
 - **Screenshot:** `DesignSystemScreenshotTest`, `ForecastScreenshotTest`,
