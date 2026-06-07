@@ -51,6 +51,8 @@
     <string name="forecast_error_search_another">Знайти інше місто</string>
     <string name="forecast_error_code">Код помилки: %1$s</string>
     <string name="forecast_loading">Завантаження актуального прогнозу…</string>
+    <string name="forecast_offline">Офлайн-дані</string>
+    <string name="forecast_offline_outdated">Офлайн · можливо застаріло</string>
     <string name="forecast_welcome_title">Ласкаво просимо до SkyCast</string>
     <string name="forecast_welcome_message">Використовуйте поточне місцезнаходження для місцевої погоди або знайдіть будь-яке місто. Ми запитуємо доступ до геолокації лише тоді, коли ви це вибираєте.</string>
     <string name="forecast_use_current_location">Використати поточне місцезнаходження</string>

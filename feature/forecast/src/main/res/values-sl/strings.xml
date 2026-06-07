@@ -51,6 +51,8 @@
     <string name="forecast_error_search_another">Išči drugo mesto</string>
     <string name="forecast_error_code">Koda napake: %1$s</string>
     <string name="forecast_loading">Pridobivanje najnovejše napovedi…</string>
+    <string name="forecast_offline">Podatki brez povezave</string>
+    <string name="forecast_offline_outdated">Brez povezave · morda zastarelo</string>
     <string name="forecast_welcome_title">Dobrodošli v SkyCast</string>
     <string name="forecast_welcome_message">Uporabite svojo trenutno lokacijo za lokalno vreme ali poiščite katero koli mesto. Za dostop do lokacije vas prosimo šele, ko to izberete.</string>
     <string name="forecast_use_current_location">Uporabi trenutno lokacijo</string>

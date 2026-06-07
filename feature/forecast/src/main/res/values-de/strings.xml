@@ -51,6 +51,8 @@
     <string name="forecast_error_search_another">Andere Stadt suchen</string>
     <string name="forecast_error_code">Fehlercode: %1$s</string>
     <string name="forecast_loading">Aktuelle Vorhersage wird geladen…</string>
+    <string name="forecast_offline">Offlinedaten</string>
+    <string name="forecast_offline_outdated">Offline · evtl. veraltet</string>
     <string name="forecast_welcome_title">Willkommen bei SkyCast</string>
     <string name="forecast_welcome_message">Nutze deinen aktuellen Standort für lokales Wetter oder suche nach einer beliebigen Stadt. Der Standortzugriff wird erst nach deiner Auswahl angefragt.</string>
     <string name="forecast_use_current_location">Aktuellen Standort verwenden</string>

@@ -51,6 +51,8 @@
     <string name="forecast_error_search_another">Andere stad zoeken</string>
     <string name="forecast_error_code">Foutcode: %1$s</string>
     <string name="forecast_loading">Laatste voorspelling ophalen…</string>
+    <string name="forecast_offline">Offlinegegevens</string>
+    <string name="forecast_offline_outdated">Offline · mogelijk verouderd</string>
     <string name="forecast_welcome_title">Welkom bij SkyCast</string>
     <string name="forecast_welcome_message">Gebruik je huidige locatie voor lokaal weer, of zoek naar een willekeurige stad. We vragen pas om je locatie nadat je dat kiest.</string>
     <string name="forecast_use_current_location">Huidige locatie gebruiken</string>

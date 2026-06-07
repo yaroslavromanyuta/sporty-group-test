@@ -1,7 +1,10 @@
 package com.sportygroup.weatherapp.feature.forecast.data
 
-import com.sportygroup.weatherapp.core.common.AppError
 import com.sportygroup.weatherapp.core.common.AppResult
+import com.sportygroup.weatherapp.core.model.City
+import com.sportygroup.weatherapp.core.model.Coordinates
+import com.sportygroup.weatherapp.core.model.ForecastSource
+import com.sportygroup.weatherapp.feature.forecast.data.local.ForecastCacheKey
 import com.sportygroup.weatherapp.feature.forecast.data.mapper.CityDataToDomainMapperImpl
 import com.sportygroup.weatherapp.feature.forecast.data.mapper.CityDtoToDataMapperImpl
 import com.sportygroup.weatherapp.feature.forecast.data.mapper.ForecastDataToDomainMapperImpl
@@ -12,14 +15,11 @@ import com.sportygroup.weatherapp.feature.forecast.data.remote.ForecastRemoteDat
 import com.sportygroup.weatherapp.feature.forecast.data.remote.api.ForecastApi
 import com.sportygroup.weatherapp.feature.forecast.data.remote.api.GeocodingApi
 import com.sportygroup.weatherapp.feature.forecast.data.repository.ForecastRepositoryImpl
-import com.sportygroup.weatherapp.core.model.City
-import com.sportygroup.weatherapp.core.model.Coordinates
 import com.sportygroup.weatherapp.feature.forecast.testutil.FakeForecastLocalDataSource
 import com.sportygroup.weatherapp.feature.forecast.testutil.FakeRecentCitiesLocalDataSource
 import com.sportygroup.weatherapp.feature.forecast.testutil.TestDispatcherProvider
 import com.sportygroup.weatherapp.lib.settings.model.AppSettings
-import com.sportygroup.weatherapp.lib.settings.model.MeasurementSystem
-import com.sportygroup.weatherapp.lib.settings.model.TemperatureUnit
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
@@ -28,21 +28,26 @@ import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import retrofit2.Retrofit
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
 
-class ForecastRepositoryIntegrationTest {
+class ForecastRepositoryCacheTest {
 
     private lateinit var server: MockWebServer
+    private lateinit var local: FakeForecastLocalDataSource
     private lateinit var repository: ForecastRepositoryImpl
+
+    private val malaga = City("Malaga", "Spain", Coordinates(36.7, -4.4))
 
     @Before
     fun setUp() {
         server = MockWebServer()
         server.start()
+        local = FakeForecastLocalDataSource()
         val json = Json { ignoreUnknownKeys = true; explicitNulls = false }
         val retrofit = Retrofit.Builder()
             .baseUrl(server.url("/"))
@@ -52,7 +57,7 @@ class ForecastRepositoryIntegrationTest {
         repository = ForecastRepositoryImpl(
             forecastRemote = ForecastRemoteDataSourceImpl(retrofit.create(ForecastApi::class.java)),
             citySearchRemote = CitySearchRemoteDataSourceImpl(retrofit.create(GeocodingApi::class.java)),
-            forecastLocal = FakeForecastLocalDataSource(),
+            forecastLocal = local,
             recentCitiesLocal = FakeRecentCitiesLocalDataSource(),
             forecastDtoToData = ForecastDtoToDataMapperImpl(),
             forecastDataToDomain = ForecastDataToDomainMapperImpl(),
@@ -69,81 +74,70 @@ class ForecastRepositoryIntegrationTest {
     }
 
     @Test
-    fun `parses a successful forecast response`() = runTest {
+    fun `network success returns network-sourced forecast and saves to cache`() = runTest {
         server.enqueue(MockResponse().setResponseCode(200).setBody(FORECAST_JSON))
 
-        val result = repository.getForecast(
-            City("Malaga", "Spain", Coordinates(36.7, -4.4)),
-            AppSettings.DEFAULT,
-        )
+        val result = repository.getForecast(malaga, AppSettings.DEFAULT)
+
+        assertTrue(result is AppResult.Success)
+        assertEquals(ForecastSource.NETWORK, (result as AppResult.Success).value.source)
+        // Saved under this location + units, so a later offline read finds it.
+        assertTrue(local.read(cacheKey()) != null)
+    }
+
+    @Test
+    fun `network failure falls back to cached forecast`() = runTest {
+        // Seed cache via a successful call, then fail the network.
+        server.enqueue(MockResponse().setResponseCode(200).setBody(FORECAST_JSON))
+        repository.getForecast(malaga, AppSettings.DEFAULT)
+        server.enqueue(MockResponse().setResponseCode(500))
+
+        val result = repository.getForecast(malaga, AppSettings.DEFAULT)
 
         assertTrue(result is AppResult.Success)
         val forecast = (result as AppResult.Success).value
-        assertEquals(24.0, forecast.current.temperature, 0.0)
-        assertEquals(1, forecast.daily.size)
-        assertEquals(2, forecast.hourly.size)
+        assertEquals(ForecastSource.CACHE, forecast.source)
+        assertFalse(forecast.isStale)
     }
 
     @Test
-    fun `empty city search returns empty list`() = runTest {
-        server.enqueue(MockResponse().setResponseCode(200).setBody("{}"))
-
-        val result = repository.searchCities("zzzz")
-
-        assertTrue(result is AppResult.Success)
-        assertTrue((result as AppResult.Success).value.isEmpty())
-    }
-
-    @Test
-    fun `forecast request sends metric unit parameters and coordinates`() = runTest {
-        server.enqueue(MockResponse().setResponseCode(200).setBody(FORECAST_JSON))
-
-        repository.getForecast(
-            City("Malaga", "Spain", Coordinates(36.7, -4.4)),
-            AppSettings(
-                measurementSystem = MeasurementSystem.METRIC,
-                temperatureUnit = TemperatureUnit.CELSIUS,
-            ),
-        )
-
-        val url = server.takeRequest().requestUrl!!
-        assertEquals("/v1/forecast", url.encodedPath)
-        assertEquals("36.7", url.queryParameter("latitude"))
-        assertEquals("-4.4", url.queryParameter("longitude"))
-        assertEquals("celsius", url.queryParameter("temperature_unit"))
-        assertEquals("kmh", url.queryParameter("wind_speed_unit"))
-        assertEquals("mm", url.queryParameter("precipitation_unit"))
-    }
-
-    @Test
-    fun `forecast request sends imperial unit parameters`() = runTest {
-        server.enqueue(MockResponse().setResponseCode(200).setBody(FORECAST_JSON))
-
-        repository.getForecast(
-            City("Malaga", "Spain", Coordinates(36.7, -4.4)),
-            AppSettings(
-                measurementSystem = MeasurementSystem.IMPERIAL,
-                temperatureUnit = TemperatureUnit.FAHRENHEIT,
-            ),
-        )
-
-        val url = server.takeRequest().requestUrl!!
-        assertEquals("fahrenheit", url.queryParameter("temperature_unit"))
-        assertEquals("mph", url.queryParameter("wind_speed_unit"))
-        assertEquals("inch", url.queryParameter("precipitation_unit"))
-    }
-
-    @Test
-    fun `server error maps to network failure`() = runTest {
+    fun `network failure with no cache returns the error`() = runTest {
         server.enqueue(MockResponse().setResponseCode(500))
 
-        val result = repository.getForecast(
-            City("Malaga", "Spain", Coordinates(36.7, -4.4)),
-            AppSettings.DEFAULT,
-        )
+        val result = repository.getForecast(malaga, AppSettings.DEFAULT)
 
-        assertEquals(AppResult.Failure(AppError.Network), result)
+        assertTrue(result is AppResult.Failure)
     }
+
+    @Test
+    fun `stale cache is still served on network failure and flagged as stale`() = runTest {
+        server.enqueue(MockResponse().setResponseCode(200).setBody(FORECAST_JSON))
+        repository.getForecast(malaga, AppSettings.DEFAULT)
+        local.staleOnRead = true
+        server.enqueue(MockResponse().setResponseCode(500))
+
+        val result = repository.getForecast(malaga, AppSettings.DEFAULT)
+
+        assertTrue(result is AppResult.Success)
+        val forecast = (result as AppResult.Success).value
+        assertEquals(ForecastSource.CACHE, forecast.source)
+        assertTrue(forecast.isStale)
+    }
+
+    @Test
+    fun `current-location forecast is not stored as a recent city`() = runTest {
+        server.enqueue(MockResponse().setResponseCode(200).setBody(FORECAST_JSON))
+
+        repository.getForecastByCoordinates(Coordinates(36.7, -4.4), AppSettings.DEFAULT)
+
+        // The repository never records recents itself; recents come only from explicit add.
+        assertTrue(repository.observeRecentCities().first().isEmpty())
+    }
+
+    private fun cacheKey() = ForecastCacheKey.from(
+        malaga,
+        ForecastUnitsMapper().map(AppSettings.DEFAULT),
+    )
 
     private companion object {
         val FORECAST_JSON = """

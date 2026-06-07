@@ -51,6 +51,8 @@
     <string name="forecast_error_search_another">Ieškoti kito miesto</string>
     <string name="forecast_error_code">Klaidos kodas: %1$s</string>
     <string name="forecast_loading">Gaunama naujausia prognozė…</string>
+    <string name="forecast_offline">Neprisijungus pateikti duomenys</string>
+    <string name="forecast_offline_outdated">Neprisijungus · gali būti pasenę</string>
     <string name="forecast_welcome_title">Sveiki atvykę į SkyCast</string>
     <string name="forecast_welcome_message">Naudokite dabartinę vietą vietiniam orui arba ieškokite bet kurio miesto. Vieta prašoma tik tada, kai ją pasirenkate.</string>
     <string name="forecast_use_current_location">Naudoti dabartinę vietą</string>

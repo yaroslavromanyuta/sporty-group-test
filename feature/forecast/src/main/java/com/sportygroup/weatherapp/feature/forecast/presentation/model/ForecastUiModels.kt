@@ -17,6 +17,10 @@ data class ForecastUiModel(
     val hourly: List<HourlyForecastUiModel>,
     val daily: List<DailyForecastUiModel>,
     val metrics: List<WeatherMetricUiModel>,
+    /** True when this forecast was served from cache (no live network). Drives an offline label. */
+    val isOffline: Boolean = false,
+    /** True when the cached forecast is older than the freshness window. */
+    val isOutdated: Boolean = false,
 )
 
 @Immutable

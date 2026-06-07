@@ -4,6 +4,7 @@ import com.sportygroup.weatherapp.core.common.StringResources
 import com.sportygroup.weatherapp.core.designsystem.icon.UiIconType
 import com.sportygroup.weatherapp.core.model.DailyForecast
 import com.sportygroup.weatherapp.core.model.Forecast
+import com.sportygroup.weatherapp.core.model.ForecastSource
 import com.sportygroup.weatherapp.feature.forecast.R
 import com.sportygroup.weatherapp.feature.forecast.presentation.model.CurrentWeatherUiModel
 import com.sportygroup.weatherapp.feature.forecast.presentation.model.DailyForecastUiModel
@@ -53,6 +54,8 @@ class ForecastDomainToUiMapperImpl @Inject constructor(
             hourly = mapHourly(forecast),
             daily = mapDaily(forecast),
             metrics = mapMetrics(forecast, measurementSystem),
+            isOffline = forecast.source == ForecastSource.CACHE,
+            isOutdated = forecast.isStale,
         )
     }
 

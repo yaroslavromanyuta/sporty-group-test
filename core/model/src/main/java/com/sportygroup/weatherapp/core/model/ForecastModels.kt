@@ -50,10 +50,23 @@ data class DailyForecast(
     val precipitationProbability: Int,
 )
 
+/** Where a [Forecast] was loaded from. Used to surface an offline/cache indicator in the UI. */
+enum class ForecastSource {
+    NETWORK,
+    CACHE,
+}
+
 /** Aggregate forecast for a city. */
 data class Forecast(
     val city: City,
     val current: CurrentWeather,
     val hourly: List<HourlyForecast>,
     val daily: List<DailyForecast>,
+    /** Origin of this data. Defaults to [ForecastSource.NETWORK] for freshly fetched forecasts. */
+    val source: ForecastSource = ForecastSource.NETWORK,
+    /**
+     * True when served from cache and older than the freshness window (see ForecastCachePolicy).
+     * Only meaningful when [source] is [ForecastSource.CACHE]; lets the UI say "may be outdated".
+     */
+    val isStale: Boolean = false,
 )

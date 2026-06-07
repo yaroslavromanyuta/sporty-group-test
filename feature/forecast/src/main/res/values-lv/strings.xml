@@ -51,6 +51,8 @@
     <string name="forecast_error_search_another">Meklēt citu pilsētu</string>
     <string name="forecast_error_code">Kļūdas kods: %1$s</string>
     <string name="forecast_loading">Tiek iegūta jaunākā prognoze…</string>
+    <string name="forecast_offline">Bezsaistes dati</string>
+    <string name="forecast_offline_outdated">Bezsaistē · var būt novecojis</string>
     <string name="forecast_welcome_title">Laipni lūdzam SkyCast</string>
     <string name="forecast_welcome_message">Izmanto savu pašreizējo atrašanās vietu vietējiem laika apstākļiem vai meklē jebkuru pilsētu. Mēs pieprasām atrašanās vietu tikai tad, ja tu to izvēlies.</string>
     <string name="forecast_use_current_location">Izmantot pašreizējo atrašanās vietu</string>

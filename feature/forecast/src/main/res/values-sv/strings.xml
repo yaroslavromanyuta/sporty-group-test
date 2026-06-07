@@ -51,6 +51,8 @@
     <string name="forecast_error_search_another">Sök en annan stad</string>
     <string name="forecast_error_code">Felkod: %1$s</string>
     <string name="forecast_loading">Hämtar senaste prognosen…</string>
+    <string name="forecast_offline">Offlinedata</string>
+    <string name="forecast_offline_outdated">Offline · kan vara inaktuell</string>
     <string name="forecast_welcome_title">Välkommen till SkyCast</string>
     <string name="forecast_welcome_message">Använd din aktuella plats för lokalt väder eller sök efter valfri stad. Vi begär endast platsåtkomst när du väljer det.</string>
     <string name="forecast_use_current_location">Använd aktuell plats</string>

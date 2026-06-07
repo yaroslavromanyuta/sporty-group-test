@@ -119,10 +119,22 @@ private fun ForecastContent(
             UiIcon(icon = UiIconType.CLOCK, size = SkyTheme.size.iconXxs, tint = SkyTheme.colors.textLow)
             Text(
                 text = buildString {
+                    if (forecast.isOffline) {
+                        append(
+                            stringResource(
+                                if (forecast.isOutdated) {
+                                    R.string.forecast_offline_outdated
+                                } else {
+                                    R.string.forecast_offline
+                                },
+                            ),
+                        )
+                        append(" · ")
+                    }
                     append(forecast.updatedLabel)
                     if (forecast.region.isNotBlank()) append(" · ${forecast.region}")
                 },
-                color = SkyTheme.colors.textLow,
+                color = if (forecast.isOffline) SkyTheme.colors.textMedium else SkyTheme.colors.textLow,
                 style = SkyTheme.typography.captionSmall,
             )
         }
@@ -152,6 +164,23 @@ private fun ForecastScreenContentPreview() {
     SkyPreview {
         ForecastScreen(
             state = ForecastUiState.Content(ForecastPreviewData.forecast),
+            onAction = {},
+            onUseCurrentLocation = {},
+            onOpenAppSettings = {},
+            onOpenSearch = {},
+            onOpenSettings = {},
+        )
+    }
+}
+
+@ThemePreviews
+@Composable
+private fun ForecastScreenOfflinePreview() {
+    SkyPreview {
+        ForecastScreen(
+            state = ForecastUiState.Content(
+                ForecastPreviewData.forecast.copy(isOffline = true, isOutdated = true),
+            ),
             onAction = {},
             onUseCurrentLocation = {},
             onOpenAppSettings = {},
