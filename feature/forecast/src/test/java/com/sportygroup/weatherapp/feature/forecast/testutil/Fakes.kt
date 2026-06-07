@@ -11,7 +11,9 @@ import com.sportygroup.weatherapp.core.model.Forecast
 import com.sportygroup.weatherapp.core.model.ForecastSource
 import com.sportygroup.weatherapp.feature.forecast.data.local.ForecastCacheKey
 import com.sportygroup.weatherapp.feature.forecast.data.local.ForecastLocalDataSource
+import com.sportygroup.weatherapp.feature.forecast.data.local.LastForecastSelectionLocalDataSource
 import com.sportygroup.weatherapp.feature.forecast.data.local.RecentCitiesLocalDataSource
+import com.sportygroup.weatherapp.feature.forecast.domain.model.LastForecastSelection
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -77,6 +79,17 @@ class InMemoryPreferencesDataStore : DataStore<Preferences> {
     override suspend fun updateData(
         transform: suspend (t: Preferences) -> Preferences,
     ): Preferences = transform(flow.value).also { flow.value = it }
+}
+
+/** In-memory [LastForecastSelectionLocalDataSource] holding the most recently saved selection. */
+class FakeLastForecastSelectionLocalDataSource : LastForecastSelectionLocalDataSource {
+    private var saved: LastForecastSelection? = null
+
+    override suspend fun read(): LastForecastSelection? = saved
+
+    override suspend fun save(selection: LastForecastSelection) {
+        saved = selection
+    }
 }
 
 /** In-memory [RecentCitiesLocalDataSource] mirroring the production dedupe/cap/limit rules. */

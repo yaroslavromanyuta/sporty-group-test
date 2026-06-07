@@ -15,6 +15,7 @@ import com.sportygroup.weatherapp.feature.forecast.data.repository.ForecastRepos
 import com.sportygroup.weatherapp.core.model.City
 import com.sportygroup.weatherapp.core.model.Coordinates
 import com.sportygroup.weatherapp.feature.forecast.testutil.FakeForecastLocalDataSource
+import com.sportygroup.weatherapp.feature.forecast.testutil.FakeLastForecastSelectionLocalDataSource
 import com.sportygroup.weatherapp.feature.forecast.testutil.FakeRecentCitiesLocalDataSource
 import com.sportygroup.weatherapp.feature.forecast.testutil.TestDispatcherProvider
 import com.sportygroup.weatherapp.lib.settings.model.AppSettings
@@ -54,6 +55,7 @@ class ForecastRepositoryIntegrationTest {
             citySearchRemote = CitySearchRemoteDataSourceImpl(retrofit.create(GeocodingApi::class.java)),
             forecastLocal = FakeForecastLocalDataSource(),
             recentCitiesLocal = FakeRecentCitiesLocalDataSource(),
+            lastSelectionLocal = FakeLastForecastSelectionLocalDataSource(),
             forecastDtoToData = ForecastDtoToDataMapperImpl(),
             forecastDataToDomain = ForecastDataToDomainMapperImpl(),
             cityDtoToData = CityDtoToDataMapperImpl(),

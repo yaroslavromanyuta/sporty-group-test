@@ -5,10 +5,13 @@ import com.sportygroup.weatherapp.core.common.AppResult
 import com.sportygroup.weatherapp.core.model.City
 import com.sportygroup.weatherapp.core.model.Coordinates
 import com.sportygroup.weatherapp.core.model.Forecast
+import com.sportygroup.weatherapp.feature.forecast.domain.model.LastForecastSelection
 import com.sportygroup.weatherapp.feature.forecast.domain.usecase.AddRecentCityUseCase
 import com.sportygroup.weatherapp.feature.forecast.domain.usecase.GetCurrentLocationForecastUseCase
 import com.sportygroup.weatherapp.feature.forecast.domain.usecase.GetForecastByCityUseCase
+import com.sportygroup.weatherapp.feature.forecast.domain.usecase.GetLastForecastSelectionUseCase
 import com.sportygroup.weatherapp.feature.forecast.domain.usecase.ObserveRecentCitiesUseCase
+import com.sportygroup.weatherapp.feature.forecast.domain.usecase.SaveLastForecastSelectionUseCase
 import com.sportygroup.weatherapp.feature.forecast.domain.usecase.SearchCitiesUseCase
 import com.sportygroup.weatherapp.feature.forecast.presentation.mapper.CityUiMapper
 import com.sportygroup.weatherapp.feature.forecast.presentation.mapper.ErrorUiMapper
@@ -51,6 +54,8 @@ class ForecastViewModelTest {
     private val getForecastByCity = mockk<GetForecastByCityUseCase>()
     private val searchCities = mockk<SearchCitiesUseCase>()
     private val addRecentCity = mockk<AddRecentCityUseCase>(relaxed = true)
+    private val getLastSelection = mockk<GetLastForecastSelectionUseCase>()
+    private val saveLastSelection = mockk<SaveLastForecastSelectionUseCase>(relaxed = true)
     private val forecastUiMapper = mockk<ForecastDomainToUiMapper>()
     private val cityUiMapper = CityUiMapper()
     private val errorUiMapper = ErrorUiMapper(FakeStringResources())
@@ -71,6 +76,8 @@ class ForecastViewModelTest {
         every { observeSettings() } returns settingsFlow
         every { observeRecentCities() } returns recentFlow
         every { forecastUiMapper.map(any(), any()) } returns ForecastPreviewData.forecast
+        // Default: no prior selection saved, so the start screen is shown on launch.
+        coEvery { getLastSelection() } returns null
     }
 
     @After
@@ -85,6 +92,8 @@ class ForecastViewModelTest {
         getForecastByCity = getForecastByCity,
         searchCities = searchCities,
         addRecentCity = addRecentCity,
+        getLastSelection = getLastSelection,
+        saveLastSelection = saveLastSelection,
         forecastUiMapper = forecastUiMapper,
         cityUiMapper = cityUiMapper,
         errorUiMapper = errorUiMapper,
@@ -284,6 +293,98 @@ class ForecastViewModelTest {
         val state = vm.uiState.value
         assertTrue(state is ForecastUiState.Content)
         assertFalse((state as ForecastUiState.Content).isRefreshing)
+    }
+
+    @Test
+    fun `no saved selection keeps the initial choice screen`() = runTest {
+        coEvery { getLastSelection() } returns null
+        val vm = viewModel()
+
+        assertTrue(vm.uiState.value is ForecastUiState.InitialChoice)
+        coVerify(exactly = 0) { getForecastByCity(any(), any()) }
+        coVerify(exactly = 0) { getCurrentLocationForecast(any()) }
+    }
+
+    @Test
+    fun `saved manual city loads automatically on launch`() = runTest {
+        val city = City("Lisbon", "Portugal", Coordinates(38.72, -9.14))
+        coEvery { getLastSelection() } returns LastForecastSelection.ManualCity(city)
+        coEvery { getForecastByCity(any(), any()) } returns AppResult.Success(domainForecast)
+
+        val vm = viewModel()
+
+        assertTrue(vm.uiState.value is ForecastUiState.Content)
+        coVerify(exactly = 1) { getForecastByCity(city, any()) }
+        coVerify(exactly = 0) { getCurrentLocationForecast(any()) }
+    }
+
+    @Test
+    fun `saved current location loads automatically when permission is granted`() = runTest {
+        coEvery { getLastSelection() } returns LastForecastSelection.CurrentLocation
+        coEvery { getCurrentLocationForecast(any()) } returns AppResult.Success(domainForecast)
+
+        val vm = viewModel()
+
+        assertTrue(vm.uiState.value is ForecastUiState.Content)
+        coVerify(exactly = 1) { getCurrentLocationForecast(any()) }
+    }
+
+    @Test
+    fun `saved current location with missing permission shows a clean initial choice`() = runTest {
+        coEvery { getLastSelection() } returns LastForecastSelection.CurrentLocation
+        coEvery { getCurrentLocationForecast(any()) } returns
+            AppResult.Failure(AppError.NoLocationPermission)
+
+        val vm = viewModel()
+
+        val state = vm.uiState.value
+        assertTrue(state is ForecastUiState.InitialChoice)
+        // A restored selection that can't run is not a user denial.
+        assertFalse((state as ForecastUiState.InitialChoice).permissionDenied)
+        assertFalse(state.permissionPermanentlyDenied)
+    }
+
+    @Test
+    fun `selecting a manual city saves it as the last selection`() = runTest {
+        val city = CityUiModel("Lisbon", "Portugal", 38.72, -9.14)
+        coEvery { getForecastByCity(any(), any()) } returns AppResult.Success(domainForecast)
+        val vm = viewModel()
+
+        vm.onAction(ForecastUiAction.OnCitySelected(city))
+
+        coVerify(exactly = 1) {
+            saveLastSelection(LastForecastSelection.ManualCity(cityUiMapper.toDomain(city)))
+        }
+    }
+
+    @Test
+    fun `successful current-location flow saves current location as the last selection`() = runTest {
+        coEvery { getCurrentLocationForecast(any()) } returns AppResult.Success(domainForecast)
+        val vm = viewModel()
+
+        vm.onLocationPermissionGranted()
+
+        coVerify(exactly = 1) { saveLastSelection(LastForecastSelection.CurrentLocation) }
+    }
+
+    @Test
+    fun `denied permission does not save current location`() = runTest {
+        val vm = viewModel()
+
+        vm.onLocationPermissionDenied()
+
+        coVerify(exactly = 0) { saveLastSelection(LastForecastSelection.CurrentLocation) }
+    }
+
+    @Test
+    fun `permission failure during load does not save current location`() = runTest {
+        coEvery { getCurrentLocationForecast(any()) } returns
+            AppResult.Failure(AppError.NoLocationPermission)
+        val vm = viewModel()
+
+        vm.onLocationPermissionGranted()
+
+        coVerify(exactly = 0) { saveLastSelection(LastForecastSelection.CurrentLocation) }
     }
 
     @Test

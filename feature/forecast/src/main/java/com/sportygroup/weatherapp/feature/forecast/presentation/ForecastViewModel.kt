@@ -6,10 +6,13 @@ import com.sportygroup.weatherapp.core.common.AppError
 import com.sportygroup.weatherapp.core.common.AppResult
 import com.sportygroup.weatherapp.core.model.City
 import com.sportygroup.weatherapp.core.model.Forecast
+import com.sportygroup.weatherapp.feature.forecast.domain.model.LastForecastSelection
 import com.sportygroup.weatherapp.feature.forecast.domain.usecase.AddRecentCityUseCase
 import com.sportygroup.weatherapp.feature.forecast.domain.usecase.GetCurrentLocationForecastUseCase
 import com.sportygroup.weatherapp.feature.forecast.domain.usecase.GetForecastByCityUseCase
+import com.sportygroup.weatherapp.feature.forecast.domain.usecase.GetLastForecastSelectionUseCase
 import com.sportygroup.weatherapp.feature.forecast.domain.usecase.ObserveRecentCitiesUseCase
+import com.sportygroup.weatherapp.feature.forecast.domain.usecase.SaveLastForecastSelectionUseCase
 import com.sportygroup.weatherapp.feature.forecast.domain.usecase.SearchCitiesUseCase
 import com.sportygroup.weatherapp.feature.forecast.presentation.mapper.CityUiMapper
 import com.sportygroup.weatherapp.feature.forecast.presentation.mapper.ErrorUiMapper
@@ -30,18 +33,21 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class ForecastViewModel @Inject constructor(
-    observeSettings: ObserveSettingsUseCase,
+    private val observeSettings: ObserveSettingsUseCase,
     observeRecentCities: ObserveRecentCitiesUseCase,
     private val getCurrentLocationForecast: GetCurrentLocationForecastUseCase,
     private val getForecastByCity: GetForecastByCityUseCase,
     private val searchCities: SearchCitiesUseCase,
     private val addRecentCity: AddRecentCityUseCase,
+    private val getLastSelection: GetLastForecastSelectionUseCase,
+    private val saveLastSelection: SaveLastForecastSelectionUseCase,
     private val forecastUiMapper: ForecastDomainToUiMapper,
     private val cityUiMapper: CityUiMapper,
     private val errorUiMapper: ErrorUiMapper,
@@ -78,6 +84,44 @@ class ForecastViewModel @Inject constructor(
         viewModelScope.launch {
             observeRecentCities().collect { cities ->
                 _searchState.update { it.copy(recent = cities.map(cityUiMapper::toUi)) }
+            }
+        }
+        restoreLastSelection()
+    }
+
+    /**
+     * Restores the user's last forecast selection on launch so the start screen is skipped when a
+     * choice was already made. A saved current-location selection is only auto-loaded when the
+     * permission is already held — the use case verifies this without ever requesting it, so the
+     * Android permission dialog is never triggered automatically on start.
+     */
+    private fun restoreLastSelection() {
+        viewModelScope.launch {
+            // Load saved units first so the restored forecast is fetched in the correct system.
+            settings = observeSettings().first()
+            when (val selection = getLastSelection()) {
+                null -> Unit // No prior choice — keep the initial choice screen.
+                is LastForecastSelection.ManualCity -> {
+                    lastSelectedCity = selection.city
+                    usingCurrentLocation = false
+                    _uiState.value = ForecastUiState.Loading
+                    handleForecastResult(getForecastByCity(selection.city, settings))
+                }
+                LastForecastSelection.CurrentLocation -> {
+                    usingCurrentLocation = true
+                    _uiState.value = ForecastUiState.Loading
+                    when (val result = getCurrentLocationForecast(settings)) {
+                        is AppResult.Success -> handleForecastResult(result)
+                        is AppResult.Failure -> if (result.error == AppError.NoLocationPermission) {
+                            // Permission not (or no longer) granted: fall back to the start screen
+                            // without flagging a denial and without auto-requesting permission.
+                            usingCurrentLocation = false
+                            _uiState.value = ForecastUiState.InitialChoice()
+                        } else {
+                            handleForecastResult(result)
+                        }
+                    }
+                }
             }
         }
     }
@@ -156,6 +200,8 @@ class ForecastViewModel @Inject constructor(
     private fun selectCity(city: City) {
         lastSelectedCity = city
         usingCurrentLocation = false
+        // Remember the manual choice so it is restored on the next launch.
+        viewModelScope.launch { saveLastSelection(LastForecastSelection.ManualCity(city)) }
         _uiState.value = ForecastUiState.Loading
         viewModelScope.launch {
             handleForecastResult(getForecastByCity(city, settings))
@@ -187,9 +233,12 @@ class ForecastViewModel @Inject constructor(
         _uiState.value = current.copy(isRefreshing = true)
         viewModelScope.launch {
             when (val result = loadForecast()) {
-                is AppResult.Success -> _uiState.value = ForecastUiState.Content(
-                    forecast = forecastUiMapper.map(result.value, settings.measurementSystem),
-                )
+                is AppResult.Success -> {
+                    rememberCurrentLocationSelection()
+                    _uiState.value = ForecastUiState.Content(
+                        forecast = forecastUiMapper.map(result.value, settings.measurementSystem),
+                    )
+                }
                 is AppResult.Failure -> if (result.error == AppError.NoLocationPermission) {
                     handleForecastResult(result)
                 } else {
@@ -212,6 +261,7 @@ class ForecastViewModel @Inject constructor(
     private fun handleForecastResult(result: AppResult<Forecast>) {
         when (result) {
             is AppResult.Success -> {
+                rememberCurrentLocationSelection()
                 _uiState.value = ForecastUiState.Content(
                     forecast = forecastUiMapper.map(result.value, settings.measurementSystem),
                 )
@@ -231,6 +281,17 @@ class ForecastViewModel @Inject constructor(
     }
 
     private fun hasLoadedForecast(): Boolean = lastSelectedCity != null || usingCurrentLocation
+
+    /**
+     * Persists [LastForecastSelection.CurrentLocation] after a successful current-location load.
+     * Guarded by [usingCurrentLocation] (cleared on every denial path) so a denied permission is
+     * never saved as the startup selection.
+     */
+    private fun rememberCurrentLocationSelection() {
+        if (lastSelectedCity == null && usingCurrentLocation) {
+            viewModelScope.launch { saveLastSelection(LastForecastSelection.CurrentLocation) }
+        }
+    }
 
     private fun onQueryChanged(query: String) {
         searchJob?.cancel()
